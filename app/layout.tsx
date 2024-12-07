@@ -1,28 +1,27 @@
 import '@mantine/core/styles.css';
 
-import React from 'react';
-import { ColorSchemeScript, MantineProvider } from '@mantine/core';
-import { theme } from '../theme';
+import { ReactNode } from 'react';
+import { ColorSchemeScript } from '@mantine/core';
+import { AppProvider } from './provider';
 
 export const metadata = {
-  title: 'Mantine Next.js template',
-  description: 'I am using Mantine with Next.js!',
+  title: 'Portello | IC 2025',
+  description: 'Delegate Website of AIESEC International Congress 2025',
 };
 
-export default function RootLayout({ children }: { children: any }) {
+const RootLayout = async ({ children }: { children: ReactNode }) => {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
         <ColorSchemeScript />
-        <link rel="shortcut icon" href="/favicon.svg" />
-        <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no"
-        />
       </head>
       <body>
-        <MantineProvider theme={theme}>{children}</MantineProvider>
+        <AppProvider>{children}</AppProvider>
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;
+
+export const dynamic = 'force-dynamic';
