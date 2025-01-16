@@ -1,0 +1,35 @@
+.nav {
+  padding: rem(1vw);
+}
+
+.link {
+  text-decoration: none;
+  color: var(--mantine-color-gray-6);
+  font-weight: bold;
+}
+
+.link:hover {
+  color: cornflowerblue;
+}
+
+.link.active {
+  color: cornflowerblue;
+  font-weight: bold;
+}
+
+.navbarButton {
+  color: var(--mantine-color-gray-6);
+}
+
+.navbarButton:hover {
+  color: cornflowerblue;
+  background-color: transparent;
+}
+
+.loginButton {
+  color: white;
+}
+
+.loginButton:hover {
+  border-color: cornflowerblue;
+}

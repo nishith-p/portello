@@ -1,8 +1,9 @@
 import '@mantine/core/styles.css';
 
 import { ReactNode } from 'react';
-import { ColorSchemeScript } from '@mantine/core';
+import { ColorSchemeScript, MantineProvider } from '@mantine/core';
 import { AppProvider } from './provider';
+import { NavLinks } from '@/components/Navbar/Navbar';
 
 export const metadata = {
   title: 'Portello | IC 2025',
@@ -16,7 +17,10 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
         <ColorSchemeScript />
       </head>
       <body>
-        <AppProvider>{children}</AppProvider>
+        <MantineProvider>
+          <NavLinks />
+          <AppProvider>{children}</AppProvider>
+        </MantineProvider>
       </body>
     </html>
   );
