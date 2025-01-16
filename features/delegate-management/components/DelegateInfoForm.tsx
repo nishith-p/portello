@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   Button,
   Container,
+  Divider,
   Group,
   NativeSelect,
   Notification,
@@ -76,6 +77,7 @@ export default function DelegateInfoForm() {
         </Title>
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Stack gap="md">
+          <Divider my="xs" label="Personal Information" labelPosition="center" />
             <TextInput
               label="First Name"
               placeholder="Your first name"
@@ -94,6 +96,7 @@ export default function DelegateInfoForm() {
                 <Radio value="female" label="Female" />
               </Group>
             </Radio.Group>
+            <Divider my="xs" label="AIESEC Information" labelPosition="center" />
             <TextInput
               label="AIESEC Email"
               placeholder="your@aiesec.com"
@@ -125,6 +128,7 @@ export default function DelegateInfoForm() {
               label="Role in AIESEC"
               data={['Select Role', 'MCP', 'MCVP', 'LCP', 'LCVP', 'Other']}
             />
+            <Divider my="xs" label="Other Details" labelPosition="center" />
             <Textarea
               placeholder="Your Expectations from IC 2025"
               label="Expectations"
