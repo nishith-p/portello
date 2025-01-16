@@ -4,21 +4,12 @@
 
 .link {
   text-decoration: none;
-  color: var(--mantine-color-gray-6);
+  color: var(--mantine-color-white);
   font-weight: bold;
 }
 
 .link:hover {
   color: cornflowerblue;
-}
-
-.link.active {
-  color: cornflowerblue;
-  font-weight: bold;
-}
-
-.navbarButton {
-  color: var(--mantine-color-gray-6);
 }
 
 .navbarButton:hover {
@@ -27,9 +18,5 @@
 }
 
 .loginButton {
-  color: white;
-}
-
-.loginButton:hover {
-  border-color: cornflowerblue;
+  color: var(--mantine-color-white);
 }
