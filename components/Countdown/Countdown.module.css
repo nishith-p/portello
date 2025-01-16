@@ -1,0 +1,38 @@
+.container {
+    text-align: center;
+    margin: 2rem auto;
+  }
+  
+  .group {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1.5rem;
+  }
+  
+  .paper {
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .paper:hover {
+    transform: translateY(-4px);
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .timeValue {
+    font-weight: bold;
+    font-size: 6rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+  }
+  
+  .timeLabel {
+    font-style: italic;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+  }
+  

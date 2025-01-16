@@ -1,4 +1,4 @@
-import { Anchor, Text, Title } from '@mantine/core';
+import { Button, Text, Title } from '@mantine/core';
 import classes from './Welcome.module.css';
 
 export function Welcome() {
@@ -10,14 +10,21 @@ export function Welcome() {
           Portello
         </Text>
       </Title>
-      <Text c="dimmed" ta="center" size="lg" maw={580} mx="auto" mt="xl">
-        This starter Next.js project includes a minimal setup for server side rendering, if you want
-        to learn more on Mantine + Next.js integration follow{' '}
-        <Anchor href="https://mantine.dev/guides/next/" size="lg">
-          this guide
-        </Anchor>
-        . To get started edit page.tsx file.
+      <Text c="white" ta="center" size="lg" maw={580} mx="auto" mt="xl">
+        Get ready for the best International Congress ever happened!!! International Congress 2025
+        is around the corner
       </Text>
+      <div className={classes.controls}>
+        <Button
+          className={classes.registrationButton}
+          variant="white"
+          size="lg"
+          component="a"
+          href="/delegateForm"
+        >
+          Register for IC 2025
+        </Button>
+      </div>
     </>
   );
 }

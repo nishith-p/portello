@@ -1,8 +1,7 @@
-import cx from 'clsx';
-import { Button, Container, Overlay, Text, Title } from '@mantine/core';
-import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle';
+import { Overlay } from '@mantine/core';
 import { Welcome } from '../Welcome/Welcome';
 import classes from './HeroImageBackground.module.css';
+import Countdown from '../Countdown/Countdown';
 
 export function HeroImageBackground() {
   return (
@@ -11,17 +10,7 @@ export function HeroImageBackground() {
 
       <div className={classes.inner}>
         <Welcome />
-        <div className={classes.controls}>
-          <Button
-            className={classes.control}
-            variant="white"
-            size="lg"
-            component="a"
-            href="/delegateForm"
-          >
-            Register for IC 2025
-          </Button>
-        </div>
+        <Countdown targetDate="2025-01-31T23:59:59"/>
       </div>
     </div>
   );

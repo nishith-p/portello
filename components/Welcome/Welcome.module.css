@@ -3,8 +3,20 @@
   font-size: rem(100px);
   font-weight: 900;
   letter-spacing: rem(-2px);
-
   @media (max-width: $mantine-breakpoint-md) {
     font-size: rem(50px);
   }
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20vh;
+  width: 100%; 
+}
+
+.registrationButton:hover {
+  background-color: var(--mantine-color-blue-2);
+  color: var(--mantine-color-blue-9);
 }
