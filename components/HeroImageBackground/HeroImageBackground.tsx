@@ -11,7 +11,6 @@ export function HeroImageBackground() {
 
       <div className={classes.inner}>
         <Welcome />
-        <ColorSchemeToggle />
         <div className={classes.controls}>
           <Button
             className={classes.control}
