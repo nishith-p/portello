@@ -1,7 +1,7 @@
 import { Overlay } from '@mantine/core';
 import { Welcome } from '../Welcome/Welcome';
 import classes from './HeroImageBackground.module.css';
-import Countdown from '../Countdown/Countdown';
+import CountdownTimer from '../Countdown/Countdown';
 
 export function HeroImageBackground() {
   return (
@@ -10,7 +10,7 @@ export function HeroImageBackground() {
 
       <div className={classes.inner}>
         <Welcome />
-        <Countdown targetDate="2025-01-31T23:59:59"/>
+        <CountdownTimer targetDate="2025-02-01T19:38:59"/>
       </div>
     </div>
   );

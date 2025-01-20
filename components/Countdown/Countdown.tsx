@@ -20,7 +20,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
   }, [targetDate]);
 
   if (!timeLeft) {
-    return <div className={styles.container}>Time's up!</div>;
+    return <div className={styles.container}>Registrations are fficially Closed!</div>;
   }
 
   return (

@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@mantine/core": "7.14.3",
+    "@mantine/dropzone": "^7.16.1",
     "@mantine/form": "^7.16.0",
     "@mantine/hooks": "7.14.3",
     "@next/bundle-analyzer": "^14.2.4",
