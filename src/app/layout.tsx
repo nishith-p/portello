@@ -1,12 +1,16 @@
 import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 
 import { ReactNode } from 'react';
 import { ColorSchemeScript } from '@mantine/core';
 import { AppProvider } from './provider';
 
 export const metadata = {
-  title: 'Portello | IC 2025',
-  description: 'Delegate Website of AIESEC International Congress 2025',
+  title: {
+    template: '%s | IC 2025',
+    default: 'IC 2025',
+  },
+  description: 'Delegate Portal of AIESEC International Congress 2025',
 };
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {

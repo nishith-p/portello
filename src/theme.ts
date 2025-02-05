@@ -1,7 +1,8 @@
 'use client';
 
+import { GeistSans } from 'geist/font/sans';
 import { createTheme } from '@mantine/core';
 
 export const theme = createTheme({
-  /* Put your mantine theme override here */
+  fontFamily: GeistSans.style.fontFamily,
 });
