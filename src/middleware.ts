@@ -1,45 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@kinde-oss/kinde-auth-nextjs/middleware';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
-import { supabaseServer } from '@/lib/supabase';
+import { PUBLIC_ROUTES, ROUTE_PERMISSIONS } from '@/config/auth';
 
 export default withAuth(
   async (req: NextRequest) => {
     const { pathname } = req.nextUrl;
 
-    if (pathname === '/') {
+    // Allow public routes
+    if (PUBLIC_ROUTES.includes(pathname as any)) {
       return NextResponse.next();
     }
 
-    const { getUser } = getKindeServerSession();
-    const user = await getUser();
+    const { getUser, getPermissions } = getKindeServerSession();
+    const [user, permissions] = await Promise.all([getUser(), getPermissions()]);
 
     if (!user) {
       return NextResponse.redirect(new URL('/api/auth/login', req.url));
     }
 
-    try {
-      const { data: userProfile } = await supabaseServer
-        .from('users')
-        .select()
-        .eq('kinde_id', user.id)
-        .single();
+    // Check route permissions
+    const requiredPermissions = ROUTE_PERMISSIONS[pathname as keyof typeof ROUTE_PERMISSIONS];
+    if (requiredPermissions) {
+      const hasPermission = requiredPermissions.some((permission) =>
+        permissions?.permissions.includes(permission)
+      );
 
-      const isOnboarding = pathname === '/onboarding';
-      const hasCompletedOnboarding = !!userProfile;
-
-      if (hasCompletedOnboarding && isOnboarding) {
-        return NextResponse.redirect(new URL('/portal', req.url));
+      if (!hasPermission) {
+        return NextResponse.redirect(new URL('/', req.url));
       }
-
-      if (!hasCompletedOnboarding && !isOnboarding) {
-        return NextResponse.redirect(new URL('/onboarding', req.url));
-      }
-
-      return NextResponse.next();
-    } catch (error) {
-      return NextResponse.redirect(new URL('/onboarding', req.url));
     }
+
+    return NextResponse.next();
   },
   {
     callbacks: {

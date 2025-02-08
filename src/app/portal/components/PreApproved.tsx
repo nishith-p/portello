@@ -1,15 +1,22 @@
+// src/components/PreApprovedDashboard/index.tsx
 'use client';
 
 import { Alert, Box, Card, Container, Grid, Stack, Text, Title } from '@mantine/core';
 
-export const PreApprovedDashboard = () => {
+interface PreApprovedDashboardProps {
+  isAdmin?: boolean;
+  isApproved?: boolean;
+}
+
+export const PreApprovedDashboard = ({ isAdmin, isApproved }: PreApprovedDashboardProps) => {
   return (
     <Container fluid p="md" style={{ minHeight: '100vh' }}>
       <Stack gap="lg">
         {/* Welcome Message */}
         <Box>
           <Title order={2} c="gray.8">
-            Welcome to IC 2025!
+            {isAdmin && 'Welcome, Admin!'}
+            {isApproved && 'Welcome, Approved!'}
           </Title>
           <Text c="dimmed" mt="xs">
             Thank you for submitting your initial information.

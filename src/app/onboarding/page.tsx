@@ -4,7 +4,7 @@ import { OnboardingForm } from '@/app/onboarding/components/OnboardingForm';
 import { getUserProfile } from '@/lib/actions/user';
 
 export const metadata = {
-  title: 'Complete Your Profile - Onboarding',
+  title: 'Onboarding',
 };
 
 const Onboarding = async () => {
