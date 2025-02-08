@@ -1,12 +1,7 @@
-import { Title } from '@mantine/core';
-import { Layout } from '@/app/portal/_components/Layout';
+import { PreApprovedDashboard } from '@/app/portal/_components/PreApproved';
 
 const PortalHomePage = () => {
-  return (
-    <Layout>
-      <Title>Portal Home Page</Title>
-    </Layout>
-  );
-}
+  return <PreApprovedDashboard />;
+};
 
 export default PortalHomePage;

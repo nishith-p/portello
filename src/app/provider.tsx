@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
@@ -26,7 +25,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     <MantineProvider theme={theme}>
       <ErrorBoundary FallbackComponent={MainErrorFallback}>
         <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools />
           <Notifications />
           {children}
         </QueryClientProvider>
