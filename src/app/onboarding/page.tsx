@@ -17,7 +17,6 @@ const Onboarding = async () => {
 
   const existingUser = await getUserProfile(user.id);
 
-  // Redirect if user exists in Supabase (already completed onboarding)
   if (existingUser) {
     redirect('/portal');
   }

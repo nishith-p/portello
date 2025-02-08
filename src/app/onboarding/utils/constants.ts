@@ -1,8 +1,4 @@
-type EntityOption = {
-  value: string;
-  label: string;
-  description: string;
-};
+import { EntityOption } from '@/app/onboarding/utils/types';
 
 export const ENTITIES: EntityOption[] = [
   {

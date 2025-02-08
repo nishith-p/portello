@@ -1,6 +1,10 @@
 import React from 'react';
-import { Layout } from './components/Layout';
+import { Center } from '@mantine/core';
 
 export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
-  return <Layout>{children}</Layout>;
+  return (
+    <Center h="100vh" bg="var(--mantine-color-gray-0)">
+      {children}
+    </Center>
+  );
 }

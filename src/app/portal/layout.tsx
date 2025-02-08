@@ -1,6 +1,6 @@
 import React from 'react';
-import { Layout } from './components/common/Layout';
+import { LayoutShell } from '@/app/portal/components/common/LayoutShell';
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
-  return <Layout>{children}</Layout>;
+  return <LayoutShell>{children}</LayoutShell>;
 }

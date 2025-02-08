@@ -1,21 +1,14 @@
 import { IconEdit, IconUser } from '@tabler/icons-react';
 import { Box, Button, Card, Grid, Stack, TextInput, Title } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
-
-type FormData = {
-  firstName: string;
-  lastName: string;
-  entity: string;
-  position: string;
-  email: string;
-};
+import { BasicUser } from '@/types/user';
 
 type BasicInformationFormProps = {
-  form: UseFormReturnType<FormData>;
+  form: UseFormReturnType<Omit<BasicUser, 'kinde_id'>>;
   isEditing: boolean;
   onEdit: () => void;
   onCancel: () => void;
-  onSubmit: (values: FormData) => void;
+  onSubmit: (values: Omit<BasicUser, 'kinde_id'>) => void;
 };
 
 export const BasicInformationForm = ({
@@ -59,14 +52,14 @@ export const BasicInformationForm = ({
             <Grid.Col span={{ base: 12, md: 6 }}>
               <TextInput
                 label="First Name"
-                {...form.getInputProps('firstName')}
+                {...form.getInputProps('first_name')}
                 disabled={!isEditing}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 6 }}>
               <TextInput
                 label="Last Name"
-                {...form.getInputProps('lastName')}
+                {...form.getInputProps('last_name')}
                 disabled={!isEditing}
               />
             </Grid.Col>
@@ -81,7 +74,7 @@ export const BasicInformationForm = ({
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 6 }}>
-              <TextInput label="Email Address" {...form.getInputProps('email')} disabled />
+              <TextInput label="Email Address" {...form.getInputProps('kinde_email')} disabled />
             </Grid.Col>
           </Grid>
 
