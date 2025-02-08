@@ -8,7 +8,7 @@ type LayoutProps = {
 export const Layout = ({ children }: LayoutProps) => {
   return (
     <>
-      <Center h="100vh">
+      <Center h="100vh" bg="var(--mantine-color-gray-0)">
         {children}
       </Center>
     </>

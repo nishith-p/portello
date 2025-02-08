@@ -1,4 +1,4 @@
-import { PreApprovedDashboard } from '@/app/portal/_components/PreApproved';
+import { PreApprovedDashboard } from '@/app/portal/components/PreApproved';
 
 const PortalHomePage = () => {
   return <PreApprovedDashboard />;

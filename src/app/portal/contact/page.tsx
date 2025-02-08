@@ -2,8 +2,8 @@
 'use client';
 
 import { Container, Stack } from '@mantine/core';
-import { ContactHeader } from './_components/ContactHeader';
-import { ContactTable } from './_components/ContactTable';
+import { ContactHeader } from './components/ContactHeader';
+import { ContactTable } from './components/ContactTable';
 
 const dxTeam = [
   {

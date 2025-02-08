@@ -1,6 +1,7 @@
 'use server';
 
 import { supabaseServer } from '@/lib/supabase';
+import type { BasicUser } from '@/types/user';
 
 export async function getUserProfile(kindeUserId: string) {
   if (!kindeUserId) {
@@ -15,7 +16,7 @@ export async function getUserProfile(kindeUserId: string) {
 
   if (error) {
     if (error.code === 'PGRST116') {
-      return null; // User not found
+      return null;
     }
     throw error;
   }
@@ -23,17 +24,13 @@ export async function getUserProfile(kindeUserId: string) {
   return data;
 }
 
-export async function createUserProfile(userData: {
-  kindeUserId: string;
-  firstName: string;
-  lastName: string;
-}) {
-  if (!userData.kindeUserId) {
+export async function createUserProfile(userData: BasicUser) {
+  if (!userData.kinde_id) {
     throw new Error('User ID is required');
   }
 
   // Check if user already exists
-  const existingUser = await getUserProfile(userData.kindeUserId);
+  const existingUser = await getUserProfile(userData.kinde_id);
   if (existingUser) {
     throw new Error('User profile already exists');
   }
@@ -42,9 +39,12 @@ export async function createUserProfile(userData: {
     .from('users')
     .insert([
       {
-        kinde_id: userData.kindeUserId,
-        first_name: userData.firstName,
-        last_name: userData.lastName,
+        kinde_id: userData.kinde_id,
+        kinde_email: userData.kinde_email,
+        first_name: userData.first_name,
+        last_name: userData.last_name,
+        entity: userData.entity,
+        position: userData.position,
         status: 'pending',
       },
     ])

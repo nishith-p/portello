@@ -1,6 +1,10 @@
-export interface UserProfile {
+export type BasicUser = {
   kinde_id: string;
+  kinde_email: string
   first_name: string;
   last_name: string;
-  status: 'pending' | 'active' | 'suspended';
+  entity: string;
+  position: string;
+  status?: 'pending' | 'active' | 'suspended';
 }
+

@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
-import { Layout } from '@/app/onboarding/_components/Layout';
-import { OnboardingForm } from '@/app/onboarding/_components/OnboardingForm';
+import { OnboardingForm } from '@/app/onboarding/components/OnboardingForm';
 import { getUserProfile } from '@/lib/actions/user';
 
 export const metadata = {
@@ -23,11 +22,7 @@ const Onboarding = async () => {
     redirect('/portal');
   }
 
-  return (
-    <Layout>
-      <OnboardingForm kindeUserId={user.id} />
-    </Layout>
-  );
+  return <OnboardingForm kinde_id={user.id} kinde_email={user.email!} />;
 };
 
 export default Onboarding;
