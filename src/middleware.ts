@@ -7,7 +7,7 @@ export default withAuth(
   async (req: NextRequest) => {
     const { pathname } = req.nextUrl;
 
-    // Allow public routes
+    // Skip all checks for public routes
     if (PUBLIC_ROUTES.includes(pathname as any)) {
       return NextResponse.next();
     }
@@ -19,16 +19,20 @@ export default withAuth(
       return NextResponse.redirect(new URL('/api/auth/login', req.url));
     }
 
-    // Check route permissions
-    const requiredPermissions = ROUTE_PERMISSIONS[pathname as keyof typeof ROUTE_PERMISSIONS];
-    if (requiredPermissions) {
-      const hasPermission = requiredPermissions.some((permission) =>
-        permissions?.permissions.includes(permission)
-      );
+    const userPermissions = permissions?.permissions || [];
 
-      if (!hasPermission) {
-        return NextResponse.redirect(new URL('/', req.url));
-      }
+    // Handle onboarding redirection
+    if (userPermissions.length === 0 && pathname !== '/onboarding') {
+      return NextResponse.redirect(new URL('/onboarding', req.url));
+    }
+
+    // Check route-specific permissions
+    const requiredPermissions = ROUTE_PERMISSIONS[pathname as keyof typeof ROUTE_PERMISSIONS];
+    if (
+      requiredPermissions?.length &&
+      !requiredPermissions.some((p) => userPermissions.includes(p))
+    ) {
+      return NextResponse.redirect(new URL('/', req.url));
     }
 
     return NextResponse.next();
