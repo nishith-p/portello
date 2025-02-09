@@ -2,8 +2,6 @@ export const PUBLIC_ROUTES = ['/', '/api/auth/login', '/api/auth/register'] as c
 
 export const ROUTE_PERMISSIONS = {
   '/portal/admin': ['dx_team:admin'],
-  '/portal/profile': ['delegate:approved'],
-  '/portal/pending': ['delegate:pending'],
 } as const;
 
 export const PERMISSIONS = {

@@ -1,10 +1,11 @@
 import { IconEdit, IconUser } from '@tabler/icons-react';
-import { Box, Button, Card, Grid, Stack, TextInput, Title } from '@mantine/core';
+import { Box, Button, Card, Grid, LoadingOverlay, Stack, TextInput, Title } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { BasicUser } from '@/types/user';
 
 type BasicInformationFormProps = {
   form: UseFormReturnType<Omit<BasicUser, 'kinde_id'>>;
+  isLoading: boolean;
   isEditing: boolean;
   onEdit: () => void;
   onCancel: () => void;
@@ -13,6 +14,7 @@ type BasicInformationFormProps = {
 
 export const BasicInformationForm = ({
   form,
+  isLoading,
   isEditing,
   onEdit,
   onCancel,
@@ -20,6 +22,7 @@ export const BasicInformationForm = ({
 }: BasicInformationFormProps) => {
   return (
     <Card withBorder>
+      <LoadingOverlay visible={isLoading} zIndex={1000} overlayProps={{ radius: 'sm', blur: 2 }} />
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack>
           <Box

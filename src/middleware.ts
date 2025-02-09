@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@kinde-oss/kinde-auth-nextjs/middleware';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import { PUBLIC_ROUTES, ROUTE_PERMISSIONS } from '@/config/auth';
+import { getUserProfile } from '@/lib/actions/user';
+
+const ONBOARDING_COOKIE_NAME = 'onboarding_complete';
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
 export default withAuth(
   async (req: NextRequest) => {
@@ -21,9 +25,32 @@ export default withAuth(
 
     const userPermissions = permissions?.permissions || [];
 
-    // Handle onboarding redirection
-    if (userPermissions.length === 0 && pathname !== '/onboarding') {
-      return NextResponse.redirect(new URL('/onboarding', req.url));
+    // // Handle onboarding redirection
+    // if (userPermissions.length === 0 && pathname !== '/onboarding') {
+    //   return NextResponse.redirect(new URL('/onboarding', req.url));
+    // }
+
+    // Handle onboarding completion check
+    if (pathname !== '/onboarding') {
+      const onboardingComplete = req.cookies.get(ONBOARDING_COOKIE_NAME)?.value === 'true';
+
+      if (!onboardingComplete) {
+        const userProfile = await getUserProfile(user?.id);
+
+        if (!userProfile) {
+          return NextResponse.redirect(new URL('/onboarding', req.url));
+        }
+
+        const response = NextResponse.next();
+        response.cookies.set(ONBOARDING_COOKIE_NAME, 'true', {
+          maxAge: COOKIE_MAX_AGE,
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+        });
+
+        return response;
+      }
     }
 
     // Check route-specific permissions

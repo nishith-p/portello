@@ -1,22 +1,38 @@
-// src/components/PreApprovedDashboard/index.tsx
 'use client';
 
-import { Alert, Box, Card, Container, Grid, Stack, Text, Title } from '@mantine/core';
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
+import {
+  Alert,
+  Box,
+  Card,
+  Container,
+  Grid,
+  LoadingOverlay,
+  Stack,
+  Text,
+  Title,
+  Transition,
+} from '@mantine/core';
 
-interface PreApprovedDashboardProps {
-  isAdmin?: boolean;
-  isApproved?: boolean;
-}
+export const PreApprovedDashboard = () => {
+  // const { permissions, isLoading } = useKindeBrowserClient();
+  //
+  // const isAdmin = permissions?.permissions?.includes('dx:admin');
+  // const isApproved = permissions?.permissions?.includes('delegate:approved');
 
-export const PreApprovedDashboard = ({ isAdmin, isApproved }: PreApprovedDashboardProps) => {
   return (
-    <Container fluid p="md" style={{ minHeight: '100vh' }}>
+    <Container fluid p="md" style={{ minHeight: '100vh', position: 'relative' }}>
+      {/*<Transition mounted={isLoading || false} transition="fade" duration={400}>*/}
+      {/*  {(styles) => (*/}
+      {/*    <LoadingOverlay visible style={styles} />*/}
+      {/*  )}*/}
+      {/*</Transition>*/}
       <Stack gap="lg">
-        {/* Welcome Message */}
         <Box>
           <Title order={2} c="gray.8">
-            {isAdmin && 'Welcome, Admin!'}
-            {isApproved && 'Welcome, Approved!'}
+            {/*{isAdmin && 'Welcome, Admin!'}*/}
+            {/*{isApproved && 'Welcome, Approved!'}*/}
+            Hello, Delegate! 👋
           </Title>
           <Text c="dimmed" mt="xs">
             Thank you for submitting your initial information.
@@ -24,7 +40,6 @@ export const PreApprovedDashboard = ({ isAdmin, isApproved }: PreApprovedDashboa
         </Box>
 
         <Grid>
-          {/* Status Card */}
           <Grid.Col>
             <Card withBorder>
               <Stack>
@@ -32,15 +47,15 @@ export const PreApprovedDashboard = ({ isAdmin, isApproved }: PreApprovedDashboa
                   Registration Status
                 </Title>
                 <Alert variant="light" color="yellow" title="Under Review">
-                  Your application is being reviewed by the Delegates Experience Team. You will receive full access to
-                  the portal once approved. This usually takes 2-3 business days.
+                  Your application is being reviewed by the Delegates Experience Team. You will
+                  receive full access to the portal once approved. This usually takes 2-3 business
+                  days.
                 </Alert>
               </Stack>
             </Card>
           </Grid.Col>
         </Grid>
 
-        {/* What's Next Card */}
         <Card withBorder>
           <Stack>
             <Title order={3} c="gray.7">

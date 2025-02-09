@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { KindeProvider } from '@kinde-oss/kinde-auth-nextjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MantineProvider } from '@mantine/core';
@@ -25,8 +26,10 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     <MantineProvider theme={theme}>
       <ErrorBoundary FallbackComponent={MainErrorFallback}>
         <QueryClientProvider client={queryClient}>
-          <Notifications />
-          {children}
+          <KindeProvider>
+            <Notifications />
+            {children}
+          </KindeProvider>
         </QueryClientProvider>
       </ErrorBoundary>
     </MantineProvider>
