@@ -17,6 +17,8 @@
 }
 
 .registrationButton:hover {
-  background-color: var(--mantine-color-blue-2);
-  color: var(--mantine-color-blue-9);
+  background-color: var(--mantine-color-blue-6);
+  color: var(--mantine-color-white);
+  border-width: 2px;
+  border-color: var(--mantine-color-white);
 }

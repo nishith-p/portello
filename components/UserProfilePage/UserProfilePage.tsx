@@ -1,22 +1,33 @@
-"use client"
+'use client';
 
-import { Container, Paper, Title, Text, Group, Stack, Avatar, Divider, Badge } from "@mantine/core"
-import { IconMail, IconBriefcase, IconFlag, IconBuilding } from "@tabler/icons-react"
+import { IconBriefcase, IconBuilding, IconFlag, IconMail, IconPencil } from '@tabler/icons-react';
+import {
+  Avatar,
+  Badge,
+  Button,
+  Container,
+  Divider,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  Title,
+} from '@mantine/core';
 
 interface UserProfileProps {
   user: {
-    firstName: string
-    lastName: string
-    gender: string
-    aiesecEmail: string
-    personalEmail: string
-    photo: string
-    lc: string
-    country: string
-    role: string
-    expectations: string
-    additionalInfo: string
-  }
+    firstName: string;
+    lastName: string;
+    gender: string;
+    aiesecEmail: string;
+    personalEmail: string;
+    photo: string;
+    lc: string;
+    country: string;
+    role: string;
+    expectations: string;
+    additionalInfo: string;
+  };
 }
 
 export default function UserProfilePage({ user }: UserProfileProps) {
@@ -25,7 +36,7 @@ export default function UserProfilePage({ user }: UserProfileProps) {
       <Paper shadow="md" radius="md" p="xl">
         <Stack align="center" mb="xl">
           <Avatar
-            src={user.photo || "/placeholder.svg?height=120&width=120"}
+            src={user.photo || '/placeholder.svg?height=120&width=120'}
             size={120}
             radius={60}
             alt={`${user.firstName} ${user.lastName}`}
@@ -77,8 +88,11 @@ export default function UserProfilePage({ user }: UserProfileProps) {
             <Text>{user.additionalInfo}</Text>
           </div>
         </Stack>
+        <Divider my="xl" />
+        <Group justify="center">
+          <Button rightSection={<IconPencil size={18} />}>Edit Profile</Button>
+        </Group>
       </Paper>
     </Container>
-  )
+  );
 }
-

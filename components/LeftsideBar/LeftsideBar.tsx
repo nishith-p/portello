@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   IconHome,
+  IconUserShare,
   IconUserCircle,
   IconUsers,
   IconCalendarClock,
@@ -15,6 +16,7 @@ import Link from 'next/link';
 
 const data = [
   { link: '/', label: 'Home', icon: IconHome },
+  { link: '/delegateForm', label: 'Register for IC 2025', icon: IconUserShare },
   { link: '/profile', label: 'Profile', icon: IconUserCircle },
   { link: '/entityDelegates', label: 'Entity Delegates', icon: IconUsers },
   { link: '/agenda', label: 'Agenda', icon: IconCalendarClock },

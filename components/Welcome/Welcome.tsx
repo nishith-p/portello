@@ -1,5 +1,6 @@
 import { Button, Text, Title } from '@mantine/core';
 import classes from './Welcome.module.css';
+import { IconArrowNarrowRight } from '@tabler/icons-react';
 
 export function Welcome() {
   return (
@@ -21,6 +22,7 @@ export function Welcome() {
           size="lg"
           component="a"
           href="/delegateForm"
+          rightSection={<IconArrowNarrowRight size={24} />}
         >
           Register for IC 2025
         </Button>
