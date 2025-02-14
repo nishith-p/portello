@@ -11,6 +11,7 @@ import {
   IconShirt,
   IconShoppingBag,
   IconUser,
+  IconUsers,
 } from '@tabler/icons-react';
 import { Box, NavLink, Stack, Tooltip } from '@mantine/core';
 import { useUser } from '@/lib/hooks/useUser';
@@ -20,9 +21,10 @@ import classes from './styles/PortalSidebar.module.css';
 type NavigationItem = {
   link: string;
   label: string;
-  icon: typeof IconHome;
+  icon?: typeof IconHome;
   allowedStatuses: readonly UserStatus[];
   disabledMessage?: string;
+  children?: Omit<NavigationItem, 'children'>[];
 };
 
 const navigationData: NavigationItem[] = [
@@ -30,7 +32,13 @@ const navigationData: NavigationItem[] = [
     link: '/portal',
     label: 'Dashboard',
     icon: IconHome,
-    allowedStatuses: ['pending', 'approved', 'rejected'],
+    allowedStatuses: ['pending', 'approved', 'rejected', 'admin'],
+  },
+  {
+    link: '/portal/delegates',
+    label: 'Delegates',
+    icon: IconUsers,
+    allowedStatuses: ['approved', 'admin'],
   },
   {
     link: '/portal/profile',
@@ -42,29 +50,71 @@ const navigationData: NavigationItem[] = [
     link: '/portal/booklets',
     label: 'Booklets',
     icon: IconBook2,
-    allowedStatuses: ['pending', 'approved', 'rejected'],
+    allowedStatuses: ['pending', 'approved', 'rejected', 'admin'],
   },
   {
     link: '/portal/store',
     label: 'Store',
     icon: IconShirt,
-    allowedStatuses: ['approved'],
+    allowedStatuses: ['approved', 'admin'],
     disabledMessage: 'Only available for approved delegates',
   },
   {
     link: '/portal/orders',
     label: 'Orders',
     icon: IconShoppingBag,
-    allowedStatuses: ['approved'],
+    allowedStatuses: ['approved', 'admin'],
     disabledMessage: 'Only available for approved delegates',
   },
   {
     link: '/portal/contact',
     label: 'Contact',
     icon: IconHelp,
-    allowedStatuses: ['pending', 'approved', 'rejected'],
+    allowedStatuses: ['pending', 'approved', 'rejected', 'admin'],
   },
 ];
+
+const renderNavLink = (
+  item: NavigationItem,
+  userStatus: UserStatus,
+  pathname: string,
+  level = 0
+) => {
+  const isDisabled = !item.allowedStatuses.includes(userStatus);
+  const isAdmin = userStatus === 'admin';
+  const shouldShowChildren = isAdmin && item.children;
+
+  const navLink = (
+    <NavLink
+      key={item.label}
+      className={classes.link}
+      active={pathname === item.link}
+      label={item.label}
+      component={Link}
+      href={isDisabled ? '#' : item.link}
+      leftSection={item.icon ? <item.icon className={classes.linkIcon} stroke={1.5} /> : null}
+      disabled={isDisabled}
+      onClick={isDisabled ? (e) => e.preventDefault() : undefined}
+      pl={level ? `${level * 20 + 16}px` : undefined}
+      defaultOpened={pathname.startsWith(item.link)}
+    >
+      {shouldShowChildren &&
+        item.children?.map((child) => renderNavLink(child, userStatus, pathname, level + 1))}
+    </NavLink>
+  );
+
+  if (isDisabled && item.disabledMessage) {
+    return (
+      <Box key={item.label} style={{ cursor: 'not-allowed' }}>
+        <Tooltip label={item.disabledMessage} position="bottom-end" offset={5}>
+          <div>{navLink}</div>
+        </Tooltip>
+      </Box>
+    );
+  }
+
+  return navLink;
+};
 
 export const PortalSidebar = memo(() => {
   const pathname = usePathname();
@@ -72,34 +122,25 @@ export const PortalSidebar = memo(() => {
   const { data: userData } = useUser(user?.id);
   const userStatus = userData?.status || 'pending';
 
-  const links = navigationData.map((item) => {
-    const isDisabled = !item.allowedStatuses.includes(userStatus);
-    const navLink = (
-      <NavLink
-        key={item.label}
-        className={classes.link}
-        active={pathname === item.link}
-        label={item.label}
-        component={Link}
-        href={isDisabled ? '#' : item.link}
-        leftSection={<item.icon className={classes.linkIcon} stroke={1.5} />}
-        disabled={isDisabled}
-        onClick={isDisabled ? (e) => e.preventDefault() : undefined}
-      />
-    );
+  const links = navigationData
+    .map((item) => {
+      // Hide profile for admin
+      if (userStatus === 'admin' && item.link === '/portal/profile') {
+        return null;
+      }
 
-    if (isDisabled && item.disabledMessage) {
-      return (
-        <Box key={item.label} style={{ cursor: 'not-allowed' }}>
-          <Tooltip label={item.disabledMessage} position="bottom-end" offset={5}>
-            <div>{navLink}</div>
-          </Tooltip>
-        </Box>
-      );
-    }
+      // // Hide nested order links for non-admin users
+      // if (
+      //   (item.link === '/portal/orders' || item.link === '/portal/delegates') &&
+      //   userStatus !== 'admin'
+      // ) {
+      //   const { children, ...orderItem } = item;
+      //   return renderNavLink(orderItem, userStatus, pathname);
+      // }
 
-    return navLink;
-  });
+      return renderNavLink(item, userStatus, pathname);
+    })
+    .filter(Boolean);
 
   return (
     <Box className={classes.navbar}>

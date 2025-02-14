@@ -1,4 +1,4 @@
-export type UserStatus = 'pending' | 'approved' | 'rejected';
+export type UserStatus = 'pending' | 'approved' | 'rejected' | 'admin';
 
 export interface BasicUser {
   kinde_id: string;

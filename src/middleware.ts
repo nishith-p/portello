@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@kinde-oss/kinde-auth-nextjs/middleware';
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
-import { PUBLIC_ROUTES, ROUTE_PERMISSIONS } from '@/config/auth';
+import { PERMISSIONS, PUBLIC_ROUTES, ROUTE_PERMISSIONS } from '@/config/auth';
 import { supabaseServer } from '@/lib/supabase';
 
 const ONBOARDING_COOKIE_NAME = 'onboarding_complete';
@@ -24,23 +24,29 @@ export default withAuth(
     }
 
     const userPermissions = permissions?.permissions || [];
+    const isAdminOrApproved = userPermissions.some(
+      (permission) => permission === PERMISSIONS.ADMIN || permission === PERMISSIONS.APPROVED
+    );
 
     // Handle onboarding completion check
     if (pathname !== '/onboarding') {
-      const { data: userProfile, error } = await supabaseServer
-        .from('users')
-        .select('*')
-        .eq('kinde_id', user.id)
-        .single();
+      // Skip onboarding check for admin or approved users
+      if (!isAdminOrApproved) {
+        const { data: userProfile, error } = await supabaseServer
+          .from('users')
+          .select('*')
+          .eq('kinde_id', user.id)
+          .single();
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error checking user profile:', error);
-        return NextResponse.redirect(new URL('/onboarding', req.url));
-      }
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error checking user profile:', error);
+          return NextResponse.redirect(new URL('/onboarding', req.url));
+        }
 
-      // If no profile exists, redirect to onboarding
-      if (!userProfile) {
-        return NextResponse.redirect(new URL('/onboarding', req.url));
+        // If no profile exists, redirect to onboarding
+        if (!userProfile) {
+          return NextResponse.redirect(new URL('/onboarding', req.url));
+        }
       }
 
       // Set the cookie and proceed with navigation
