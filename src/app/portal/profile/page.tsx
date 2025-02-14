@@ -4,7 +4,8 @@ import { useEffect } from 'react';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { Container, Stack } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { useProfile } from '@/lib/mutations/user';
+import { useUpdateUser, useUser } from '@/lib/hooks/useUser';
+import type { BasicUser } from '@/types/user';
 import { AdditionalInformationForm } from './components/AdditionalInformationForm';
 import { BasicInformationForm } from './components/BasicInformationForm';
 import { ProfileHeader } from './components/ProfileHeader';
@@ -12,12 +13,8 @@ import { useBasicInfoForm } from './utils/hooks';
 
 const ProfilePage = () => {
   const { user, isLoading: isAuthLoading } = useKindeBrowserClient();
-  const {
-    basicInfo,
-    isLoading: isBasicInfoLoading,
-    updateBasicInfo,
-    isUpdating,
-  } = useProfile(user?.id || '');
+  const { data: basicInfo, isLoading: isBasicInfoLoading } = useUser(user?.id);
+  const { mutate: updateBasicInfo, isPending: isUpdating } = useUpdateUser();
   const { form, isEditing, handleEdit, handleCancel } = useBasicInfoForm(basicInfo);
 
   useEffect(() => {
@@ -30,11 +27,18 @@ const ProfilePage = () => {
         kinde_email: basicInfo.kinde_email,
       });
     }
-  }, [basicInfo]);
+  }, [basicInfo]); // Removed form from dependencies
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: Partial<BasicUser>) => {
+    if (!user?.id) {
+      return;
+    }
+
     try {
-      updateBasicInfo(values);
+      updateBasicInfo({
+        userId: user.id,
+        userData: values,
+      });
       handleCancel();
       notifications.show({
         title: 'Success',
@@ -51,20 +55,20 @@ const ProfilePage = () => {
   };
 
   return (
-    <Container fluid p="md" style={{ minHeight: '100vh' }}>
-      <Stack gap="lg">
-        <ProfileHeader />
-        <BasicInformationForm
-          form={form}
-          isLoading={isAuthLoading || isBasicInfoLoading || isUpdating}
-          isEditing={isEditing}
-          onEdit={handleEdit}
-          onCancel={handleCancel}
-          onSubmit={handleSubmit}
-        />
-        <AdditionalInformationForm />
-      </Stack>
-    </Container>
+      <Container fluid p="md" style={{ minHeight: '100vh' }}>
+        <Stack gap="lg">
+          <ProfileHeader />
+          <BasicInformationForm
+              form={form}
+              isLoading={isAuthLoading || isBasicInfoLoading || isUpdating}
+              isEditing={isEditing}
+              onEdit={handleEdit}
+              onCancel={handleCancel}
+              onSubmit={handleSubmit}
+          />
+          <AdditionalInformationForm />
+        </Stack>
+      </Container>
   );
 };
 

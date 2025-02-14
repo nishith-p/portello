@@ -1,23 +1,37 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { BasicUser } from '@/types/user'; // Adjust according to your project structure
-import { basicInfoValidation } from './schemas'; // Adjust the path if needed
+import { useUpdateUser } from '@/lib/hooks/useUser';
+import { BasicUser } from '@/types/user';
+import { basicInfoValidation } from './schemas';
 
-export const useBasicInfoForm = (initialData?: BasicUser | null) => {
+export function useBasicInfoForm(initialData?: BasicUser | null) {
   const [isEditing, setIsEditing] = useState(false);
-  // const updateUser = useUpdateUser(); // Uncomment and integrate your update logic when available
+  const { mutateAsync: updateUser, isPending } = useUpdateUser();
 
   const form = useForm({
     initialValues: {
-      first_name: '',
-      last_name: '',
-      entity: '',
-      position: '',
-      kinde_email: '',
+      first_name: initialData?.first_name ?? '',
+      last_name: initialData?.last_name ?? '',
+      entity: initialData?.entity ?? '',
+      position: initialData?.position ?? '',
+      kinde_email: initialData?.kinde_email ?? '',
     },
     validate: basicInfoValidation,
   });
+
+  // Update form values when initialData changes
+  useEffect(() => {
+    if (initialData) {
+      form.setValues({
+        first_name: initialData.first_name,
+        last_name: initialData.last_name,
+        entity: initialData.entity,
+        position: initialData.position,
+        kinde_email: initialData.kinde_email,
+      });
+    }
+  }, [initialData]);
 
   const handleEdit = () => setIsEditing(true);
 
@@ -34,10 +48,26 @@ export const useBasicInfoForm = (initialData?: BasicUser | null) => {
     setIsEditing(false);
   };
 
-  const handleSubmit = async (values: Omit<BasicUser, 'kinde_id'>) => {
+  const handleSubmit = form.onSubmit(async (values) => {
+    if (!initialData?.kinde_id) {
+      notifications.show({
+        title: 'Error',
+        message: 'User ID is required for updating profile',
+        color: 'red',
+      });
+      return;
+    }
+
     try {
-      // await updateUser.mutateAsync(values);
-      console.log(values);
+      await updateUser({
+        userId: initialData.kinde_id,
+        userData: {
+          first_name: values.first_name.trim(),
+          last_name: values.last_name.trim(),
+          entity: values.entity.trim(),
+          position: values.position.trim(),
+        },
+      });
 
       notifications.show({
         title: 'Success',
@@ -53,14 +83,14 @@ export const useBasicInfoForm = (initialData?: BasicUser | null) => {
         color: 'red',
       });
     }
-  };
+  });
 
   return {
     form,
     isEditing,
-    isSubmitting: false,
+    isSubmitting: isPending,
     handleSubmit,
     handleEdit,
     handleCancel,
   };
-};
+}

@@ -1,37 +1,13 @@
 'use client';
 
-import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
-import {
-  Alert,
-  Box,
-  Card,
-  Container,
-  Grid,
-  LoadingOverlay,
-  Stack,
-  Text,
-  Title,
-  Transition,
-} from '@mantine/core';
+import { Alert, Box, Card, Container, Grid, Stack, Text, Title } from '@mantine/core';
 
-export const PreApprovedDashboard = () => {
-  // const { permissions, isLoading } = useKindeBrowserClient();
-  //
-  // const isAdmin = permissions?.permissions?.includes('dx:admin');
-  // const isApproved = permissions?.permissions?.includes('delegate:approved');
-
+export const PendingDashboard = () => {
   return (
-    <Container fluid p="md" style={{ minHeight: '100vh', position: 'relative' }}>
-      {/*<Transition mounted={isLoading || false} transition="fade" duration={400}>*/}
-      {/*  {(styles) => (*/}
-      {/*    <LoadingOverlay visible style={styles} />*/}
-      {/*  )}*/}
-      {/*</Transition>*/}
+    <Container fluid p="md" style={{ minHeight: '100vh' }}>
       <Stack gap="lg">
         <Box>
           <Title order={2} c="gray.8">
-            {/*{isAdmin && 'Welcome, Admin!'}*/}
-            {/*{isApproved && 'Welcome, Approved!'}*/}
             Hello, Delegate! 👋
           </Title>
           <Text c="dimmed" mt="xs">
