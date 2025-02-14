@@ -35,16 +35,16 @@ const navigationData: NavigationItem[] = [
     allowedStatuses: ['pending', 'approved', 'rejected', 'admin'],
   },
   {
-    link: '/portal/delegates',
-    label: 'Delegates',
-    icon: IconUsers,
-    allowedStatuses: ['approved', 'admin'],
-  },
-  {
     link: '/portal/profile',
     label: 'Profile',
     icon: IconUser,
     allowedStatuses: ['pending', 'approved', 'rejected'],
+  },
+  {
+    link: '/portal/delegates',
+    label: 'Delegates',
+    icon: IconUsers,
+    allowedStatuses: ['approved', 'admin'],
   },
   {
     link: '/portal/booklets',
@@ -56,8 +56,8 @@ const navigationData: NavigationItem[] = [
     link: '/portal/store',
     label: 'Store',
     icon: IconShirt,
-    allowedStatuses: ['approved', 'admin'],
-    disabledMessage: 'Only available for approved delegates',
+    allowedStatuses: ['admin'],
+    disabledMessage: 'Merch store will be available soon',
   },
   {
     link: '/portal/orders',
