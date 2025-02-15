@@ -21,8 +21,27 @@ export const useOnboardingForm = (kinde_id: string, kinde_email: string) => {
         kinde_email,
         first_name: values.first_name.trim(),
         last_name: values.last_name.trim(),
+        aiesec_email: values.aiesec_email,
+        personal_email: values.personal_email,
+        country_code: values.country_code,
+        phone_number: values.phone_number,
+        telegram_id: values.telegram_id,
+        region: values.region,
         entity: values.entity,
+        lc: values.lc,
         position: values.position,
+        tshirt_size: values.tshirt_size,
+        meal_preferences: values.meal_preferences,
+        allergies: values.allergies,
+        medical_concerns: values.medical_concerns,
+        expectations: values.expectations,
+        expectations_for_cc_faci: values.expectations_for_cc_faci,
+        post_conference_tour: values.post_conference_tour,
+        ai_partner_consent: values.ai_partner_consent,
+        promotional_consent: values.promotional_consent,
+        excitement: values.excitement,
+        other_message: values.other_message,
+        clarifications: values.clarifications
       });
 
       notifications.show({
