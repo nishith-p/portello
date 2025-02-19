@@ -3,5 +3,8 @@ export const basicInfoValidation = {
   first_name: (value: string) => (value.length < 2 ? 'First name is too short' : null),
   last_name: (value: string) => (value.length < 2 ? 'Last name is too short' : null),
   entity: (value: string) => (!value ? 'Entity is required' : null),
-  position: (value: string) => (!value ? 'Position is required' : null),
+  position: (value?: string) =>
+    value && ['mcp', 'mcvp', 'lcp', 'other'].includes(value)
+      ? null
+      : 'Position is required',
 };

@@ -17,9 +17,9 @@ const Onboarding = async () => {
 
   const existingUser = await getUserProfile(user.id);
 
-  if (existingUser) {
-    redirect('/portal');
-  }
+  // if (existingUser) {
+  //   redirect('/portal');
+  // }
 
   return <OnboardingForm kinde_id={user.id} kinde_email={user.email!} />;
 };

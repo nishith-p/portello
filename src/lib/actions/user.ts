@@ -25,6 +25,27 @@ export async function getUserProfile(kindeUserId: string) {
   return data;
 }
 
+export async function getUserFirstName(kindeUserId: string) {
+  if (!kindeUserId) {
+    throw new Error('User ID is required');
+  }
+
+  const { data, error } = await supabaseServer
+    .from('users')
+    .select('first_name')
+    .eq('kinde_id', kindeUserId)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null;
+    }
+    throw error;
+  }
+
+  return data?.first_name || null;
+}
+
 export async function createUserProfile(userData: BasicUser) {
   if (!userData.kinde_id) {
     throw new Error('User ID is required');
