@@ -35,9 +35,10 @@ interface Delegate {
 interface PreApprovedDashboardProps {
   isAdmin?: boolean;
   isApproved?: boolean;
+  userId: string;
 }
 
-export const PreApprovedDashboard = ({ isAdmin, isApproved }: PreApprovedDashboardProps) => {
+export const PreApprovedDashboard = ({ isAdmin, isApproved, userId }: PreApprovedDashboardProps) => {
   const [delegates, setDelegates] = useState<Delegate[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -126,11 +127,8 @@ export const PreApprovedDashboard = ({ isAdmin, isApproved }: PreApprovedDashboa
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      const { getUser } = useKindeBrowserClient();
-      const user = getUser();
-
-      if(user){
-        const loggedinUser = getUserFirstName(user.id);
+      if(userId){
+        const loggedinUser = getUserFirstName(userId);
         setFirstName(await loggedinUser);
       }
     };
