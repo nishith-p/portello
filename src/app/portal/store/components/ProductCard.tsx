@@ -72,6 +72,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         <Badge color="blue" variant="light">
           {product.category}
         </Badge>
+        {product.size ? (
+          <Badge color="purple" variant="light">
+          {product.size}
+        </Badge>
+        ):(<></>)}
       </Box>
 
       <Text fw={500} size="lg" mb={5} lineClamp={1}>
@@ -84,7 +89,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       <Group justify="space-between" mt="auto">
         <Text fw={700} size="xl">
-          ${product.price.toFixed(2)}
+          ${product.price}
         </Text>
         <Button variant="light" color="blue" onClick={handleAddToCart}>
           Add to cart
