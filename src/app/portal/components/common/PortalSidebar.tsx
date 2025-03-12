@@ -56,7 +56,7 @@ const navigationData: NavigationItem[] = [
     link: '/portal/store',
     label: 'Store',
     icon: IconShirt,
-    allowedStatuses: ['admin'],
+    allowedStatuses: ['approved', 'admin'],
     disabledMessage: 'Merch store will be available soon',
   },
   {
