@@ -7,8 +7,11 @@ import FilterSidebar from './components/FilterSidebar';
 import Header from './components/Header';
 import ProductGrid from './components/ProductGrid';
 import { mockProducts } from './data/mockProducts';
-import type { Product } from './types';
 import { CartProvider } from './hooks/useCart';
+import type { Product } from './types';
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
+import { LoadingOverlay } from '@mantine/core';
+import { useUser } from '@/lib/hooks/useUser';
 
 export default function MerchStore() {
   const [opened, { toggle }] = useDisclosure();
@@ -85,6 +88,15 @@ export default function MerchStore() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const { user, permissions, isLoading: isAuthLoading } = useKindeBrowserClient();
+  const { data: userData, isLoading: isUserLoading } = useUser(user?.id);
+
+  if (isAuthLoading || isUserLoading) {
+    return <LoadingOverlay visible />;
+  }
+
+  const isAdmin = permissions?.permissions?.includes('dx:admin');
+
   return (
     <AppShell
       header={{ height: 60 }}
@@ -98,6 +110,7 @@ export default function MerchStore() {
             toggle={toggle}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
+            isAdmin={isAdmin}
           />
         </AppShell.Header>
 
