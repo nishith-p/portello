@@ -184,6 +184,7 @@ export default function MerchStore() {
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={handlePageChange}
+                    isAdmin={isAdmin}
                   />
                 </>
               ) : (
