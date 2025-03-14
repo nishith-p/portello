@@ -53,3 +53,15 @@ export async function updateProduct(productId: string, updatedProduct: Partial<O
   if (error) throw error;
   return data;
 }
+
+export async function deleteProduct(productId: string) {
+  if (!productId) return;
+  const { error } = await supabaseClient
+    .from("merch_item")
+    .delete()
+    .eq("id", productId)
+    .single();
+
+  if (error) throw error;
+}
+

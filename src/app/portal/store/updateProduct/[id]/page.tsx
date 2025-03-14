@@ -22,10 +22,11 @@ import {
   IconDeviceFloppy,
   IconCheck,
   IconX,
+  IconXboxX,
 } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import type { Product } from "../../types";
-import { updateProduct, fetchProduct } from "../../utils/productService";
+import { updateProduct, fetchProduct, deleteProduct } from "../../utils/productService";
 
 const categories = [
   { value: "tshirt", label: "T-Shirts" },
@@ -143,6 +144,22 @@ export default function UpdateProductPage() {
     }
   };
 
+  const handleDeleteClick = () => {
+    deleteProduct(productId as string);
+
+    setNotification({
+      show: true,
+      message: "Product deleted successfully!",
+      type: "success",
+    });
+
+    // Redirect after a short delay
+    setTimeout(() => {
+      router.push("/store");
+      router.refresh();
+    }, 2000);
+  };
+
   return (
     <Container size="md" py="xl">
       {notification.show && (
@@ -243,7 +260,15 @@ export default function UpdateProductPage() {
                 upload feature here.
               </Text>
 
-              <Group justify="right" mt="md">
+              <Group justify="space-between" mt="md">
+              <Button
+                  leftSection={<IconXboxX size={16} />}
+                  variant="outline"
+                  color="red"
+                  onClick={handleDeleteClick}
+                >
+                  Delete Product
+                </Button>
                 <Button
                   type="submit"
                   leftSection={<IconDeviceFloppy size={16} />}

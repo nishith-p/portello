@@ -100,7 +100,7 @@ export default function AddProductPage() {
 
       // Redirect after a short delay
       setTimeout(() => {
-        router.push("/");
+        router.push("/store");
         router.refresh();
       }, 2000);
     } catch (error) {
