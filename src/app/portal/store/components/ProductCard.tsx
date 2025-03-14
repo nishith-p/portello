@@ -1,30 +1,51 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Card, Image, Text, Badge, Button, Group, ActionIcon, Flex, Overlay, Box, rem } from "@mantine/core";
-import { IconHeart, IconShoppingCart, IconEye, IconHeartFilled } from "@tabler/icons-react";
+import { useState } from "react";
+import {
+  Card,
+  Image,
+  Text,
+  Badge,
+  Button,
+  Group,
+  ActionIcon,
+  Flex,
+  Overlay,
+  Box,
+  rem,
+} from "@mantine/core";
+import {
+  IconHeart,
+  IconShoppingCart,
+  IconEye,
+  IconHeartFilled,
+} from "@tabler/icons-react";
 import type { Product } from "../types";
 import { useCart } from "../hooks/useCart";
+import { useRouter } from "next/navigation";
+import { updateProduct } from "../utils/productService";
 
 interface ProductCardProps {
-  product: Product
+  product: Product;
+  isAdmin: boolean;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
-  const [hovered, setHovered] = useState(false)
-  const [wishlist, setWishlist] = useState(false)
-  const { addToCart } = useCart()
+export default function ProductCard({ product, isAdmin }: ProductCardProps) {
+  const router = useRouter();
+  const [hovered, setHovered] = useState(false);
+  const [wishlist, setWishlist] = useState(false);
+  const { addToCart } = useCart();
 
   const handleAddToCart = () => {
-    addToCart(product)
-  }
+    addToCart(product);
+  };
 
   const handleToggleWishlist = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setWishlist(!wishlist)
-  }
+    e.stopPropagation();
+    setWishlist(!wishlist);
+  };
 
   return (
     <Card
@@ -37,7 +58,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       onMouseLeave={() => setHovered(false)}
     >
       <Card.Section pos="relative">
-        <Image src={product.image || "/placeholder.svg"} height={220} alt={product.name} />
+        <Image
+          src={product.image || "/placeholder.svg"}
+          height={220}
+          alt={product.name}
+        />
 
         {hovered && (
           <Overlay opacity={0.2} color="#000" zIndex={1}>
@@ -50,13 +75,20 @@ export default function ProductCard({ product }: ProductCardProps) {
                 onClick={handleToggleWishlist}
               >
                 {wishlist ? (
-                  <IconHeartFilled style={{ width: rem(18), height: rem(18) }} />
+                  <IconHeartFilled
+                    style={{ width: rem(18), height: rem(18) }}
+                  />
                 ) : (
                   <IconHeart style={{ width: rem(18), height: rem(18) }} />
                 )}
               </ActionIcon>
 
-              <ActionIcon variant="filled" radius="xl" size="lg" onClick={handleAddToCart}>
+              <ActionIcon
+                variant="filled"
+                radius="xl"
+                size="lg"
+                onClick={handleAddToCart}
+              >
                 <IconShoppingCart style={{ width: rem(18), height: rem(18) }} />
               </ActionIcon>
 
@@ -74,9 +106,11 @@ export default function ProductCard({ product }: ProductCardProps) {
         </Badge>
         {product.size ? (
           <Badge color="purple" variant="light">
-          {product.size}
-        </Badge>
-        ):(<></>)}
+            {product.size}
+          </Badge>
+        ) : (
+          <></>
+        )}
       </Box>
 
       <Text fw={500} size="lg" mb={5} lineClamp={1}>
@@ -91,11 +125,20 @@ export default function ProductCard({ product }: ProductCardProps) {
         <Text fw={700} size="xl">
           ${product.price}
         </Text>
-        <Button variant="light" color="blue" onClick={handleAddToCart}>
-          Add to cart
-        </Button>
+        {isAdmin ? (
+          <Button
+            variant="light"
+            color="blue"
+            onClick={() => router.push(`/store/updateProduct/${product.id}`)}
+          >
+            Edit
+          </Button>
+        ) : (
+          <Button variant="light" color="blue" onClick={handleAddToCart}>
+            Add to cart
+          </Button>
+        )}
       </Group>
     </Card>
-  )
+  );
 }
-
