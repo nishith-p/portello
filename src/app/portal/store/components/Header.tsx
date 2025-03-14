@@ -18,6 +18,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useCart } from '../hooks/useCart';
+import { useRouter } from 'next/navigation';
 
 interface HeaderProps {
   opened: boolean;
@@ -37,9 +38,10 @@ export default function Header({
   const theme = useMantineTheme();
   const [cartOpened, { toggle: toggleCart, close: closeCart }] = useDisclosure(false);
   const { cart, totalPrice } = useCart();
+  const router = useRouter();
 
   return (
-    <Flex h="100%" px="md" align="center" justify="space-between">
+    <Flex h="100%" px="md" align="center" justify="right">
       <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
 
       <TextInput
@@ -56,14 +58,15 @@ export default function Header({
           <IconHeart style={{ width: rem(22), height: rem(22) }} />
         </ActionIcon>
 
-        <ActionIcon variant="subtle" color="gray" size="lg">
-          <IconUser style={{ width: rem(22), height: rem(22) }} />
-        </ActionIcon>
-
         {isAdmin ? (
-          <Button leftSection={<IconPlus size={18} />} variant="filled" color="blue">
-            Add Product
-          </Button>
+          <Button
+          leftSection={<IconPlus size={18} />}
+          variant="filled"
+          color="blue"
+          onClick={() => router.push("/store/addProduct")}
+        >
+          Add Product
+        </Button>
         ) : (
           <Popover
             width={300}

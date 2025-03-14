@@ -9,6 +9,7 @@ import {
   Text,
   Loader,
   Center,
+  Group,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
@@ -36,13 +37,15 @@ export default function MerchStore() {
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
-      const { data, error } = await supabaseClient.from("merch_item").select("*");
-  
+      const { data, error } = await supabaseClient
+        .from("merch_item")
+        .select("*");
+
       if (error) {
         console.error("Error fetching products:", error.message);
       } else {
         console.log("Fetched Data:", data);
-  
+
         const formattedData = data.map((item) => ({
           id: item.id,
           name: item.merch_name,
@@ -52,24 +55,22 @@ export default function MerchStore() {
           category: item.merch_category,
           image: item.merch_picture || "/placeholder.svg",
           popularity: Number(item.merch_popularity) || 0,
-          createdAt: item.created_at
+          createdAt: item.created_at,
         }));
-  
+
         setProducts(formattedData);
         setFilteredProducts([...formattedData]);
       }
       setLoading(false);
     };
-  
+
     fetchProducts();
   }, []);
-  
-  
+
   // Log the updated state after it changes
   useEffect(() => {
     console.log("Updated products state:", products);
   }, [products]);
-  
 
   // Filter and sort products
   useEffect(() => {
@@ -133,7 +134,7 @@ export default function MerchStore() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const isAdmin = true;
+  const isAdmin = false;
 
   return (
     <AppShell
@@ -142,16 +143,6 @@ export default function MerchStore() {
       padding="md"
     >
       <CartProvider>
-        <AppShell.Header>
-          <Header
-            opened={opened}
-            toggle={toggle}
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            isAdmin={isAdmin}
-          />
-        </AppShell.Header>
-
         <AppShell.Navbar p="md">
           <FilterSidebar
             priceRange={priceRange}
@@ -166,9 +157,19 @@ export default function MerchStore() {
         <AppShell.Main>
           <Container size="xl">
             <Flex direction="column" gap="md">
-              <Title order={1} mb="md">
-                Merchandise Store
-              </Title>
+              <Group justify="space-between">
+                <Title order={1} mb="md">
+                  Merchandise Store
+                </Title>
+
+                <Header
+                  opened={opened}
+                  toggle={toggle}
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  isAdmin={isAdmin}
+                />
+              </Group>
 
               {loading ? (
                 <Center h={400}>

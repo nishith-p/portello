@@ -65,7 +65,7 @@ export default function ProductCard({ product, isAdmin }: ProductCardProps) {
         />
 
         {hovered && (
-          <Overlay opacity={0.2} color="#000" zIndex={1}>
+          <Overlay opacity={0.5} color="#000" zIndex={1}>
             <Flex justify="center" align="center" h="100%" gap="md">
               <ActionIcon
                 variant="filled"
@@ -83,18 +83,14 @@ export default function ProductCard({ product, isAdmin }: ProductCardProps) {
                 )}
               </ActionIcon>
 
-              <ActionIcon
+              {/* <ActionIcon
                 variant="filled"
                 radius="xl"
                 size="lg"
                 onClick={handleAddToCart}
               >
                 <IconShoppingCart style={{ width: rem(18), height: rem(18) }} />
-              </ActionIcon>
-
-              <ActionIcon variant="filled" radius="xl" size="lg">
-                <IconEye style={{ width: rem(18), height: rem(18) }} />
-              </ActionIcon>
+              </ActionIcon> */}
             </Flex>
           </Overlay>
         )}
