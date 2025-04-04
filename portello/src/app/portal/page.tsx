@@ -1,0 +1,24 @@
+'use client';
+
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
+import { Container, LoadingOverlay } from '@mantine/core';
+import { AdminDashboard } from './components/AdminDashboard';
+import { UserDashboard } from './components/UserDashboard';
+
+const PortalHomePage = () => {
+  const { permissions, isLoading: isAuthLoading } = useKindeBrowserClient();
+
+  if (isAuthLoading) {
+    return <LoadingOverlay visible />;
+  }
+
+  const isAdmin = permissions?.permissions?.includes('dx:admin');
+
+  return (
+    <Container fluid p="md">
+      {isAdmin ? <AdminDashboard /> : <UserDashboard />}
+    </Container>
+  );
+};
+
+export default PortalHomePage;
