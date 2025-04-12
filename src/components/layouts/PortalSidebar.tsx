@@ -4,7 +4,7 @@ import { memo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
-import { IconHome, IconShirt, IconShoppingBag, IconUsers } from '@tabler/icons-react';
+import { IconFileDescription, IconHome, IconShirt, IconShoppingBag, IconUsers } from '@tabler/icons-react';
 import { Box, NavLink, Stack, Tooltip } from '@mantine/core';
 import classes from './PortalSidebar.module.css';
 
@@ -46,6 +46,11 @@ const navigationData: NavigationItem[] = [
     link: '/portal/orders',
     label: 'Orders',
     icon: IconShoppingBag,
+  },
+  {
+    link: '/portal/payment',
+    label: 'Payment',
+    icon: IconFileDescription,
   },
 ];
 

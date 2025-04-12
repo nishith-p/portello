@@ -1,0 +1,106 @@
+.container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.subsubtitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.paragraph {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    text-align: justify;
+}
+
+.list {
+    list-style-type: disc;
+    padding-left: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: justify;
+}
+
+.listItem {
+    margin-bottom: 0.5rem;
+}
+
+.link {
+    color: var(--mantine-color-blue-6);
+    text-decoration: underline;
+}
+
+.lastUpdated {
+    text-align: right;
+    margin-bottom: 2rem;
+}
+
+.tableContainer {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: justify;
+    table-layout: fixed;
+}
+
+.tableHeader {
+    background-color: var(--mantine-color-gray-1);
+    text-align: left;
+}
+
+.tableHeaderCell {
+    border: 1px solid var(--mantine-color-gray-3);
+    padding: 0.75rem;
+    width: 33.33%;
+}
+
+.tableCell {
+    border: 1px solid var(--mantine-color-gray-3);
+    padding: 0.75rem;
+    vertical-align: top;
+    width: 33.33%;
+}
+
+.sectionDivider {
+    margin: 2rem 0;
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+    .gridContainer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .gridContainer {
+        grid-template-columns: 1fr;
+    }
+}
