@@ -1,6 +1,5 @@
 import { Badge, Box, Flex, Group, Image, Paper, Text } from '@mantine/core';
-import { OrderItem } from '../types';
-
+import { OrderItem } from '@/types/store';
 
 interface OrderItemCardProps {
   item: OrderItem;

@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 // Define the CartItem type
 export interface CartItem {
@@ -12,6 +12,7 @@ export interface CartItem {
   size?: string;
   color?: string;
   colorHex?: string; // Added to store the color hex code
+  item_code: string; // Required for foreign key reference to store_items
 }
 
 // Define the CartContext type
@@ -66,7 +67,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     // Calculate total items and subtotal
     const total = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-    const cartSubtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const cartSubtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     setTotalItems(total);
     setSubtotal(cartSubtotal);
@@ -74,13 +75,19 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Add an item to the cart
   const addToCart = (newItem: CartItem): void => {
-    setCartItems(prevItems => {
+    // Make sure item_code is required and not defaulting to id
+    if (!newItem.item_code) {
+      console.error('Cannot add item to cart: item_code is required');
+      return;
+    }
+
+    setCartItems((prevItems) => {
       // Use getItemKey function to find matching items
       const newItemKey = getItemKey(newItem.id, newItem.size, newItem.color);
 
       // Check if item already exists in cart with the same key
-      const existingItemIndex = prevItems.findIndex(item =>
-        getItemKey(item.id, item.size, item.color) === newItemKey
+      const existingItemIndex = prevItems.findIndex(
+        (item) => getItemKey(item.id, item.size, item.color) === newItemKey
       );
 
       if (existingItemIndex >= 0) {
@@ -89,33 +96,35 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         updatedCart[existingItemIndex].quantity += newItem.quantity || 1;
         return updatedCart;
       }
-        // Add as new item
-        return [...prevItems, { ...newItem, quantity: newItem.quantity || 1 }];
-
+      // Add as new item
+      return [...prevItems, { ...newItem, quantity: newItem.quantity || 1 }];
     });
   };
 
   // Remove an item from the cart
   const removeFromCart = (itemId: string, size?: string, color?: string): void => {
     const itemKey = getItemKey(itemId, size, color);
-    setCartItems(prevItems =>
-      prevItems.filter(item => getItemKey(item.id, item.size, item.color) !== itemKey)
+    setCartItems((prevItems) =>
+      prevItems.filter((item) => getItemKey(item.id, item.size, item.color) !== itemKey)
     );
   };
 
   // Update the quantity of an item in the cart
-  const updateQuantity = (itemId: string, quantity: number, size?: string, color?: string): void => {
+  const updateQuantity = (
+    itemId: string,
+    quantity: number,
+    size?: string,
+    color?: string
+  ): void => {
     if (quantity <= 0) {
       removeFromCart(itemId, size, color);
       return;
     }
 
     const itemKey = getItemKey(itemId, size, color);
-    setCartItems(prevItems => {
-      return prevItems.map(item =>
-        getItemKey(item.id, item.size, item.color) === itemKey
-          ? { ...item, quantity }
-          : item
+    setCartItems((prevItems) => {
+      return prevItems.map((item) =>
+        getItemKey(item.id, item.size, item.color) === itemKey ? { ...item, quantity } : item
       );
     });
   };
@@ -129,7 +138,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Cart drawer controls
   const openCart = (): void => setIsCartOpen(true);
   const closeCart = (): void => setIsCartOpen(false);
-  const toggleCart = (): void => setIsCartOpen(prev => !prev);
+  const toggleCart = (): void => setIsCartOpen((prev) => !prev);
 
   // Context value
   const value: CartContextType = {
@@ -144,14 +153,10 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     openCart,
     closeCart,
     toggleCart,
-    getItemKey
+    getItemKey,
   };
 
-  return (
-    <CartContext.Provider value={value}>
-      {children}
-    </CartContext.Provider>
-  );
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
 // Custom hook for using the cart context

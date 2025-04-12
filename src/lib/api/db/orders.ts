@@ -1,6 +1,6 @@
-import { supabaseServer } from '@/lib/supabase';
-import { Order, OrderStatus } from '@/types/store';
 import { NotFoundError } from '@/lib/api/errors';
+import { supabaseServer } from '@/lib/supabase';
+import { Order, OrderAuditInfo, OrderItem, OrderStatus } from '@/types/store';
 
 /**
  * Get all orders
@@ -8,17 +8,23 @@ import { NotFoundError } from '@/lib/api/errors';
 export async function getOrders(): Promise<Order[]> {
   const { data, error } = await supabaseServer
     .from('orders')
-    .select(`
+    .select(
+      `
       *,
       order_items(*)
-    `)
+    `
+    )
     .order('created_at', { ascending: false });
 
   if (error) {
     throw error;
   }
-  
-  return data;
+
+  // Transform the response to match the Order interface
+  return data.map((order) => ({
+    ...order,
+    items: order.order_items || [],
+  }));
 }
 
 /**
@@ -27,18 +33,24 @@ export async function getOrders(): Promise<Order[]> {
 export async function getUserOrders(userId: string): Promise<Order[]> {
   const { data, error } = await supabaseServer
     .from('orders')
-    .select(`
+    .select(
+      `
       *,
       order_items(*)
-    `)
+    `
+    )
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
 
   if (error) {
     throw error;
   }
-  
-  return data;
+
+  // Transform the response to match the Order interface
+  return data.map((order) => ({
+    ...order,
+    items: order.order_items || [],
+  }));
 }
 
 /**
@@ -47,10 +59,12 @@ export async function getUserOrders(userId: string): Promise<Order[]> {
 export async function getOrder(orderId: string): Promise<Order> {
   const { data, error } = await supabaseServer
     .from('orders')
-    .select(`
+    .select(
+      `
       *,
       order_items(*)
-    `)
+    `
+    )
     .eq('id', orderId)
     .single();
 
@@ -60,14 +74,22 @@ export async function getOrder(orderId: string): Promise<Order> {
     }
     throw error;
   }
-  
-  return data;
+
+  // Transform the response to match the Order interface
+  return {
+    ...data,
+    items: data.order_items || [],
+  };
 }
 
 /**
  * Create a new order
  */
-export async function createOrder(order: Order): Promise<Order> {
+export async function createOrder(
+  order: Omit<Order, 'id' | 'created_at' | 'order_items'> & {
+    items: Omit<OrderItem, 'id' | 'order_id' | 'created_at'>[];
+  }
+): Promise<Order> {
   // Start a transaction
   const { data: orderData, error: orderError } = await supabaseServer
     .from('orders')
@@ -75,8 +97,7 @@ export async function createOrder(order: Order): Promise<Order> {
       user_id: order.user_id,
       status: order.status || 'pending',
       total_amount: order.total_amount,
-      shipping_address: order.shipping_address,
-      updated_by: order.user_id // Initial update is by the creator
+      updated_by: order.user_id, // Initial update is by the creator
     })
     .select()
     .single();
@@ -86,7 +107,7 @@ export async function createOrder(order: Order): Promise<Order> {
   }
 
   // Fetch item details for the order items
-  const itemCodes = order.items.map(item => item.item_code);
+  const itemCodes = order.items.map((item) => item.item_code);
 
   // Get store item data to include name and image
   const { data: storeItems, error: storeItemsError } = await supabaseServer
@@ -98,32 +119,38 @@ export async function createOrder(order: Order): Promise<Order> {
     throw storeItemsError;
   }
 
+  interface StoreItemInfo {
+    item_code: string;
+    name: string;
+    images: string[];
+  }
+
   // Create a lookup map for store items
-  const storeItemMap = storeItems.reduce((map, item) => {
-    map[item.item_code] = item;
-    return map;
-  }, {} as Record<string, { item_code: string, name: string, images: string[] }>);
+  const storeItemMap: Record<string, StoreItemInfo> = {};
+
+  storeItems.forEach((item: StoreItemInfo) => {
+    storeItemMap[item.item_code] = item;
+  });
 
   // Insert order items with names and images
-  const orderItems = order.items.map(item => {
+  const orderItems: Omit<OrderItem, 'id' | 'created_at'>[] = order.items.map((item) => {
     const storeItem = storeItemMap[item.item_code];
     return {
       order_id: orderData.id,
       item_code: item.item_code,
       quantity: item.quantity,
       price: item.price,
-      size: item.size,
-      color: item.color,
-      color_hex: item.color_hex,
+      size: item.size || null,
+      color: item.color || null,
+      color_hex: item.color_hex || null,
       // Include name and image from the store item if available
       name: storeItem?.name || item.name || null,
-      image: (storeItem?.images && storeItem.images.length > 0) ? storeItem.images[0] : item.image || null
+      image:
+        storeItem?.images && storeItem.images.length > 0 ? storeItem.images[0] : item.image || null,
     };
   });
 
-  const { error: itemsError } = await supabaseServer
-    .from('order_items')
-    .insert(orderItems);
+  const { error: itemsError } = await supabaseServer.from('order_items').insert(orderItems);
 
   if (itemsError) {
     // If there's an error, try to rollback by deleting the order
@@ -131,22 +158,22 @@ export async function createOrder(order: Order): Promise<Order> {
     throw itemsError;
   }
 
-  return { ...orderData, items: orderItems };
+  return { ...orderData, items: orderItems as OrderItem[] };
 }
 
 /**
  * Update an order's status
  */
 export async function updateOrderStatus(
-  orderId: string, 
-  status: OrderStatus, 
+  orderId: string,
+  status: OrderStatus,
   updatedBy: string
 ): Promise<Order> {
   const { data, error } = await supabaseServer
     .from('orders')
     .update({
       status,
-      updated_by: updatedBy
+      updated_by: updatedBy,
       // last_status_change will be updated automatically by the trigger
     })
     .eq('id', orderId)
@@ -159,18 +186,24 @@ export async function updateOrderStatus(
     }
     throw error;
   }
-  
-  return data;
+
+  // Get the order items
+  const { data: orderItems, error: itemsError } = await supabaseServer
+    .from('order_items')
+    .select('*')
+    .eq('order_id', orderId);
+
+  if (itemsError) {
+    throw itemsError;
+  }
+
+  return { ...data, items: orderItems || [] };
 }
 
 /**
  * Get order audit information (who updated it and when)
  */
-export async function getOrderAudit(orderId: string): Promise<{
-  status: OrderStatus;
-  updated_by: string;
-  last_status_change: string;
-}> {
+export async function getOrderAudit(orderId: string): Promise<OrderAuditInfo> {
   const { data, error } = await supabaseServer
     .from('orders')
     .select('status, updated_by, last_status_change')
@@ -183,6 +216,6 @@ export async function getOrderAudit(orderId: string): Promise<{
     }
     throw error;
   }
-  
-  return data;
+
+  return data as OrderAuditInfo;
 }

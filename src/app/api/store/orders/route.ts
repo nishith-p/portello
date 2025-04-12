@@ -1,27 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/api/middleware/auth';
+import { createOrder, getOrders } from '@/lib/api/db/orders';
 import { errorResponse, ValidationError } from '@/lib/api/errors';
-import { getOrders, createOrder } from '@/lib/api/services/orders';
-import { getStoreItem } from '@/lib/api/services/store';
+import { withAuth } from '@/lib/api/middleware/auth';
 import { validateOrder } from '@/lib/api/validators/orders';
-import { Order } from '@/types/store';
+import { Order, OrderItem } from '@/types/store';
 
 /**
  * GET /api/store/orders
  * Get all orders (admin only)
  */
 export async function GET(request: NextRequest) {
-  return withAuth(request, async () => {
-    try {
-      const orders = await getOrders();
-      return NextResponse.json(orders);
-    } catch (error) {
-      return errorResponse(error as Error);
+  return withAuth(
+    request,
+    async () => {
+      try {
+        const orders = await getOrders();
+        return NextResponse.json(orders);
+      } catch (error) {
+        return errorResponse(error as Error);
+      }
+    },
+    {
+      requireAuth: true,
+      requireAdmin: true, // Only admins can access all orders
     }
-  }, {
-    requireAuth: true,
-    requireAdmin: true // Only admins can access all orders
-  });
+  );
 }
 
 /**
@@ -29,63 +32,71 @@ export async function GET(request: NextRequest) {
  * Create a new order
  */
 export async function POST(request: NextRequest) {
-  return withAuth(request, async (_req, user) => {
-    try {
-      if (!user) {
-        throw new ValidationError('User is required');
-      }
-      
-      // Parse request body
-      const body = await request.json();
-      
-      // Create order object from request body
-      const orderData: Order = {
-        user_id: user.id,
-        status: 'pending',
-        total_amount: parseFloat(body.total_amount),
-        items: body.items
-      };
-      
-      // Validate the order data
-      validateOrder(orderData);
-      
-      // Enhance items with store data where possible
-      const enhancedItems = [];
-      for (const item of body.items) {
-        try {
-          // Get store item data if not already provided
-          if (!item.name || !item.image) {
-            const storeItem = await getStoreItem(item.item_code);
-            if (storeItem) {
-              // Add name if not provided
-              if (!item.name) {
-                item.name = storeItem.name;
-              }
-
-              // Add image if not provided and images exist
-              if (!item.image && storeItem.images && storeItem.images.length > 0) {
-                item.image = storeItem.images[0];
-              }
-            }
-          }
-          enhancedItems.push(item);
-        } catch (e) {
-          // Just add the original item if there's an error
-          enhancedItems.push(item);
+  return withAuth(
+    request,
+    async (req, user) => {
+      try {
+        if (!user || !user.id) {
+          throw new ValidationError('User is required', { user: 'User ID is required' });
         }
+
+        // Parse request body
+        let body;
+        try {
+          body = await request.json();
+        } catch (e) {
+          console.error('Error parsing JSON:', e);
+          throw new ValidationError('Invalid JSON in request body');
+        }
+
+        // Handle the case where body could be an array (just items) or an object with items property
+        const orderItems = Array.isArray(body) ? body : body.items;
+        const totalAmount = Array.isArray(body)
+          ? orderItems.reduce(
+              (sum: number, item: { price: number; quantity: number }) =>
+                sum + item.price * item.quantity,
+              0
+            )
+          : parseFloat(body.total_amount);
+
+        if (!orderItems || !Array.isArray(orderItems) || orderItems.length === 0) {
+          throw new ValidationError('Order must contain at least one item', {
+            items: 'Items array is required',
+          });
+        }
+
+        // Create order object for createOrder
+        const serviceData = {
+          user_id: user.id,
+          status: 'pending' as const,
+          total_amount: totalAmount,
+          items: orderItems as Omit<OrderItem, 'id' | 'order_id' | 'created_at'>[],
+        };
+
+        // Validate and create the order with type assertion
+        try {
+          validateOrder(serviceData as unknown as Order);
+        } catch (validationError) {
+          console.error('Validation error:', validationError);
+          throw validationError;
+        }
+
+        let newOrder;
+        try {
+          newOrder = await createOrder(serviceData);
+        } catch (createError) {
+          console.error('Create order error:', createError);
+          throw createError;
+        }
+
+        return NextResponse.json(newOrder, { status: 201 });
+      } catch (error) {
+        console.error('Order creation error:', error);
+        return errorResponse(error as Error);
       }
-      
-      // Update the order items with enhanced data
-      orderData.items = enhancedItems;
-      
-      // Create the order
-      const newOrder = await createOrder(orderData);
-      
-      return NextResponse.json(newOrder, { status: 201 });
-    } catch (error) {
-      return errorResponse(error as Error);
+    },
+    {
+      requireAuth: true,
     }
-  }, {
-    requireAuth: true
-  });
+  );
 }

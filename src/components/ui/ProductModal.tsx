@@ -18,13 +18,13 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import { Item } from '@/types/store';
+import { StoreItem } from '@/types/store';
 import classes from './ProductModal.module.css';
 
 interface ProductModalProps {
   opened: boolean;
   onClose: () => void;
-  selectedItem: Item | null;
+  selectedItem: StoreItem | null;
   onAddToCart: (size?: string, color?: { name: string; hex: string }) => void;
 }
 
@@ -32,6 +32,7 @@ export function ProductModal({ opened, onClose, selectedItem, onAddToCart }: Pro
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColorHex, setSelectedColorHex] = useState<string | null>(null);
+  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
 
   // Reset selections when a new item is selected
   useEffect(() => {
@@ -39,8 +40,26 @@ export function ProductModal({ opened, onClose, selectedItem, onAddToCart }: Pro
       setActiveImageIndex(0);
       setSelectedSize(selectedItem.sizes.length > 0 ? selectedItem.sizes[0] : null);
       setSelectedColorHex(selectedItem.colors.length > 0 ? selectedItem.colors[0].hex : null);
+      setImageErrors({}); // Reset image errors when item changes
     }
   }, [selectedItem]);
+
+  const handleImageError = (index: number) => {
+    setImageErrors((prev) => ({
+      ...prev,
+      [index]: true,
+    }));
+
+    // If the currently active image fails, try to find another valid image
+    if (index === activeImageIndex && selectedItem?.images.length) {
+      const nextValidIndex = selectedItem.images.findIndex(
+        (_, idx) => !imageErrors[idx] && idx !== index
+      );
+      if (nextValidIndex !== -1) {
+        setActiveImageIndex(nextValidIndex);
+      }
+    }
+  };
 
   const isAddToCartDisabled = (): boolean => {
     if (!selectedItem) {
@@ -73,30 +92,48 @@ export function ProductModal({ opened, onClose, selectedItem, onAddToCart }: Pro
     onAddToCart(selectedSize || undefined, selectedColorHex ? getSelectedColorObject() : undefined);
   };
 
+  // Check if any valid images exist
+  const hasValidImages = selectedItem?.images.length
+    ? selectedItem.images.some((_, index) => !imageErrors[index])
+    : false;
+
   // Render thumbnails
   const renderThumbnails = () => {
     if (!selectedItem || selectedItem.images.length <= 1) {
       return null;
     }
 
+    // Filter out images with errors
+    const validImages = selectedItem.images.filter((_, index) => !imageErrors[index]);
+
+    if (validImages.length <= 1) {
+      return null;
+    }
+
     return (
       <div className={classes.thumbnailsContainer}>
         <div className={classes.thumbnailsWrapper}>
-          {selectedItem.images.map((image, index) => (
-            <Box
-              key={index}
-              className={index === activeImageIndex ? classes.thumbnailActive : classes.thumbnail}
-              onClick={() => setActiveImageIndex(index)}
-            >
-              <Image
-                src={image}
-                h={60}
-                w={60}
-                fit="cover"
-                alt={`${selectedItem.name} view ${index + 1}`}
-              />
-            </Box>
-          ))}
+          {selectedItem.images.map((image, index) => {
+            // Skip thumbnails for images that failed to load
+            if (imageErrors[index]) return null;
+
+            return (
+              <Box
+                key={index}
+                className={index === activeImageIndex ? classes.thumbnailActive : classes.thumbnail}
+                onClick={() => setActiveImageIndex(index)}
+              >
+                <Image
+                  src={image}
+                  h={60}
+                  w={60}
+                  fit="cover"
+                  onError={() => handleImageError(index)}
+                  alt={`${selectedItem.name} view ${index + 1}`}
+                />
+              </Box>
+            );
+          })}
         </div>
       </div>
     );
@@ -131,16 +168,17 @@ export function ProductModal({ opened, onClose, selectedItem, onAddToCart }: Pro
             <Grid.Col span={{ base: 12, md: 6 }}>
               {/* Fixed-size image container */}
               <div className={classes.imageContainer}>
-                {selectedItem.images.length > 0 ? (
+                {hasValidImages ? (
                   <div className={classes.imageWrapper}>
                     <Image
                       src={selectedItem.images[activeImageIndex]}
                       className={classes.productImage}
+                      onError={() => handleImageError(activeImageIndex)}
                       alt={selectedItem.name}
                     />
                   </div>
                 ) : (
-                  <Center h="100%" w="100%">
+                  <Center h="100%" w="100%" className={classes.imagePlaceholder}>
                     <IconShirt size={80} color="gray" />
                   </Center>
                 )}
@@ -169,7 +207,7 @@ export function ProductModal({ opened, onClose, selectedItem, onAddToCart }: Pro
 
                 {/* Product ID */}
                 <Text size="sm" c="dimmed">
-                  Product ID: {selectedItem.id}
+                  Product ID: {selectedItem.item_code}
                 </Text>
 
                 {/* Description */}

@@ -1,67 +1,115 @@
-// Types for the store items and cart functionality
-
-// Store item types
-export interface Item {
-  id: string;
+// Define types for store items
+export interface StoreItemColor {
   name: string;
-  price: number;
-  images: string[];
-  sizes: string[];
-  colors: { name: string; hex: string }[];
-  description: string;
+  hex: string;
 }
 
-// Store item in database
 export interface StoreItem {
-  id?: string;
+  id: string;
   item_code: string;
   name: string;
   price: number;
   images: string[];
   sizes: string[];
-  colors: { name: string; hex: string }[];
+  colors: StoreItemColor[];
   description: string;
-  active?: boolean;
-  created_at?: string;
-  updated_at?: string;
+  created_at: string;
+  updated_at: string;
+  active: boolean;
 }
 
-// Cart item type
+// For creating or updating a store item
+export interface StoreItemInput {
+  item_code: string;
+  name: string;
+  price: number;
+  images: string[];
+  sizes: string[];
+  colors: StoreItemColor[];
+  description: string;
+  active?: boolean;
+}
+
+// Request parameters for search and filtering
+export interface StoreItemSearchParams {
+  search?: string;
+  active?: boolean;
+  limit?: number;
+  offset?: number;
+}
+
+// API response structures
+export interface StoreItemListResponse {
+  items: StoreItem[];
+  total: number;
+}
+
+export interface ErrorResponse {
+  error: {
+    message: string;
+    code: string;
+  };
+}
+
+// Order status options
+export type OrderStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'paid'
+  | 'processing'
+  | 'shipped'
+  | 'delivered'
+  | 'cancelled';
+
+// Order item interface
+export interface OrderItem {
+  id: string;
+  item_code: string;
+  order_id: string;
+  quantity: number;
+  price: number;
+  size?: string | null;
+  color?: string | null;
+  color_hex?: string | null;
+  name?: string | null;
+  image?: string | null;
+  created_at?: string;
+}
+
+// Order interface - Updated to match database schema without shipping_address
+export interface Order {
+  id: string;
+  user_id: string;
+  status: OrderStatus;
+  total_amount: number;
+  created_at: string;
+  updated_at?: string;
+  updated_by?: string | null;
+  last_status_change?: string;
+  order_items: OrderItem[];
+  // Aliased property for compatibility with existing code
+  items?: OrderItem[];
+}
+
+// Order audit information
+export interface OrderAuditInfo {
+  status: OrderStatus;
+  updated_by: string;
+  last_status_change: string;
+}
+
+// Cart item interface
 export interface CartItem {
   id: string;
   name: string;
   price: number;
+  quantity: number;
+  image?: string;
   size?: string;
   color?: string;
   colorHex?: string;
-  quantity: number;
-  image?: string;
+  item_code?: string;
 }
 
-// Order status types
-export type OrderStatus = 'pending' | 'confirmed' | 'paid' | 'delivered' | 'cancelled';
-
-// Order item in database
-export interface OrderItem {
-  item_code: string;
-  quantity: number;
-  price: number;
-  size?: string;
-  color?: string;
-  color_hex?: string;
-  name?: string;  // Item name at time of order
-  image?: string; // Item image at time of order
-}
-
-// Order in database
-export interface Order {
-  id?: string;
-  user_id: string;
-  status: OrderStatus;
-  total_amount: number;
-  created_at?: string;
-  updated_at?: string;
-  updated_by?: string; // User who last updated the order
-  last_status_change?: string; // When the status was last changed
-  items: OrderItem[];
-}
+// Status color mapping
+export type StatusColorMap = Record<OrderStatus, string>;

@@ -1,62 +1,68 @@
 'use client';
 
-import { IconShirt } from '@tabler/icons-react';
-import { Badge, Button, Card, Center, Flex, Image, Stack, Text } from '@mantine/core';
-import { Item } from '@/types/store';
+import { useState } from 'react';
+import { IconEye, IconShirt } from '@tabler/icons-react';
+import { ActionIcon, Box, Card, Center, Text } from '@mantine/core';
+import { StoreItem } from '@/types/store';
 import classes from './ProductCard.module.css';
 
 interface ProductCardProps {
-  item: Item;
-  onViewProduct: (item: Item) => void;
+  item: StoreItem;
+  onViewProductAction: (item: StoreItem) => void;
 }
 
-export function ProductCard({ item, onViewProduct }: ProductCardProps) {
+export function ProductCard({ item, onViewProductAction }: ProductCardProps) {
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
+
   return (
-    <Card key={item.id} shadow="sm" padding="lg" radius="md" withBorder>
-      <Card.Section>
-        {item.images.length > 0 ? (
-          <Image src={item.images[0]} h={200} fit="cover" alt={item.name} />
+    <Card padding={0} radius="md" withBorder className={classes.card}>
+      <div className={classes.imageContainer}>
+        {item.images.length > 0 && !imageError ? (
+          <img
+            src={item.images[0]}
+            alt={item.name}
+            className={classes.image}
+            onError={handleImageError}
+          />
         ) : (
-          <Center h={200} className={classes.imagePlaceholder}>
-            <IconShirt size={60} color="gray" />
+          <Center className={classes.placeholderContainer}>
+            <IconShirt size={80} color="gray" />
           </Center>
         )}
-      </Card.Section>
+      </div>
 
-      <Stack mt="md" gap="xs">
-        <Flex justify="space-between" align="flex-start">
-          <Text fw={600} size="lg" lineClamp={1} style={{ flexGrow: 1, marginRight: 10 }}>
-            {item.name}
-          </Text>
-          <Badge
-            color="blue"
-            variant="filled"
-            size="lg"
-            style={{ whiteSpace: 'nowrap', minWidth: 'auto', flexShrink: 0 }}
-          >
-            ${item.price.toFixed(2)}
-          </Badge>
-        </Flex>
-
-        <Text size="sm" c="dimmed" mb="xs">
-          ID: {item.id}
+      <Box px="md" py="xs" pos="relative">
+        {/* Price */}
+        <Text fw={700} size="xl" mb={8}>
+          ${item.price.toFixed(2)}
         </Text>
 
-        <Text lineClamp={2} size="sm" c="dimmed" mb="xs">
-          {item.description}
+        {/* Product Name */}
+        <Text fw={600} size="md" mb={4} lineClamp={1}>
+          {item.name}
         </Text>
 
-        <Button
-          variant="light"
-          color="blue"
-          fullWidth
-          onClick={() => onViewProduct(item)}
-          radius="md"
-          mt="auto"
+        {/* Item ID */}
+        <Text size="sm" c="dimmed" mb={8}>
+          {item.item_code}
+        </Text>
+
+        {/* View Button (Eye Icon) */}
+        <ActionIcon
+          className={classes.viewButton}
+          variant="subtle"
+          color="gray"
+          size="lg"
+          radius="xl"
+          onClick={() => onViewProductAction(item)}
         >
-          View Product
-        </Button>
-      </Stack>
+          <IconEye size={20} />
+        </ActionIcon>
+      </Box>
     </Card>
   );
 }

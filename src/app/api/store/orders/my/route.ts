@@ -1,25 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getUserOrders } from '@/lib/api/db/orders';
+import { errorResponse } from '@/lib/api/errors';
 import { withAuth } from '@/lib/api/middleware/auth';
-import { errorResponse, ValidationError } from '@/lib/api/errors';
-import { getUserOrders } from '@/lib/api/services/orders';
 
 /**
  * GET /api/store/orders/my
  * Get current user's orders
  */
 export async function GET(request: NextRequest) {
-  return withAuth(request, async (req, user) => {
-    try {
-      if (!user || !user.id) {
-        throw new ValidationError('User is required');
+  return withAuth(
+    request,
+    async (_req, user) => {
+      try {
+        const orders = await getUserOrders(user!.id);
+        return NextResponse.json(orders);
+      } catch (error) {
+        return errorResponse(error as Error);
       }
-      
-      const orders = await getUserOrders(user.id);
-      return NextResponse.json(orders);
-    } catch (error) {
-      return errorResponse(error as Error);
+    },
+    {
+      requireAuth: true,
     }
-  }, {
-    requireAuth: true
-  });
+  );
 }

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="Layout fixes, working orders.">
+      <change afterPath="$PROJECT_DIR$/.idea/prettier.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/portal/admin/store/edit/[id]/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/portal/admin/store/new/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/portal/admin/store/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/api/db/store-items.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/api/hooks/useOrders.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/api/hooks/useStoreItems.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/items/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/items/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/orders/[id]/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/orders/[id]/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/orders/my/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/orders/my/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/orders/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/orders/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/components/OrderDetailsModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/orders/components/OrderDetailsModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/components/OrderItemCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/orders/components/OrderItemCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/components/OrdersTable.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/orders/components/OrdersTable.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/orders/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/utils/orderUtils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/orders/utils/orderUtils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/data.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/CartDrawer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/CartDrawer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/ProductCard.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ProductCard.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/ProductCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ProductCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ui/ProductModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ui/ProductModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/auth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/context/CartContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/context/CartContext.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/api/services/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/api/services/orders.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/api/db/orders.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/api/services/store.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/api/services/users.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/api/validators/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/api/validators/orders.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/api/validators/orders.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/api/validators/store.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/api/validators/users.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/store.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "nishith-p"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/nishith-p/portello.git",
+    "accountId": "ae6f3ba3-81c9-4e5d-9b2a-f500080ef556"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="2vH8XUlVwJYDJH6q575jBSyDlnT" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "dev-main",
+    "last_opened_file_path": "/Users/nishith/Desktop/Clean Project/portello",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.stylelint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.stylelint": "/Users/nishith/Desktop/Clean Project/portello/node_modules/stylelint",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "prettierjs.PrettierConfiguration.Package": "/Users/nishith/Desktop/Clean Project/portello/node_modules/prettier",
+    "settings.editor.selected.configurable": "settings.javascript.prettier",
+    "ts.external.directory.path": "/Users/nishith/Desktop/Clean Project/portello/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/lib/api/db" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.25659.40" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="" />
+      <created>1743790678452</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1743790678452</updated>
+      <workItem from="1743790679486" duration="24553000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Layout fixes, working orders." />
+    <option name="LAST_COMMIT_MESSAGE" value="Layout fixes, working orders." />
+  </component>
+</project>

@@ -1,19 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { Container, SimpleGrid, Title } from '@mantine/core';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { Alert, Center, Container, Loader, SimpleGrid, Text, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useCart } from '@/context';
 import { ProductCard, ProductModal } from '@/components/ui';
-import { items } from './data';
-import { Item, CartItem } from '@/types/store';
+import { useCart } from '@/context';
+import { useStoreItems } from '@/lib/api/hooks/useStoreItems';
+import { StoreItem } from '@/types/store';
 
-export default function Page(): JSX.Element {
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+export default function StorePage(): JSX.Element {
+  const [selectedItem, setSelectedItem] = useState<StoreItem | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
   const { addToCart } = useCart();
 
-  const handleViewProduct = (item: Item): void => {
+  // Fetch store items from the API
+  const { data, isLoading, error } = useStoreItems();
+
+  const handleViewProduct = (item: StoreItem): void => {
     setSelectedItem(item);
     open();
   };
@@ -24,14 +28,15 @@ export default function Page(): JSX.Element {
     }
 
     // Create a new CartItem
-    const newItem: CartItem = {
+    const newItem = {
       id: selectedItem.id,
+      item_code: selectedItem.item_code, // Add this line to include the item_code
       name: selectedItem.name,
       price: selectedItem.price,
       // Use the first image from the images array if available
       image: selectedItem.images?.length > 0 ? selectedItem.images[0] : undefined,
       // Include the selected size and color
-      size: size,
+      size,
       color: color?.name,
       colorHex: color?.hex,
       quantity: 1,
@@ -44,17 +49,57 @@ export default function Page(): JSX.Element {
     close();
   };
 
+  // Render loading state
+  if (isLoading) {
+    return (
+      <Container fluid p="md">
+        <Title order={2} c="gray.8" mb="xl">
+          Store
+        </Title>
+        <Center mt="xl">
+          <Loader size="lg" />
+        </Center>
+      </Container>
+    );
+  }
+
+  // Render error state
+  if (error) {
+    return (
+      <Container fluid p="md">
+        <Title order={2} c="gray.8" mb="xl">
+          Store
+        </Title>
+        <Alert icon={<IconAlertCircle size={16} />} title="Error" color="red">
+          <Text>Failed to load store items. Please try again later.</Text>
+        </Alert>
+      </Container>
+    );
+  }
+
+  // Check if we have items to display
+  const items = data?.items || [];
+  const hasItems = items.length > 0;
+
   return (
     <Container fluid p="md">
       <Title order={2} c="gray.8" mb="xl">
         Store
       </Title>
 
-      <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
-        {items.map((item) => (
-          <ProductCard key={item.id} item={item} onViewProduct={handleViewProduct} />
-        ))}
-      </SimpleGrid>
+      {hasItems ? (
+        <SimpleGrid cols={{ base: 2, sm: 3, md: 4, lg: 5 }} spacing="lg">
+          {items.map((item: StoreItem) => (
+            <ProductCard key={item.id} item={item} onViewProductAction={handleViewProduct} />
+          ))}
+        </SimpleGrid>
+      ) : (
+        <Center mt="xl">
+          <Alert icon={<IconAlertCircle size={16} />} title="No Items" color="blue">
+            <Text>There are no items available in the store right now.</Text>
+          </Alert>
+        </Center>
+      )}
 
       <ProductModal
         opened={opened}

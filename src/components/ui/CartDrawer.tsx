@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { IconMinus, IconPlus, IconShoppingCart, IconTrash } from '@tabler/icons-react';
 import {
   ActionIcon,
@@ -13,17 +15,64 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { useCart } from '@/context';
-import { useRouter } from 'next/navigation';
+import { useOrders } from '@/lib/api/hooks/useOrders';
 
 export const CartDrawer = (): JSX.Element => {
-  const { cartItems, isCartOpen, closeCart, removeFromCart, updateQuantity, subtotal, getItemKey } =
-    useCart();
+  const {
+    cartItems,
+    isCartOpen,
+    closeCart,
+    removeFromCart,
+    updateQuantity,
+    subtotal,
+    getItemKey,
+    clearCart,
+  } = useCart();
+
   const router = useRouter();
+  const { placeOrder, placeOrderMutation } = useOrders();
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
   const handleGoToStore = () => {
     closeCart();
     router.push('/portal/store');
+  };
+
+  const handlePlaceOrder = async () => {
+    if (cartItems.length === 0) {
+      notifications.show({
+        title: 'Error',
+        message: 'Your cart is empty',
+        color: 'red',
+      });
+      return;
+    }
+
+    setIsPlacingOrder(true);
+
+    try {
+      // Place the order
+      placeOrder(cartItems, subtotal);
+
+      // Clear the cart after successful order placement
+
+      // Navigate to orders page and close drawer
+      setTimeout(() => {
+        clearCart();
+        closeCart();
+        router.push('/portal/orders');
+        setIsPlacingOrder(false);
+      }, 3000);
+    } catch (error) {
+      setIsPlacingOrder(false);
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to place order. Please try again.',
+        color: 'red',
+      });
+    }
   };
 
   return (
@@ -42,18 +91,19 @@ export const CartDrawer = (): JSX.Element => {
               width: 90,
               height: 90,
               borderRadius: '50%',
-              backgroundColor: 'var(--mantine-color-gray-1)'
+              backgroundColor: 'var(--mantine-color-gray-1)',
             }}
           >
             <IconShoppingCart size={42} color="var(--mantine-color-gray-5)" />
           </Center>
 
           <Stack gap="xs" align="center">
-            <Text fw={600} fz="lg" ta="center">
+            <Text fw={600} size="lg" ta="center">
               Your cart is empty
             </Text>
-            <Text c="dimmed" ta="center" fz="sm" maw={300} mx="auto">
-              Looks like you haven't added any items to your cart yet. Explore our collection and find something you'll love!
+            <Text c="dimmed" ta="center" size="sm" maw={300} mx="auto">
+              Looks like you haven't added any items to your cart yet. Explore our collection and
+              find something you'll love!
             </Text>
           </Stack>
 
@@ -147,7 +197,7 @@ export const CartDrawer = (): JSX.Element => {
                           <IconMinus size={14} />
                         </ActionIcon>
 
-                        <Text fz="sm">{item.quantity}</Text>
+                        <Text size="sm">{item.quantity}</Text>
 
                         <ActionIcon
                           size="sm"
@@ -172,16 +222,23 @@ export const CartDrawer = (): JSX.Element => {
 
           <Box p="sm">
             <Flex justify="space-between" align="center" mb="md">
-              <Text fw={600} fz="lg">
+              <Text fw={600} size="lg">
                 Subtotal
               </Text>
-              <Text fw={600} fz="lg">
+              <Text fw={600} size="lg">
                 ${subtotal.toFixed(2)}
               </Text>
             </Flex>
 
-            <Button fullWidth color="green" size="md">
-              Place Order
+            <Button
+              fullWidth
+              color="green"
+              size="md"
+              onClick={handlePlaceOrder}
+              disabled={isPlacingOrder || placeOrderMutation.isPending || cartItems.length === 0}
+              loading={isPlacingOrder || placeOrderMutation.isPending}
+            >
+              {isPlacingOrder || placeOrderMutation.isPending ? 'Processing...' : 'Place Order'}
             </Button>
           </Box>
         </Stack>

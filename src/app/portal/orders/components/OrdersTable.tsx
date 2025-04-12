@@ -1,6 +1,6 @@
 import { IconPackage } from '@tabler/icons-react';
 import { Badge, Group, Table, Text } from '@mantine/core';
-import { Order } from '../types';
+import { Order } from '@/types/store';
 import { formatDate, getStatusColor } from '../utils/orderUtils';
 
 interface OrdersTableProps {
@@ -9,7 +9,7 @@ interface OrdersTableProps {
 }
 
 export const OrdersTable = ({ orders, onOrderClick }: OrdersTableProps): JSX.Element => (
-  <Table striped highlightOnHover withTableBorder bgcolor="white">
+  <Table striped highlightOnHover withTableBorder bg="white">
     <Table.Thead>
       <Table.Tr>
         <Table.Th>Order ID</Table.Th>

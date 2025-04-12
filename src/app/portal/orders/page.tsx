@@ -3,19 +3,10 @@
 import { useState } from 'react';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import {
-  Alert,
-  Container,
-  Flex,
-  Loader,
-  Stack,
-  Text,
-  Title,
-} from '@mantine/core';
-
-import { OrdersTable } from './components/OrdersTable';
+import { Alert, Container, Flex, Loader, Stack, Text, Title } from '@mantine/core';
+import { Order } from '@/types/store';
 import { OrderDetailsModal } from './components/OrderDetailsModal';
-import { Order } from './types';
+import { OrdersTable } from './components/OrdersTable';
 
 const OrdersPage = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -89,11 +80,7 @@ const OrdersPage = () => {
         )}
       </Stack>
 
-      <OrderDetailsModal
-        order={selectedOrder}
-        opened={modalOpened}
-        onClose={closeModal}
-      />
+      <OrderDetailsModal order={selectedOrder} opened={modalOpened} onClose={closeModal} />
     </Container>
   );
 };
