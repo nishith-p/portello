@@ -6,7 +6,7 @@ import { validateOrder } from '@/lib/store/orders/validators';
 import { Order, OrderItem } from '@/lib/store/types';
 
 /**
- * GET /api/store/orders
+ * GET /api/orders
  * Get all orders (admin only)
  */
 export async function GET(request: NextRequest) {
@@ -22,30 +22,29 @@ export async function GET(request: NextRequest) {
     },
     {
       requireAuth: true,
-      requireAdmin: true, // Only admins can access all orders
+      requireAdmin: true,
     }
   );
 }
 
 /**
- * POST /api/store/orders
- * Create a create order
+ * POST /api/orders
+ * Create a new order
  */
 export async function POST(request: NextRequest) {
   return withAuth(
     request,
-    async (req, user) => {
+    async (_req, user) => {
       try {
         if (!user || !user.id) {
           throw new ValidationError('User is required', { user: 'User ID is required' });
         }
 
         // Parse request body
-        let body;
+        let body: { items: any[]; total_amount?: number } | any[];
         try {
           body = await request.json();
         } catch (e) {
-          console.error('Error parsing JSON:', e);
           throw new ValidationError('Invalid JSON in request body');
         }
 
@@ -57,7 +56,7 @@ export async function POST(request: NextRequest) {
                 sum + item.price * item.quantity,
               0
             )
-          : parseFloat(body.total_amount);
+          : parseFloat(String(body.total_amount));
 
         if (!orderItems || !Array.isArray(orderItems) || orderItems.length === 0) {
           throw new ValidationError('Order must contain at least one item', {
@@ -65,7 +64,6 @@ export async function POST(request: NextRequest) {
           });
         }
 
-        // Create order object for createOrder
         const serviceData = {
           user_id: user.id,
           status: 'pending' as const,
@@ -73,25 +71,11 @@ export async function POST(request: NextRequest) {
           items: orderItems as Omit<OrderItem, 'id' | 'order_id' | 'created_at'>[],
         };
 
-        // Validate and create the order with type assertion
-        try {
-          validateOrder(serviceData as unknown as Order);
-        } catch (validationError) {
-          console.error('Validation error:', validationError);
-          throw validationError;
-        }
+        validateOrder(serviceData as unknown as Order);
 
-        let newOrder;
-        try {
-          newOrder = await createOrder(serviceData);
-        } catch (createError) {
-          console.error('Create order error:', createError);
-          throw createError;
-        }
-
+        const newOrder = await createOrder(serviceData);
         return NextResponse.json(newOrder, { status: 201 });
       } catch (error) {
-        console.error('Order creation error:', error);
         return errorResponse(error as Error);
       }
     },

@@ -4,21 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="Better file struct">
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="Working store management">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/store/items/[id]/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/items/[id]/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/store/items/[id]/toggle-active/route.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/store/items/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/items/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/next.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/orders/[id]/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/orders/[id]/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/orders/my/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/orders/my/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/orders/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/orders/route.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/portal-sidebar/portal-sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/(components)/portal-sidebar/portal-sidebar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/create/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegate-profile.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/delegates/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/edit/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/edit/[id]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/delegates/(components)/delegate-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegate-profile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/delegates/(components)/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/delegates/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/delegates/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/store/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/store/items/hooks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/items/hooks.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/cart-drawer/cart-drawer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/cart-drawer/cart-drawer.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/store/orders/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/orders/db.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/store/orders/hooks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/orders/hooks.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/store/orders/validators.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/orders/validators.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/store/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/types.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -98,7 +98,7 @@
       <option name="presentableId" value="Default" />
       <updated>1743790678452</updated>
       <workItem from="1743790679486" duration="26388000" />
-      <workItem from="1744462042462" duration="17916000" />
+      <workItem from="1744462042462" duration="24703000" />
     </task>
     <task id="LOCAL-00001" summary="Layout fixes, working orders.">
       <option name="closed" value="true" />
@@ -116,7 +116,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744885660337</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Working store management">
+      <option name="closed" value="true" />
+      <created>1744891156092</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1744891156092</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -128,6 +136,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Layout fixes, working orders." />
     <MESSAGE value="Better file struct" />
-    <option name="LAST_COMMIT_MESSAGE" value="Better file struct" />
+    <MESSAGE value="Working store management" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working store management" />
   </component>
 </project>

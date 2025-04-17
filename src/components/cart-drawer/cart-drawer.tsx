@@ -17,7 +17,8 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { useCart } from '@/context';
-import { hooks } from '@/lib/store/orders/hooks';
+import { useOrderHooks } from '@/lib/store/orders/hooks';
+import { formatCurrency } from '@/lib/utils';
 
 export const CartDrawer = (): JSX.Element => {
   const {
@@ -32,7 +33,8 @@ export const CartDrawer = (): JSX.Element => {
   } = useCart();
 
   const router = useRouter();
-  const { placeOrder, placeOrderMutation } = hooks();
+  const { usePlaceOrder } = useOrderHooks();
+  const placeOrderMutation = usePlaceOrder();
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
 
   const handleGoToStore = () => {
@@ -53,23 +55,25 @@ export const CartDrawer = (): JSX.Element => {
     setIsPlacingOrder(true);
 
     try {
-      // Place the order
-      placeOrder(cartItems, subtotal);
+      // Place the order using the mutation
+      await placeOrderMutation.mutateAsync({
+        items: cartItems,
+        total_amount: subtotal,
+      });
 
       // Clear the cart after successful order placement
-
-      // Navigate to orders page and close drawer
       setTimeout(() => {
         clearCart();
         closeCart();
         router.push('/portal/orders');
         setIsPlacingOrder(false);
-      }, 3000);
+      }, 1000);
     } catch (error) {
       setIsPlacingOrder(false);
       notifications.show({
         title: 'Error',
-        message: 'Failed to place order. Please try again.',
+        message:
+          error instanceof Error ? error.message : 'Failed to place order. Please try again.',
         color: 'red',
       });
     }
@@ -210,7 +214,7 @@ export const CartDrawer = (): JSX.Element => {
                         </ActionIcon>
                       </Flex>
 
-                      <Text fw={500}>${(item.price * item.quantity).toFixed(2)}</Text>
+                      <Text fw={500}>{formatCurrency(item.price * item.quantity)}</Text>
                     </Flex>
                   </Box>
                 </Flex>
@@ -226,7 +230,7 @@ export const CartDrawer = (): JSX.Element => {
                 Subtotal
               </Text>
               <Text fw={600} size="lg">
-                ${subtotal.toFixed(2)}
+                {formatCurrency(subtotal)}
               </Text>
             </Flex>
 

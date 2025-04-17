@@ -1,6 +1,11 @@
 import { NotFoundError } from '@/lib/core/errors';
 import { supabaseServer } from '@/lib/core/supabase';
-import { Order, OrderAuditInfo, OrderItem, OrderStatus } from '@/lib/store/types';
+import { CreateOrderInput, Order, OrderAuditInfo, OrderItem, OrderStatus } from '@/lib/store/types';
+
+// Define a type for the raw DB response to properly handle the nested order_items
+type OrderWithNestedItems = Omit<Order, 'items'> & {
+  order_items: OrderItem[];
+};
 
 /**
  * Get all orders
@@ -21,7 +26,7 @@ export async function getOrders(): Promise<Order[]> {
   }
 
   // Transform the response to match the Order interface
-  return data.map((order) => ({
+  return (data as OrderWithNestedItems[]).map((order) => ({
     ...order,
     items: order.order_items || [],
   }));
@@ -47,7 +52,7 @@ export async function getUserOrders(userId: string): Promise<Order[]> {
   }
 
   // Transform the response to match the Order interface
-  return data.map((order) => ({
+  return (data as OrderWithNestedItems[]).map((order) => ({
     ...order,
     items: order.order_items || [],
   }));
@@ -77,28 +82,27 @@ export async function getOrder(orderId: string): Promise<Order> {
 
   // Transform the response to match the Order interface
   return {
-    ...data,
+    ...(data as OrderWithNestedItems),
     items: data.order_items || [],
   };
 }
 
 /**
- * Create a create order
+ * Create a new order
  */
-export async function createOrder(
-  order: Omit<Order, 'id' | 'created_at' | 'order_items'> & {
-    items: Omit<OrderItem, 'id' | 'order_id' | 'created_at'>[];
-  }
-): Promise<Order> {
-  // Start a transaction
-  const { data: orderData, error: orderError } = await supabaseServer
+export async function createOrder(orderInput: CreateOrderInput): Promise<Order> {
+  // Prepare order data for insertion
+  const orderData = {
+    user_id: orderInput.user_id,
+    status: orderInput.status || 'pending',
+    total_amount: orderInput.total_amount,
+    updated_by: orderInput.user_id, // Initial update is by the creator
+  };
+
+  // Insert the order
+  const { data: newOrder, error: orderError } = await supabaseServer
     .from('orders')
-    .insert({
-      user_id: order.user_id,
-      status: order.status || 'pending',
-      total_amount: order.total_amount,
-      updated_by: order.user_id, // Initial update is by the creator
-    })
+    .insert(orderData)
     .select()
     .single();
 
@@ -107,7 +111,7 @@ export async function createOrder(
   }
 
   // Fetch item details for the order items
-  const itemCodes = order.items.map((item) => item.item_code);
+  const itemCodes = orderInput.items.map((item) => item.item_code);
 
   // Get store item data to include name and image
   const { data: storeItems, error: storeItemsError } = await supabaseServer
@@ -127,38 +131,50 @@ export async function createOrder(
 
   // Create a lookup map for store items
   const storeItemMap: Record<string, StoreItemInfo> = {};
-
-  storeItems.forEach((item: StoreItemInfo) => {
+  (storeItems as StoreItemInfo[]).forEach((item) => {
     storeItemMap[item.item_code] = item;
   });
 
-  // Insert order items with names and images
-  const orderItems: Omit<OrderItem, 'id' | 'created_at'>[] = order.items.map((item) => {
-    const storeItem = storeItemMap[item.item_code];
-    return {
-      order_id: orderData.id,
-      item_code: item.item_code,
-      quantity: item.quantity,
-      price: item.price,
-      size: item.size || null,
-      color: item.color || null,
-      color_hex: item.color_hex || null,
-      // Include name and image from the store item if available
-      name: storeItem?.name || item.name || null,
-      image:
-        storeItem?.images && storeItem.images.length > 0 ? storeItem.images[0] : item.image || null,
-    };
-  });
+  // Prepare order items for insertion
+  const orderItemsToInsert: Omit<OrderItem, 'id' | 'created_at'>[] = orderInput.items.map(
+    (item) => {
+      const storeItem = storeItemMap[item.item_code];
+      return {
+        order_id: newOrder.id,
+        item_code: item.item_code,
+        quantity: item.quantity,
+        price: item.price,
+        size: item.size || null,
+        color: item.color || null,
+        color_hex: item.color_hex || null,
+        // Include name and image from the store item if available
+        name: storeItem?.name || item.name || null,
+        image:
+          storeItem?.images && storeItem.images.length > 0
+            ? storeItem.images[0]
+            : item.image || null,
+      };
+    }
+  );
 
-  const { error: itemsError } = await supabaseServer.from('order_items').insert(orderItems);
+  // Insert order items
+  const { data: insertedItems, error: itemsError } = await supabaseServer
+    .from('order_items')
+    .insert(orderItemsToInsert)
+    .select();
 
   if (itemsError) {
     // If there's an error, try to rollback by deleting the order
-    await supabaseServer.from('orders').delete().eq('id', orderData.id);
+    await supabaseServer.from('orders').delete().eq('id', newOrder.id);
     throw itemsError;
   }
 
-  return { ...orderData, items: orderItems as OrderItem[] };
+  // Return the complete order with items
+  return {
+    ...newOrder,
+    items: insertedItems as OrderItem[],
+    order_items: insertedItems as OrderItem[],
+  };
 }
 
 /**
@@ -169,7 +185,8 @@ export async function updateOrderStatus(
   status: OrderStatus,
   updatedBy: string
 ): Promise<Order> {
-  const { data, error } = await supabaseServer
+  // Update the order status
+  const { data: updatedOrder, error } = await supabaseServer
     .from('orders')
     .update({
       status,
@@ -197,7 +214,12 @@ export async function updateOrderStatus(
     throw itemsError;
   }
 
-  return { ...data, items: orderItems || [] };
+  // Return the complete updated order
+  return {
+    ...updatedOrder,
+    items: orderItems as OrderItem[],
+    order_items: orderItems as OrderItem[],
+  };
 }
 
 /**
@@ -217,5 +239,9 @@ export async function getOrderAudit(orderId: string): Promise<OrderAuditInfo> {
     throw error;
   }
 
-  return data as OrderAuditInfo;
+  return {
+    status: data.status as OrderStatus,
+    updated_by: data.updated_by || '',
+    last_status_change: data.last_status_change || '',
+  };
 }

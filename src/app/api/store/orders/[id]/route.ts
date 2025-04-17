@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdmin, withAuth } from '@/lib/auth/utils';
-import { AuthorizationError, errorResponse } from '@/lib/core/errors';
+import { AuthorizationError, errorResponse, ValidationError } from '@/lib/core/errors';
 import { getOrder, getOrderAudit, updateOrderStatus } from '@/lib/store/orders/db';
 import { validateOrderStatus } from '@/lib/store/orders/validators';
 import { OrderStatus } from '@/lib/store/types';
 
 /**
- * GET /api/store/orders/[id]
+ * GET /api/orders/[id]
  * Get a specific order
  */
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
@@ -15,11 +15,16 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     async (_req, user) => {
       try {
         const orderId = params.id;
+
+        if (!orderId) {
+          throw new ValidationError('Order ID is required');
+        }
+
         const order = await getOrder(orderId);
 
         // Check if user is the order owner or admin
         const userIsAdmin = await isAdmin();
-        if (!userIsAdmin && order.user_id !== user!.id) {
+        if (!userIsAdmin && order.user_id !== user?.id) {
           throw new AuthorizationError('You can only view your own orders');
         }
 
@@ -35,7 +40,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 /**
- * PUT /api/store/orders/[id]
+ * PUT /api/orders/[id]
  * Update order status (admin only)
  */
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
@@ -44,7 +49,24 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     async (req, user) => {
       try {
         const orderId = params.id;
-        const { status } = await req.json();
+
+        if (!orderId) {
+          throw new ValidationError('Order ID is required');
+        }
+
+        // Parse request body
+        let body: { status: string };
+        try {
+          body = await req.json();
+        } catch (e) {
+          throw new ValidationError('Invalid JSON in request body');
+        }
+
+        const { status } = body;
+
+        if (!status) {
+          throw new ValidationError('Status is required');
+        }
 
         // Validate status
         validateOrderStatus(status);

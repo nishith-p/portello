@@ -1,9 +1,14 @@
-// Define types for store items
+/**
+ * Store item color representation
+ */
 export interface StoreItemColor {
   name: string;
   hex: string;
 }
 
+/**
+ * Store item model
+ */
 export interface StoreItem {
   id: string;
   item_code: string;
@@ -50,14 +55,20 @@ export interface StoreItemListResponse {
   total: number;
 }
 
+/**
+ * Standardized API error response
+ */
 export interface ErrorResponse {
   error: {
     message: string;
     code: string;
+    fields?: Record<string, string>;
   };
 }
 
-// Order status options
+/**
+ * Order status options
+ */
 export type OrderStatus =
   | 'pending'
   | 'confirmed'
@@ -67,22 +78,26 @@ export type OrderStatus =
   | 'delivered'
   | 'cancelled';
 
-// Order item interface
+/**
+ * Order item interface
+ */
 export interface OrderItem {
   id: string;
   item_code: string;
   order_id: string;
   quantity: number;
   price: number;
-  size?: string | null;
-  color?: string | null;
-  color_hex?: string | null;
-  name?: string | null;
-  image?: string | null;
+  size: string | null;
+  color: string | null;
+  color_hex: string | null;
+  name: string | null;
+  image: string | null;
   created_at?: string;
 }
 
-// Order interface - Updated to match database schema without shipping_address
+/**
+ * Order interface - matches database schema
+ */
 export interface Order {
   id: string;
   user_id: string;
@@ -90,21 +105,25 @@ export interface Order {
   total_amount: number;
   created_at: string;
   updated_at?: string;
-  updated_by?: string | null;
+  updated_by?: string | null; // Made optional since it may be set automatically
   last_status_change?: string;
-  order_items: OrderItem[];
+  order_items?: OrderItem[]; // Made optional for input scenarios
   // Aliased property for compatibility with existing code
   items?: OrderItem[];
 }
 
-// Order audit information
+/**
+ * Order audit information
+ */
 export interface OrderAuditInfo {
   status: OrderStatus;
   updated_by: string;
   last_status_change: string;
 }
 
-// Cart item interface
+/**
+ * Cart item interface
+ */
 export interface CartItem {
   id: string;
   name: string;
@@ -114,8 +133,28 @@ export interface CartItem {
   size?: string;
   color?: string;
   colorHex?: string;
-  item_code?: string;
+  item_code: string; // Made non-optional since it's needed for orders
 }
 
-// Status color mapping
+/**
+ * Status color mapping type
+ */
 export type StatusColorMap = Record<OrderStatus, string>;
+
+/**
+ * Input for creating a new order
+ */
+export interface CreateOrderInput {
+  user_id: string;
+  status?: OrderStatus;
+  total_amount: number;
+  items: Omit<OrderItem, 'id' | 'order_id' | 'created_at'>[];
+}
+
+/**
+ * Input for updating an order's status
+ */
+export interface UpdateOrderStatusInput {
+  orderId: string;
+  status: OrderStatus;
+}

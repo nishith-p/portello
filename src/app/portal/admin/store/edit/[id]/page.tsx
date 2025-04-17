@@ -54,18 +54,8 @@ export default function EditStorePage(): JSX.Element {
   return (
     <Container fluid p="md">
       <Stack gap="md">
-        <Breadcrumbs mb="md">
-          <Anchor component={Link} href="/admin">
-            Admin
-          </Anchor>
-          <Anchor component={Link} href="/admin/store">
-            Store
-          </Anchor>
-          <span>Edit Item</span>
-        </Breadcrumbs>
-
         <Title order={2} c="gray.8">
-          Edit Store Item: {item.name}
+          Edit Item
         </Title>
 
         <StoreItemForm

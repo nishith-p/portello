@@ -5,14 +5,18 @@ import { getUserOrders } from '@/lib/store/orders/db';
 
 /**
  * GET /api/store/orders/my
- * Get current user's orders
+ * Get all orders for the current user
  */
 export async function GET(request: NextRequest) {
   return withAuth(
     request,
     async (_req, user) => {
       try {
-        const orders = await getUserOrders(user!.id);
+        if (!user || !user.id) {
+          return NextResponse.json([], { status: 200 });
+        }
+
+        const orders = await getUserOrders(user.id);
         return NextResponse.json(orders);
       } catch (error) {
         return errorResponse(error as Error);

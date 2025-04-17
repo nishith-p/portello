@@ -24,13 +24,8 @@ export function validateOrderStatus(status: string): void {
  * Validate order data
  */
 export function validateOrder(order: Order): void {
-  // Validate required fields
   if (!order.user_id) {
     throw new ValidationError('Missing user ID', { user_id: 'User ID is required' });
-  }
-
-  if (!order.total_amount && order.total_amount !== 0) {
-    throw new ValidationError('Missing total amount', { total_amount: 'Total amount is required' });
   }
 
   if (order.total_amount < 0) {
@@ -53,15 +48,9 @@ export function validateOrder(order: Order): void {
       });
     }
 
-    if (!item.quantity || item.quantity <= 0) {
+    if (item.quantity <= 0) {
       throw new ValidationError('Invalid quantity', {
         [`items[${index}].quantity`]: 'Quantity must be greater than 0',
-      });
-    }
-
-    if (!item.price && item.price !== 0) {
-      throw new ValidationError('Missing price', {
-        [`items[${index}].price`]: 'Price is required',
       });
     }
 

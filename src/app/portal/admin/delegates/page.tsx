@@ -1,31 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { IconAlertCircle, IconEye, IconSearch } from '@tabler/icons-react';
-import {
-  ActionIcon,
-  Alert,
-  Button,
-  Center,
-  Container,
-  Group,
-  Loader,
-  Modal,
-  Paper,
-  ScrollArea,
-  Select,
-  Stack,
-  Table,
-  Text,
-  TextInput,
-  Title,
-} from '@mantine/core';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { Alert, Center, Container, Loader, Paper, Stack, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useUserProfile, useUserSearch } from '@/lib/users/hooks';
-import { UserListItem, UserSearchParams } from '@/lib/users/types';
-import { DelegateProfile } from './(components)/delegate-profile';
+import { useUserSearch } from '@/lib/users/hooks';
+import { UserSearchParams } from '@/lib/users/types';
+import {
+  DelegateProfileModal,
+  DelegatesPagination,
+  DelegatesSearch,
+  DelegatesTable,
+} from './(components)';
 
-const DelegatesPage = () => {
+export default function DelegatesPage(): JSX.Element {
   // State for search parameters
   const [searchParams, setSearchParams] = useState<
     Required<Pick<UserSearchParams, 'limit' | 'offset'>> &
@@ -36,7 +24,7 @@ const DelegatesPage = () => {
   });
 
   // State for quick search input
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState<string>('');
 
   // State for profile modal
   const [opened, { open, close }] = useDisclosure(false);
@@ -45,11 +33,8 @@ const DelegatesPage = () => {
   // Fetch delegates data
   const { data, isLoading, error } = useUserSearch(searchParams);
 
-  // Fetch selected user profile
-  const { data: userProfile, isLoading: isProfileLoading } = useUserProfile(selectedUserId);
-
   // Handle search form submission
-  const handleSearch = () => {
+  const handleSearch = (): void => {
     setSearchParams((prev) => ({
       ...prev,
       search: searchInput,
@@ -57,21 +42,14 @@ const DelegatesPage = () => {
     }));
   };
 
-  // Handle enter key in search input
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
   // Handle row click to view profile
-  const handleViewProfile = (userId: string) => {
+  const handleViewProfile = (userId: string): void => {
     setSelectedUserId(userId);
     open();
   };
 
   // Handle pagination
-  const handlePageChange = (newOffset: number) => {
+  const handlePageChange = (newOffset: number): void => {
     setSearchParams((prev) => ({
       ...prev,
       offset: newOffset,
@@ -86,39 +64,12 @@ const DelegatesPage = () => {
         </Title>
 
         <Paper p="md" radius="md" withBorder>
-          <Group mb="md" justify="space-between">
-            <Group>
-              <TextInput
-                placeholder="Search by name or email"
-                leftSection={<IconSearch size={16} />}
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.currentTarget.value)}
-                onKeyDown={handleKeyDown}
-                style={{ width: '300px' }}
-              />
-              <Button onClick={handleSearch}>Search</Button>
-            </Group>
-
-            <Group>
-              <Select
-                placeholder="Entity"
-                data={['AIESEC International', 'AIESEC Germany', 'AIESEC India']}
-                clearable
-                onChange={(value) =>
-                  setSearchParams((prev) => ({ ...prev, entity: value || undefined, offset: 0 }))
-                }
-              />
-              <Select
-                placeholder="Round"
-                data={['1', '2', '3']} // Replace with your rounds
-                clearable
-                onChange={(value) => {
-                  const round = value ? parseInt(value, 10) : undefined;
-                  setSearchParams((prev) => ({ ...prev, round, offset: 0 }));
-                }}
-              />
-            </Group>
-          </Group>
+          <DelegatesSearch
+            searchInput={searchInput}
+            setSearchInput={setSearchInput}
+            setSearchParams={setSearchParams}
+            onSearch={handleSearch}
+          />
 
           {isLoading ? (
             <Center my="xl">
@@ -126,121 +77,26 @@ const DelegatesPage = () => {
             </Center>
           ) : error ? (
             <Alert icon={<IconAlertCircle size={16} />} title="Error loading delegates" color="red">
-              {error.message || 'Failed to load delegates. Please try again.'}
+              {error.message}
             </Alert>
           ) : (
             <>
-              <ScrollArea>
-                <Table striped highlightOnHover withTableBorder>
-                  <Table.Thead>
-                    <Table.Tr>
-                      <Table.Th>Name</Table.Th>
-                      <Table.Th>Position</Table.Th>
-                      <Table.Th>Entity</Table.Th>
-                      <Table.Th>Sub Entity</Table.Th>
-                      <Table.Th>AIESEC Email</Table.Th>
-                      <Table.Th>Round</Table.Th>
-                      <Table.Th>Actions</Table.Th>
-                    </Table.Tr>
-                  </Table.Thead>
-                  <Table.Tbody>
-                    {data?.users.length ? (
-                      data.users.map((user: UserListItem) => (
-                        <Table.Tr
-                          key={user.kinde_id}
-                          style={{ cursor: 'pointer' }}
-                          onClick={() => handleViewProfile(user.kinde_id)}
-                        >
-                          <Table.Td>{user.full_name}</Table.Td>
-                          <Table.Td>{user.position}</Table.Td>
-                          <Table.Td>{user.entity}</Table.Td>
-                          <Table.Td>{user.sub_entity || '-'}</Table.Td>
-                          <Table.Td>{user.aiesec_email}</Table.Td>
-                          <Table.Td>{user.round || '-'}</Table.Td>
-                          <Table.Td>
-                            <ActionIcon
-                              variant="subtle"
-                              color="blue"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleViewProfile(user.kinde_id);
-                              }}
-                            >
-                              <IconEye size={16} />
-                            </ActionIcon>
-                          </Table.Td>
-                        </Table.Tr>
-                      ))
-                    ) : (
-                      <Table.Tr>
-                        <Table.Td colSpan={7}>
-                          <Text ta="center" c="dimmed" py="md">
-                            No delegates found
-                          </Text>
-                        </Table.Td>
-                      </Table.Tr>
-                    )}
-                  </Table.Tbody>
-                </Table>
-              </ScrollArea>
+              <DelegatesTable delegates={data?.users || []} onViewProfile={handleViewProfile} />
 
-              {data && data.total > 0 && (
-                <Group justify="space-between" mt="md">
-                  <Text size="sm" c="dimmed">
-                    Showing {Math.min(searchParams.offset + 1, data.total)} -{' '}
-                    {Math.min(searchParams.offset + searchParams.limit, data.total)} of {data.total}{' '}
-                    delegates
-                  </Text>
-                  <Group>
-                    <Button
-                      variant="outline"
-                      disabled={searchParams.offset === 0}
-                      onClick={() =>
-                        handlePageChange(Math.max(0, searchParams.offset - searchParams.limit))
-                      }
-                    >
-                      Previous
-                    </Button>
-                    <Button
-                      variant="outline"
-                      disabled={searchParams.offset + searchParams.limit >= (data?.total || 0)}
-                      onClick={() => handlePageChange(searchParams.offset + searchParams.limit)}
-                    >
-                      Next
-                    </Button>
-                  </Group>
-                </Group>
+              {data && (
+                <DelegatesPagination
+                  currentOffset={searchParams.offset}
+                  limit={searchParams.limit}
+                  total={data.total}
+                  onPageChange={handlePageChange}
+                />
               )}
             </>
           )}
         </Paper>
       </Stack>
 
-      <Modal
-        opened={opened}
-        onClose={close}
-        title={
-          <Text fw={700} size="lg">
-            Delegate Profile
-          </Text>
-        }
-        size="xl"
-        centered
-      >
-        {isProfileLoading ? (
-          <Center p="xl">
-            <Loader />
-          </Center>
-        ) : userProfile?.user ? (
-          <DelegateProfile user={userProfile.user} documents={userProfile.documents} />
-        ) : (
-          <Alert color="red" icon={<IconAlertCircle size={16} />}>
-            Failed to load delegate profile
-          </Alert>
-        )}
-      </Modal>
+      <DelegateProfileModal opened={opened} onClose={close} userId={selectedUserId} />
     </Container>
   );
-};
-
-export default DelegatesPage;
+}

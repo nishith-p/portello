@@ -1,0 +1,47 @@
+'use client';
+
+import { Button, Group, Text } from '@mantine/core';
+
+interface DelegatesPaginationProps {
+  currentOffset: number;
+  limit: number;
+  total: number;
+  onPageChange: (newOffset: number) => void;
+}
+
+export function DelegatesPagination({
+  currentOffset,
+  limit,
+  total,
+  onPageChange,
+}: DelegatesPaginationProps): JSX.Element {
+  // Don't render if there are no items
+  if (total === 0) {
+    return <></>;
+  }
+
+  return (
+    <Group justify="space-between" mt="md">
+      <Text size="sm" c="dimmed">
+        Showing {Math.min(currentOffset + 1, total)} - {Math.min(currentOffset + limit, total)} of{' '}
+        {total} delegates
+      </Text>
+      <Group>
+        <Button
+          variant="outline"
+          disabled={currentOffset === 0}
+          onClick={() => onPageChange(Math.max(0, currentOffset - limit))}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          disabled={currentOffset + limit >= total}
+          onClick={() => onPageChange(currentOffset + limit)}
+        >
+          Next
+        </Button>
+      </Group>
+    </Group>
+  );
+}
