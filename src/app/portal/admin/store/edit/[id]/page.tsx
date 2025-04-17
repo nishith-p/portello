@@ -29,8 +29,8 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { useStoreItem, useUpdateStoreItem } from '@/lib/api/hooks/useStoreItems';
-import { StoreItemColor, StoreItemInput } from '@/types/store';
+import { useStoreItem, useUpdateStoreItem } from '@/lib/store/items/hooks';
+import { StoreItemColor, StoreItemInput } from '@/lib/store/types';
 
 // Common T-shirt sizes for convenience
 const COMMON_SIZES = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
@@ -88,7 +88,7 @@ export default function EditStoreItemPage({ params }: { params: { id: string } }
     }
   }, [item]);
 
-  // Add a new color
+  // Add a create color
   const handleAddColor = () => {
     if (!colorName.trim()) {
       notifications.show({
@@ -109,7 +109,7 @@ export default function EditStoreItemPage({ params }: { params: { id: string } }
     setColors(colors.filter((_, i) => i !== index));
   };
 
-  // Add a new image URL
+  // Add a create image URL
   const handleAddImage = () => {
     if (!newImageUrl.trim()) {
       notifications.show({

@@ -21,9 +21,9 @@ import {
   Title,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useUserProfile, useUserSearch } from '@/lib/api/hooks/useUsers';
-import { UserListItem, UserSearchParams } from '@/types/users';
-import { DelegateProfile } from './DelegatesProfile';
+import { useUserProfile, useUserSearch } from '@/lib/users/hooks';
+import { UserListItem, UserSearchParams } from '@/lib/users/types';
+import { DelegateProfile } from './(components)/delegate-profile';
 
 const DelegatesPage = () => {
   // State for search parameters

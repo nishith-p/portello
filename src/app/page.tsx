@@ -1,4 +1,4 @@
-import { AuthButtons } from '@/components/AuthButtons/AuthButtons';
+import { AuthButtons } from '@/components/auth-buttons/auth-buttons';
 
 export const metadata = {
   title: 'Discover | IC 2025',

@@ -30,8 +30,8 @@ import {
   Title,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useStoreItemSearch, useUpdateStoreItemStatus } from '@/lib/api/hooks/useStoreItems';
-import { StoreItem, StoreItemSearchParams } from '@/types/store';
+import { useStoreItemSearch, useUpdateStoreItemStatus } from '@/lib/store/items/hooks';
+import { StoreItem, StoreItemSearchParams } from '@/lib/store/types';
 
 export default function AdminStorePage(): JSX.Element {
   // State for search parameters

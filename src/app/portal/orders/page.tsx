@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { Alert, Container, Flex, Loader, Stack, Text, Title } from '@mantine/core';
-import { Order } from '@/types/store';
-import { OrderDetailsModal } from './components/OrderDetailsModal';
-import { OrdersTable } from './components/OrdersTable';
+import { OrderDetailsModal } from '@/app/portal/orders/(components)/order-details-modal';
+import { OrdersTable } from '@/app/portal/orders/(components)/orders-table';
+import { Order } from '@/lib/store/types';
 
 const OrdersPage = () => {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);

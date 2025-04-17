@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth/utils';
+import { BadRequestError, errorResponse, NotFoundError } from '@/lib/core/errors';
 import {
   createStoreItem,
   getActiveStoreItems,
@@ -6,10 +8,8 @@ import {
   searchStoreItems,
   updateStoreItem,
   updateStoreItemStatus,
-} from '@/lib/api/db/store-items';
-import { BadRequestError, errorResponse, NotFoundError } from '@/lib/api/errors';
-import { withAuth } from '@/lib/api/middleware/auth';
-import { StoreItemInput, StoreItemSearchParams } from '@/types/store';
+} from '@/lib/store/items/db';
+import { StoreItemInput, StoreItemSearchParams } from '@/lib/store/types';
 
 /**
  * GET /api/store/items
@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/store/items
- * - Admin only: Create a new store item
+ * - Admin only: Create a create store item
  */
 export async function POST(request: NextRequest) {
   return withAuth(

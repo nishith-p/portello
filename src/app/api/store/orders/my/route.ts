@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserOrders } from '@/lib/api/db/orders';
-import { errorResponse } from '@/lib/api/errors';
-import { withAuth } from '@/lib/api/middleware/auth';
+import { withAuth } from '@/lib/auth/utils';
+import { errorResponse } from '@/lib/core/errors';
+import { getUserOrders } from '@/lib/store/orders/db';
 
 /**
  * GET /api/store/orders/my

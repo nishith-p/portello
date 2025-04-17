@@ -2,8 +2,7 @@
 
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import { Container, LoadingOverlay } from '@mantine/core';
-import { AdminDashboard } from './components/AdminDashboard';
-import { UserDashboard } from './components/UserDashboard';
+import { AdminDashboard, UserDashboard } from '@/app/portal/(components)';
 
 const PortalHomePage = () => {
   const { permissions, isLoading: isAuthLoading } = useKindeBrowserClient();

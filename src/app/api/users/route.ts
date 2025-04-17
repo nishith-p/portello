@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getUserProfile, searchUsers } from '@/lib/api/db/users';
-import { errorResponse, NotFoundError } from '@/lib/api/errors';
-import { isAdmin, withAuth } from '@/lib/api/middleware/auth';
-import { UserSearchParams } from '@/types/users';
+import { isAdmin, withAuth } from '@/lib/auth/utils';
+import { errorResponse, NotFoundError } from '@/lib/core/errors';
+import { getUserProfile, searchUsers } from '@/lib/users/db';
+import { UserSearchParams } from '@/lib/users/types';
 
 /**
  * GET /api/users

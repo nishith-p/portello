@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getOrder, getOrderAudit, updateOrderStatus } from '@/lib/api/db/orders';
-import { AuthorizationError, errorResponse } from '@/lib/api/errors';
-import { isAdmin, withAuth } from '@/lib/api/middleware/auth';
-import { validateOrderStatus } from '@/lib/api/validators/orders';
-import { OrderStatus } from '@/types/store';
+import { isAdmin, withAuth } from '@/lib/auth/utils';
+import { AuthorizationError, errorResponse } from '@/lib/core/errors';
+import { getOrder, getOrderAudit, updateOrderStatus } from '@/lib/store/orders/db';
+import { validateOrderStatus } from '@/lib/store/orders/validators';
+import { OrderStatus } from '@/lib/store/types';
 
 /**
  * GET /api/store/orders/[id]

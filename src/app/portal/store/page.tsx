@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { Alert, Center, Container, Loader, SimpleGrid, Text, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { ProductCard, ProductModal } from '@/components/ui';
+import { ProductCard, ProductModal } from '@/app/portal/store/(components)';
 import { useCart } from '@/context';
-import { useStoreItems } from '@/lib/api/hooks/useStoreItems';
-import { StoreItem } from '@/types/store';
+import { hooks } from '@/lib/store/items/hooks';
+import { StoreItem } from '@/lib/store/types';
 
 export default function StorePage(): JSX.Element {
   const [selectedItem, setSelectedItem] = useState<StoreItem | null>(null);
@@ -15,7 +15,7 @@ export default function StorePage(): JSX.Element {
   const { addToCart } = useCart();
 
   // Fetch store items from the API
-  const { data, isLoading, error } = useStoreItems();
+  const { data, isLoading, error } = hooks();
 
   const handleViewProduct = (item: StoreItem): void => {
     setSelectedItem(item);
@@ -27,7 +27,7 @@ export default function StorePage(): JSX.Element {
       return;
     }
 
-    // Create a new CartItem
+    // Create a create CartItem
     const newItem = {
       id: selectedItem.id,
       item_code: selectedItem.item_code, // Add this line to include the item_code

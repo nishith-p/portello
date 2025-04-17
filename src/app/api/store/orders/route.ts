@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createOrder, getOrders } from '@/lib/api/db/orders';
-import { errorResponse, ValidationError } from '@/lib/api/errors';
-import { withAuth } from '@/lib/api/middleware/auth';
-import { validateOrder } from '@/lib/api/validators/orders';
-import { Order, OrderItem } from '@/types/store';
+import { withAuth } from '@/lib/auth/utils';
+import { errorResponse, ValidationError } from '@/lib/core/errors';
+import { createOrder, getOrders } from '@/lib/store/orders/db';
+import { validateOrder } from '@/lib/store/orders/validators';
+import { Order, OrderItem } from '@/lib/store/types';
 
 /**
  * GET /api/store/orders
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/store/orders
- * Create a new order
+ * Create a create order
  */
 export async function POST(request: NextRequest) {
   return withAuth(

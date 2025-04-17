@@ -2,7 +2,6 @@ import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 
 import { ReactNode } from 'react';
-import { ColorSchemeScript } from '@mantine/core';
 import { AppProvider } from './provider';
 
 export const metadata = {
@@ -16,9 +15,6 @@ export const metadata = {
 const RootLayout = async ({ children }: { children: ReactNode }) => {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <ColorSchemeScript />
-      </head>
       <body>
         <AppProvider>{children}</AppProvider>
       </body>

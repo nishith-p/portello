@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { isAdmin, errorResponse } from '@/app/api/utils/auth';
-import { getStoreItem, toggleItemActive } from '@/app/api/utils/db';
+import { errorResponse, isAdmin } from '@/app/api/(utils)/auth';
+import { getStoreItem, toggleItemActive } from '@/app/api/(utils)/db';
 
 // PATCH /api/store/items/[id]/toggle-active - Toggle item active status (admin only)
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     // Check if user is admin
     await isAdmin();
@@ -19,19 +16,13 @@ export async function PATCH(
 
     // Validate active parameter
     if (typeof active !== 'boolean') {
-      return NextResponse.json(
-        { error: 'Active status must be a boolean' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Active status must be a boolean' }, { status: 400 });
     }
 
     // Check if item exists
     const existingItem = await getStoreItem(itemCode);
     if (!existingItem) {
-      return NextResponse.json(
-        { error: 'Item not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Item not found' }, { status: 404 });
     }
 
     // Toggle active status
@@ -40,12 +31,9 @@ export async function PATCH(
     return NextResponse.json({
       success: true,
       item: updatedItem,
-      message: active ? 'Item activated' : 'Item deactivated'
+      message: active ? 'Item activated' : 'Item deactivated',
     });
   } catch (error) {
-    return errorResponse(
-      error as Error,
-      (error as Error).message === 'Unauthorized' ? 403 : 400
-    );
+    return errorResponse(error as Error, (error as Error).message === 'Unauthorized' ? 403 : 400);
   }
 }
