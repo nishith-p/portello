@@ -13,7 +13,7 @@ import {
 /**
  * Hook to fetch store items for public view (active items only)
  */
-export function hooks() {
+export function useStoreItems() {
   const query = useQuery<StoreItemListResponse>({
     queryKey: ['storeItems', 'active'],
     queryFn: async () => {
@@ -30,7 +30,7 @@ export function hooks() {
     if (query.error) {
       notifications.show({
         title: 'Error',
-        message: query.error.message || 'Failed to load store items',
+        message: query.error.message,
         color: 'red',
       });
     }
@@ -50,7 +50,7 @@ export function useStoreItem(id: string | null) {
         throw new Error('Item ID is required');
       }
 
-      const response = await fetch(`/api/store/items?id=${id}`);
+      const response = await fetch(`/api/store/items/${id}`);
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -66,7 +66,7 @@ export function useStoreItem(id: string | null) {
     if (query.error) {
       notifications.show({
         title: 'Error',
-        message: query.error.message || 'Failed to load store item',
+        message: query.error.message,
         color: 'red',
       });
     }
@@ -100,7 +100,7 @@ export function useStoreItemSearch(searchParams: StoreItemSearchParams) {
         params.set('offset', searchParams.offset.toString());
       }
 
-      const url = `/api/store/items?${params.toString()}`;
+      const url = `/api/store/items/search?${params.toString()}`;
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -117,7 +117,7 @@ export function useStoreItemSearch(searchParams: StoreItemSearchParams) {
     if (query.error) {
       notifications.show({
         title: 'Error',
-        message: query.error.message || 'Failed to load store items',
+        message: query.error.message,
         color: 'red',
       });
     }
@@ -127,7 +127,7 @@ export function useStoreItemSearch(searchParams: StoreItemSearchParams) {
 }
 
 /**
- * Hook to create a create store item (admin only)
+ * Hook to create a new store item (admin only)
  */
 export function useCreateStoreItem() {
   const queryClient = useQueryClient();
@@ -149,9 +149,8 @@ export function useCreateStoreItem() {
 
       return response.json();
     },
-    onSuccess: () => {
-      // Invalidate queries to refetch data
-      queryClient.invalidateQueries({ queryKey: ['storeItems'] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['storeItems'] });
 
       notifications.show({
         title: 'Success',
@@ -177,15 +176,12 @@ export function useUpdateStoreItem() {
 
   return useMutation<StoreItem, Error, { id: string; data: Partial<StoreItemInput> }>({
     mutationFn: async ({ id, data }) => {
-      const response = await fetch('/api/store/items', {
+      const response = await fetch(`/api/store/items/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          id,
-          ...data,
-        }),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
@@ -195,10 +191,9 @@ export function useUpdateStoreItem() {
 
       return response.json();
     },
-    onSuccess: (data) => {
-      // Invalidate queries to refetch data
-      queryClient.invalidateQueries({ queryKey: ['storeItems'] });
-      queryClient.invalidateQueries({ queryKey: ['storeItem', data.id] });
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({ queryKey: ['storeItems'] });
+      await queryClient.invalidateQueries({ queryKey: ['storeItem', data.id] });
 
       notifications.show({
         title: 'Success',
@@ -224,15 +219,12 @@ export function useUpdateStoreItemStatus() {
 
   return useMutation<StoreItem, Error, { id: string; active: boolean }>({
     mutationFn: async ({ id, active }) => {
-      const response = await fetch('/api/store/items', {
+      const response = await fetch(`/api/store/items/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          id,
-          active,
-        }),
+        body: JSON.stringify({ active }),
       });
 
       if (!response.ok) {
@@ -242,10 +234,9 @@ export function useUpdateStoreItemStatus() {
 
       return response.json();
     },
-    onSuccess: (data) => {
-      // Invalidate queries to refetch data
-      queryClient.invalidateQueries({ queryKey: ['storeItems'] });
-      queryClient.invalidateQueries({ queryKey: ['storeItem', data.id] });
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({ queryKey: ['storeItems'] });
+      await queryClient.invalidateQueries({ queryKey: ['storeItem', data.id] });
 
       notifications.show({
         title: 'Success',
@@ -257,6 +248,45 @@ export function useUpdateStoreItemStatus() {
       notifications.show({
         title: 'Error',
         message: error.message || 'Failed to update store item status',
+        color: 'red',
+      });
+    },
+  });
+}
+
+/**
+ * Hook to deactivate a store item (soft delete)
+ */
+export function useDeactivateStoreItem() {
+  const queryClient = useQueryClient();
+
+  return useMutation<StoreItem, Error, string>({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/store/items/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to deactivate store item');
+      }
+
+      return response.json();
+    },
+    onSuccess: async (data) => {
+      await queryClient.invalidateQueries({ queryKey: ['storeItems'] });
+      await queryClient.invalidateQueries({ queryKey: ['storeItem', data.id] });
+
+      notifications.show({
+        title: 'Success',
+        message: 'Store item deactivated successfully',
+        color: 'green',
+      });
+    },
+    onError: (error) => {
+      notifications.show({
+        title: 'Error',
+        message: error.message || 'Failed to deactivate store item',
         color: 'red',
       });
     },

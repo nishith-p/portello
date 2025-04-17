@@ -27,7 +27,7 @@ const navigationData: NavigationItem[] = [
     icon: IconHome,
   },
   {
-    link: '/portal/delegates',
+    link: '/portal/admin/delegates',
     label: 'Delegates',
     icon: IconUsers,
     adminOnly: true,

@@ -1,6 +1,6 @@
 import { NotFoundError } from '@/lib/core/errors';
 import { supabaseServer } from '@/lib/core/supabase';
-import { Order, OrderAuditInfo, OrderItem, OrderStatus } from '@/types/store';
+import { Order, OrderAuditInfo, OrderItem, OrderStatus } from '@/lib/store/types';
 
 /**
  * Get all orders

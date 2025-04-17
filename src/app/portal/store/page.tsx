@@ -6,7 +6,7 @@ import { Alert, Center, Container, Loader, SimpleGrid, Text, Title } from '@mant
 import { useDisclosure } from '@mantine/hooks';
 import { ProductCard, ProductModal } from '@/app/portal/store/(components)';
 import { useCart } from '@/context';
-import { hooks } from '@/lib/store/items/hooks';
+import { useStoreItems } from '@/lib/store/items/hooks';
 import { StoreItem } from '@/lib/store/types';
 
 export default function StorePage(): JSX.Element {
@@ -15,7 +15,7 @@ export default function StorePage(): JSX.Element {
   const { addToCart } = useCart();
 
   // Fetch store items from the API
-  const { data, isLoading, error } = hooks();
+  const { data, isLoading, error } = useStoreItems(); // Updated function call
 
   const handleViewProduct = (item: StoreItem): void => {
     setSelectedItem(item);
@@ -27,10 +27,10 @@ export default function StorePage(): JSX.Element {
       return;
     }
 
-    // Create a create CartItem
+    // Create a new CartItem
     const newItem = {
       id: selectedItem.id,
-      item_code: selectedItem.item_code, // Add this line to include the item_code
+      item_code: selectedItem.item_code,
       name: selectedItem.name,
       price: selectedItem.price,
       // Use the first image from the images array if available

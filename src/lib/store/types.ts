@@ -18,7 +18,9 @@ export interface StoreItem {
   active: boolean;
 }
 
-// For creating or updating a store item
+/**
+ * Input for creating or updating a store item
+ */
 export interface StoreItemInput {
   item_code: string;
   name: string;
@@ -27,10 +29,12 @@ export interface StoreItemInput {
   sizes: string[];
   colors: StoreItemColor[];
   description: string;
-  active?: boolean;
+  active: boolean;
 }
 
-// Request parameters for search and filtering
+/**
+ * Parameters for searching store items
+ */
 export interface StoreItemSearchParams {
   search?: string;
   active?: boolean;
@@ -38,7 +42,9 @@ export interface StoreItemSearchParams {
   offset?: number;
 }
 
-// API response structures
+/**
+ * Response for a list of store items
+ */
 export interface StoreItemListResponse {
   items: StoreItem[];
   total: number;
