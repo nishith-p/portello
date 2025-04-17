@@ -118,12 +118,22 @@ export function OrderDetailModal({
           <Stack gap="xs">
             {/* Order ID - full row */}
             <Box py={5} px="sm" bg="gray.0" style={{ borderRadius: 4 }}>
-              <TruncatedId id={order.id} label="Order ID" />
+              <Text size="sm">
+                <Text span fw={500}>
+                  Order ID:{' '}
+                </Text>
+                {order.id}
+              </Text>
             </Box>
 
             {/* User ID - full row */}
             <Box py={5} px="sm" bg="gray.0" style={{ borderRadius: 4 }}>
-              <TruncatedId id={order.user_id} label="User ID" />
+              <Text size="sm">
+                <Text span fw={500}>
+                  Full Name:{' '}
+                </Text>
+                {order.user_id}
+              </Text>
             </Box>
 
             {/* Date and Status */}

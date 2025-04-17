@@ -88,7 +88,7 @@ export default function StorePage(): JSX.Element {
       </Title>
 
       {hasItems ? (
-        <SimpleGrid cols={{ base: 2, sm: 3, md: 4, lg: 5 }} spacing="lg">
+        <SimpleGrid cols={{ base: 2, sm: 3, md: 4 }} spacing="lg">
           {items.map((item: StoreItem) => (
             <ProductCard key={item.id} item={item} onViewProductAction={handleViewProduct} />
           ))}

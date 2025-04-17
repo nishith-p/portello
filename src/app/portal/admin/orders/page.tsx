@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { IconAlertCircle, IconFilter, IconRefresh } from '@tabler/icons-react';
+import { IconAlertCircle, IconRefresh } from '@tabler/icons-react';
 import {
   Alert,
   Button,

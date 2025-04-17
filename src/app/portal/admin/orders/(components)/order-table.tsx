@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconEye } from '@tabler/icons-react';
 import { ActionIcon, Badge, Group, ScrollArea, Table, Text } from '@mantine/core';
-import { Order, OrderStatus, StatusColorMap } from '@/lib/store/types';
+import { Order, StatusColorMap } from '@/lib/store/types';
 
 interface OrderTableProps {
   orders: Order[];
@@ -48,7 +48,7 @@ export function OrderTable({ orders, onViewOrder }: OrderTableProps): JSX.Elemen
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Order ID</Table.Th>
-            <Table.Th>User ID</Table.Th>
+            <Table.Th>Full Name</Table.Th>
             <Table.Th>Date</Table.Th>
             <Table.Th>Status</Table.Th>
             <Table.Th>Items</Table.Th>
@@ -73,7 +73,7 @@ export function OrderTable({ orders, onViewOrder }: OrderTableProps): JSX.Elemen
                 onClick={() => onViewOrder(order)}
               >
                 <Table.Td>{order.id.substring(0, 8)}...</Table.Td>
-                <Table.Td>{order.user_id.substring(0, 10)}...</Table.Td>
+                <Table.Td>{order.user_id}</Table.Td>
                 <Table.Td>{formatDate(order.created_at)}</Table.Td>
                 <Table.Td>
                   <Badge color={statusColorMap[order.status]} variant="filled">

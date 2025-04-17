@@ -1,12 +1,28 @@
 import { IconPackage } from '@tabler/icons-react';
 import { Badge, Group, Table, Text } from '@mantine/core';
-import { formatDate, getStatusColor } from '@/app/portal/orders/(utils)/order-utils';
-import { Order } from '@/lib/store/types';
+import { Order, OrderStatus } from '@/lib/store/types';
+import { formatCurrency, formatDate } from '@/lib/utils';
 
 interface OrdersTableProps {
   orders: Order[];
   onOrderClick: (order: Order) => void;
 }
+
+// Status color mapping
+const statusColorMap: Record<OrderStatus, string> = {
+  pending: 'orange',
+  confirmed: 'blue',
+  paid: 'teal',
+  processing: 'indigo',
+  shipped: 'cyan',
+  delivered: 'green',
+  cancelled: 'red',
+};
+
+// Get appropriate color for order status
+const getStatusColor = (status: OrderStatus): string => {
+  return statusColorMap[status] || 'gray';
+};
 
 export const OrdersTable = ({ orders, onOrderClick }: OrdersTableProps): JSX.Element => (
   <Table striped highlightOnHover withTableBorder bg="white">
@@ -20,34 +36,48 @@ export const OrdersTable = ({ orders, onOrderClick }: OrdersTableProps): JSX.Ele
       </Table.Tr>
     </Table.Thead>
     <Table.Tbody>
-      {orders.map((order) => (
-        <Table.Tr key={order.id} onClick={() => onOrderClick(order)} style={{ cursor: 'pointer' }}>
-          <Table.Td>
-            <Text size="sm" fw={500}>
-              {order.id.substring(0, 8)}...
-            </Text>
-          </Table.Td>
-          <Table.Td>
-            <Text size="sm">{formatDate(order.created_at)}</Text>
-          </Table.Td>
-          <Table.Td>
-            <Badge color={getStatusColor(order.status)} variant="light">
-              {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-            </Badge>
-          </Table.Td>
-          <Table.Td>
-            <Group gap="xs">
-              <IconPackage size={16} />
-              <Text size="sm">{order.order_items.length}</Text>
-            </Group>
-          </Table.Td>
-          <Table.Td>
-            <Text size="sm" fw={500}>
-              ${order.total_amount.toFixed(2)}
+      {orders.length === 0 ? (
+        <Table.Tr>
+          <Table.Td colSpan={5}>
+            <Text ta="center" c="dimmed" py="md">
+              No orders found
             </Text>
           </Table.Td>
         </Table.Tr>
-      ))}
+      ) : (
+        orders.map((order) => (
+          <Table.Tr
+            key={order.id}
+            onClick={() => onOrderClick(order)}
+            style={{ cursor: 'pointer' }}
+          >
+            <Table.Td>
+              <Text size="sm" fw={500}>
+                {order.id.substring(0, 8)}...
+              </Text>
+            </Table.Td>
+            <Table.Td>
+              <Text size="sm">{formatDate(order.created_at)}</Text>
+            </Table.Td>
+            <Table.Td>
+              <Badge color={getStatusColor(order.status)} variant="light">
+                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+              </Badge>
+            </Table.Td>
+            <Table.Td>
+              <Group gap="xs">
+                <IconPackage size={16} />
+                <Text size="sm">{(order.items || order.order_items || []).length}</Text>
+              </Group>
+            </Table.Td>
+            <Table.Td>
+              <Text size="sm" fw={500}>
+                {formatCurrency(order.total_amount)}
+              </Text>
+            </Table.Td>
+          </Table.Tr>
+        ))
+      )}
     </Table.Tbody>
   </Table>
 );

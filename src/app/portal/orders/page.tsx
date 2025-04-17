@@ -1,32 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { IconAlertCircle } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
-import { Alert, Container, Flex, Loader, Stack, Text, Title } from '@mantine/core';
-import { OrderDetailsModal } from '@/app/portal/orders/(components)/order-details-modal';
-import { OrdersTable } from '@/app/portal/orders/(components)/orders-table';
+import { useRouter } from 'next/navigation';
+import { IconAlertCircle, IconShoppingBag } from '@tabler/icons-react';
+import { Alert, Button, Center, Container, Loader, Stack, Text, Title } from '@mantine/core';
+import { useOrderHooks } from '@/lib/store/orders/hooks';
 import { Order } from '@/lib/store/types';
+import { OrderDetailsModal } from './(components)/order-details-modal';
+import { OrdersTable } from './(components)/orders-table';
 
-const OrdersPage = () => {
+export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [modalOpened, setModalOpened] = useState<boolean>(false);
+  const router = useRouter();
 
-  // Fetch orders data
-  const {
-    data: orders,
-    isLoading,
-    error,
-  } = useQuery<Order[], Error>({
-    queryKey: ['orders'],
-    queryFn: async () => {
-      const response = await fetch('/api/store/orders/my');
-      if (!response.ok) {
-        throw new Error('Failed to fetch orders');
-      }
-      return response.json();
-    },
-  });
+  const { useUserOrders } = useOrderHooks();
+  const { data: orders, isLoading, error } = useUserOrders();
 
   // Handle row click
   const handleOrderClick = (order: Order): void => {
@@ -39,13 +28,18 @@ const OrdersPage = () => {
     setModalOpened(false);
   };
 
+  // Navigate to store
+  const handleGoToStore = (): void => {
+    router.push('/portal/store');
+  };
+
   // Render loading state
   if (isLoading) {
     return (
-      <Container fluid p="md" style={{ minHeight: '100vh' }}>
-        <Flex justify="center" align="center" h="50vh">
+      <Container fluid p="md">
+        <Center h="50vh">
           <Loader size="lg" />
-        </Flex>
+        </Center>
       </Container>
     );
   }
@@ -53,10 +47,40 @@ const OrdersPage = () => {
   // Render error state
   if (error) {
     return (
-      <Container fluid p="md" style={{ minHeight: '100vh' }}>
+      <Container fluid p="md">
         <Alert icon={<IconAlertCircle size={16} />} title="Error" color="red">
-          Failed to load orders. Please try again later.
+          {error instanceof Error
+            ? error.message
+            : 'Failed to load orders. Please try again later.'}
         </Alert>
+      </Container>
+    );
+  }
+
+  // Render empty state
+  if (!orders || orders.length === 0) {
+    return (
+      <Container fluid p="md">
+        <Stack gap="lg">
+          <Title order={2} c="gray.8" fz={{ base: 'h3', sm: 'h2' }}>
+            Orders
+          </Title>
+
+          <Center py="xl">
+            <Stack align="center" gap="md" style={{ maxWidth: 400 }}>
+              <IconShoppingBag size={48} color="var(--mantine-color-gray-5)" />
+              <Text fw={600} fz="lg" ta="center">
+                No orders found
+              </Text>
+              <Text c="dimmed" ta="center">
+                You haven't placed any orders yet. Visit our store to find something you'll love.
+              </Text>
+              <Button onClick={handleGoToStore} mt="md">
+                Browse Store
+              </Button>
+            </Stack>
+          </Center>
+        </Stack>
       </Container>
     );
   }
@@ -67,22 +91,15 @@ const OrdersPage = () => {
         <Title order={2} c="gray.8" fz={{ base: 'h3', sm: 'h2' }}>
           Orders
         </Title>
+
         <Text c="dimmed" fz={{ base: 'sm', sm: 'md' }}>
           Show the Order ID to the DX Team to pay and collect your order.
         </Text>
 
-        {orders && orders.length > 0 ? (
-          <OrdersTable orders={orders} onOrderClick={handleOrderClick} />
-        ) : (
-          <Alert title="No orders found" color="gray">
-            You haven't placed any orders yet. Visit our store to shop.
-          </Alert>
-        )}
+        <OrdersTable orders={orders} onOrderClick={handleOrderClick} />
       </Stack>
 
       <OrderDetailsModal order={selectedOrder} opened={modalOpened} onClose={closeModal} />
     </Container>
   );
-};
-
-export default OrdersPage;
+}

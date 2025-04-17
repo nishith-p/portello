@@ -2,21 +2,43 @@ import { NotFoundError } from '@/lib/core/errors';
 import { supabaseServer } from '@/lib/core/supabase';
 import { CreateOrderInput, Order, OrderAuditInfo, OrderItem, OrderStatus } from '@/lib/store/types';
 
-// Define a type for the raw DB response to properly handle the nested order_items
+// Define types for the raw DB responses to properly handle the nested order_items
 type OrderWithNestedItems = Omit<Order, 'items'> & {
   order_items: OrderItem[];
 };
 
+// Define the user information returned from the database
+interface UserInfo {
+  first_name: string | null;
+  last_name: string | null;
+}
+
+// Define the full database response structure
+interface OrderDatabaseResponse extends OrderWithNestedItems {
+  users: UserInfo | null;
+}
+
 /**
- * Get all orders
+ * Get all orders with usernames instead of IDs
  */
 export async function getOrders(): Promise<Order[]> {
   const { data, error } = await supabaseServer
     .from('orders')
     .select(
       `
-      *,
-      order_items(*)
+      id,
+      user_id,
+      status,
+      total_amount,
+      created_at,
+      updated_at,
+      updated_by,
+      last_status_change,
+      order_items(*),
+      users:user_id (
+        first_name,
+        last_name
+      )
     `
     )
     .order('created_at', { ascending: false });
@@ -25,23 +47,42 @@ export async function getOrders(): Promise<Order[]> {
     throw error;
   }
 
-  // Transform the response to match the Order interface
-  return (data as OrderWithNestedItems[]).map((order) => ({
-    ...order,
-    items: order.order_items || [],
-  }));
+  return (data as unknown as OrderDatabaseResponse[]).map((order) => {
+    const userName = order.users
+      ? `${order.users.first_name || ''} ${order.users.last_name || ''}`.trim()
+      : order.user_id;
+
+    const { users, order_items, ...orderData } = order;
+
+    return {
+      ...orderData,
+      user_id: userName,
+      items: order_items || [],
+    };
+  });
 }
 
 /**
- * Get orders for a specific user
+ * Get orders for a specific user with user names
  */
 export async function getUserOrders(userId: string): Promise<Order[]> {
   const { data, error } = await supabaseServer
     .from('orders')
     .select(
       `
-      *,
-      order_items(*)
+      id,
+      user_id,
+      status,
+      total_amount,
+      created_at,
+      updated_at,
+      updated_by,
+      last_status_change,
+      order_items(*),
+      users:user_id (
+        first_name,
+        last_name
+      )
     `
     )
     .eq('user_id', userId)
@@ -51,23 +92,42 @@ export async function getUserOrders(userId: string): Promise<Order[]> {
     throw error;
   }
 
-  // Transform the response to match the Order interface
-  return (data as OrderWithNestedItems[]).map((order) => ({
-    ...order,
-    items: order.order_items || [],
-  }));
+  return (data as unknown as OrderDatabaseResponse[]).map((order) => {
+    const userName = order.users
+      ? `${order.users.first_name || ''} ${order.users.last_name || ''}`.trim()
+      : order.user_id;
+
+    const { users, order_items, ...orderData } = order;
+
+    return {
+      ...orderData,
+      user_id: userName,
+      items: order_items || [],
+    };
+  });
 }
 
 /**
- * Get a specific order by ID
+ * Get a specific order by ID with user name
  */
 export async function getOrder(orderId: string): Promise<Order> {
   const { data, error } = await supabaseServer
     .from('orders')
     .select(
       `
-      *,
-      order_items(*)
+      id,
+      user_id,
+      status,
+      total_amount,
+      created_at,
+      updated_at,
+      updated_by,
+      last_status_change,
+      order_items(*),
+      users:user_id (
+        first_name,
+        last_name
+      )
     `
     )
     .eq('id', orderId)
@@ -80,10 +140,18 @@ export async function getOrder(orderId: string): Promise<Order> {
     throw error;
   }
 
-  // Transform the response to match the Order interface
+  const typedData = data as unknown as OrderDatabaseResponse;
+
+  const userName = typedData.users
+    ? `${typedData.users.first_name || ''} ${typedData.users.last_name || ''}`.trim()
+    : typedData.user_id;
+
+  const { users, order_items, ...orderData } = typedData;
+
   return {
-    ...(data as OrderWithNestedItems),
-    items: data.order_items || [],
+    ...orderData,
+    user_id: userName,
+    items: order_items || [],
   };
 }
 
@@ -94,12 +162,11 @@ export async function createOrder(orderInput: CreateOrderInput): Promise<Order> 
   // Prepare order data for insertion
   const orderData = {
     user_id: orderInput.user_id,
-    status: orderInput.status || 'pending',
+    status: orderInput.status || ('pending' as OrderStatus),
     total_amount: orderInput.total_amount,
     updated_by: orderInput.user_id, // Initial update is by the creator
   };
 
-  // Insert the order
   const { data: newOrder, error: orderError } = await supabaseServer
     .from('orders')
     .insert(orderData)
@@ -113,6 +180,13 @@ export async function createOrder(orderInput: CreateOrderInput): Promise<Order> 
   // Fetch item details for the order items
   const itemCodes = orderInput.items.map((item) => item.item_code);
 
+  // Define StoreItemInfo interface
+  interface StoreItemInfo {
+    item_code: string;
+    name: string;
+    images: string[];
+  }
+
   // Get store item data to include name and image
   const { data: storeItems, error: storeItemsError } = await supabaseServer
     .from('store_items')
@@ -121,12 +195,6 @@ export async function createOrder(orderInput: CreateOrderInput): Promise<Order> 
 
   if (storeItemsError) {
     throw storeItemsError;
-  }
-
-  interface StoreItemInfo {
-    item_code: string;
-    name: string;
-    images: string[];
   }
 
   // Create a lookup map for store items
@@ -170,10 +238,10 @@ export async function createOrder(orderInput: CreateOrderInput): Promise<Order> 
   }
 
   // Return the complete order with items
+  const typedOrder = newOrder as Omit<Order, 'items'>;
   return {
-    ...newOrder,
+    ...typedOrder,
     items: insertedItems as OrderItem[],
-    order_items: insertedItems as OrderItem[],
   };
 }
 
@@ -218,7 +286,6 @@ export async function updateOrderStatus(
   return {
     ...updatedOrder,
     items: orderItems as OrderItem[],
-    order_items: orderItems as OrderItem[],
   };
 }
 

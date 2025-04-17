@@ -1,209 +1,233 @@
-import { useState } from 'react';
-import { IconPackage } from '@tabler/icons-react';
+import React from 'react';
+import Image from 'next/image';
 import {
   Badge,
   Box,
+  Button,
+  Card,
   Divider,
   Flex,
+  Grid,
   Group,
-  Image,
   Modal,
-  ScrollArea,
   Stack,
   Text,
+  Tooltip,
 } from '@mantine/core';
-import {
-  formatCurrency,
-  formatDate,
-  getStatusColor,
-} from '@/app/portal/orders/(utils)/order-utils';
-import { Order, OrderItem } from '@/lib/store/types';
+import { Order, OrderItem, OrderStatus } from '@/lib/store/types';
+import { formatCurrency, formatDate } from '@/lib/utils';
 
 interface OrderDetailsModalProps {
-  order: Order | null;
   opened: boolean;
   onClose: () => void;
+  order: Order | null;
 }
 
-export const OrderDetailsModal = ({
-  order,
-  opened,
-  onClose,
-}: OrderDetailsModalProps): JSX.Element => {
-  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+// Status color mapping
+const statusColorMap: Record<OrderStatus, string> = {
+  pending: 'orange',
+  confirmed: 'blue',
+  paid: 'teal',
+  processing: 'indigo',
+  shipped: 'cyan',
+  delivered: 'green',
+  cancelled: 'red',
+};
 
-  const handleImageError = (id: string) => {
-    setImageErrors((prev) => ({ ...prev, [id]: true }));
-  };
-
+export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalProps): JSX.Element {
   if (!order) {
-    return (
-      <Modal opened={opened} onClose={onClose} title="Order Details" centered>
-        <Text>No order data available</Text>
-      </Modal>
-    );
+    return <></>;
   }
 
-  const orderItems = order.order_items;
+  const orderItems: OrderItem[] = order.items || order.order_items || [];
 
   return (
     <Modal
       opened={opened}
       onClose={onClose}
       title={
-        <Text fw={600} size="lg">
+        <Text fw={700} size="lg">
           Order Details
         </Text>
       }
       size="lg"
       centered
     >
-      <Stack gap="lg">
-        <Group justify="space-between">
-          <Stack gap={4}>
-            <Text size="sm" c="dimmed">
-              Order ID
-            </Text>
-            <Text fw={500}>{order.id}</Text>
-          </Stack>
-          <Badge color={getStatusColor(order.status)} size="lg">
-            {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-          </Badge>
-        </Group>
+      <Stack gap="md">
+        <Card withBorder padding="md">
+          <Text fw={600} mb="md">
+            Order Information
+          </Text>
 
-        <Box>
-          <Group justify="space-between" mb="xs">
-            <Text fw={500}>Order Date</Text>
-            <Text>{formatDate(order.created_at)}</Text>
-          </Group>
-          {order.last_status_change && (
-            <Group justify="space-between">
-              <Text fw={500}>Last Updated</Text>
-              <Text>{formatDate(order.last_status_change)}</Text>
-            </Group>
-          )}
-        </Box>
-
-        <Divider />
-
-        <Text fw={600} size="md">
-          Items
-        </Text>
-
-        <ScrollArea.Autosize mah={300}>
-          <Stack gap="md">
-            {orderItems.map((item: OrderItem, index: number) => {
-              const key = item.id || `temp-${index}`;
-              const showFallback = imageErrors[key] || !item.image;
-
-              return (
-                <Box
-                  key={key}
-                  p="sm"
-                  style={{
-                    borderRadius: 'var(--mantine-radius-sm)',
-                    backgroundColor: 'white',
-                    border: '1px solid var(--mantine-color-gray-2)',
+          <Stack gap="xs">
+            {/* Order ID with copy tooltip */}
+            <Box py={5} px="sm" bg="gray.0" style={{ borderRadius: 4 }}>
+              <Tooltip label="Click to copy" position="right">
+                <Text
+                  size="sm"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    navigator.clipboard.writeText(order.id);
                   }}
                 >
-                  <Flex align="center" justify="center" gap="md">
-                    {showFallback ? (
-                      <Box
-                        w={60}
-                        h={60}
-                        bg="gray.1"
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          borderRadius: 'var(--mantine-radius-sm)',
-                        }}
-                      >
-                        <IconPackage size={24} color="gray" />
-                      </Box>
-                    ) : (
-                      <Box
-                        w={60}
-                        h={60}
-                        style={{
-                          borderRadius: 'var(--mantine-radius-sm)',
-                          overflow: 'hidden',
-                          position: 'relative',
-                        }}
-                      >
-                        <Image
-                          src={item.image}
+                  <Text span fw={500}>
+                    Order ID:{' '}
+                  </Text>
+                  {order.id}
+                </Text>
+              </Tooltip>
+            </Box>
+
+            {/* Date and Status */}
+            <Grid gutter="xs">
+              <Grid.Col span={6}>
+                <Box py={5} px="sm">
+                  <Text size="sm">
+                    <Text span fw={500}>
+                      Date:{' '}
+                    </Text>
+                    {formatDate(order.created_at)}
+                  </Text>
+                </Box>
+              </Grid.Col>
+
+              <Grid.Col span={6}>
+                <Box py={5} px="sm">
+                  <Group gap="xs">
+                    <Text size="sm" fw={500}>
+                      Status:
+                    </Text>
+                    <Badge color={statusColorMap[order.status]} variant="light">
+                      {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                    </Badge>
+                  </Group>
+                </Box>
+              </Grid.Col>
+            </Grid>
+
+            {/* Total Amount */}
+            <Box py={5} px="sm" bg="gray.0" style={{ borderRadius: 4 }}>
+              <Group justify="space-between">
+                <Text size="sm" fw={500}>
+                  Total Amount:
+                </Text>
+                <Text fw={700} size="md">
+                  {formatCurrency(order.total_amount)}
+                </Text>
+              </Group>
+            </Box>
+          </Stack>
+        </Card>
+
+        {/* Order Items */}
+        <Card withBorder padding="md">
+          <Text fw={600} mb="md">
+            Order Items ({orderItems.length})
+          </Text>
+
+          {orderItems.length === 0 ? (
+            <Text c="dimmed">No items in this order</Text>
+          ) : (
+            <Stack gap="md">
+              {orderItems.map((item) => (
+                <Card key={item.id} withBorder>
+                  <Grid gutter="md">
+                    <Grid.Col span={{ base: 3, sm: 2 }}>
+                      {item.image ? (
+                        <Box
+                          style={{ width: 60, height: 60, position: 'relative', margin: '0 auto' }}
+                        >
+                          <Image
+                            src={item.image}
+                            alt={item.name || 'Product image'}
+                            fill
+                            style={{ objectFit: 'cover', borderRadius: 4 }}
+                          />
+                        </Box>
+                      ) : (
+                        <Box
                           style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
+                            width: 60,
+                            height: 60,
+                            backgroundColor: '#f0f0f0',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: 4,
+                            margin: '0 auto',
                           }}
-                          onError={() => handleImageError(key)}
-                          alt={item.name || 'Product'}
-                        />
-                      </Box>
-                    )}
+                        >
+                          <Text size="xs" c="dimmed">
+                            No image
+                          </Text>
+                        </Box>
+                      )}
+                    </Grid.Col>
 
-                    <Box style={{ flex: 1 }}>
-                      <Group justify="space-between" mb={4}>
-                        <Text fw={500}>{item.name || `Product ${index + 1}`}</Text>
-                        <Text fw={500}>{formatCurrency(item.price * item.quantity)}</Text>
-                      </Group>
-
-                      <Text size="sm" c="dimmed" mb={4}>
-                        {formatCurrency(item.price)} × {item.quantity}
+                    <Grid.Col span={{ base: 9, sm: 6 }}>
+                      <Text fw={500}>{item.name || `Product ${item.item_code}`}</Text>
+                      <Text size="sm" c="dimmed">
+                        Code: {item.item_code}
                       </Text>
-
-                      <Group gap="xs">
+                      <Group mt={5} gap="xs">
                         {item.size && (
-                          <Badge size="sm" variant="outline">
+                          <Badge variant="outline" size="sm">
                             Size: {item.size}
                           </Badge>
                         )}
                         {item.color && (
                           <Badge
-                            size="sm"
                             variant="outline"
+                            size="sm"
                             leftSection={
-                              item.color_hex ? (
+                              item.color_hex && (
                                 <div
                                   style={{
                                     width: 10,
                                     height: 10,
                                     borderRadius: '50%',
                                     backgroundColor: item.color_hex,
-                                    border: '1px solid rgba(0, 0, 0, 0.1)',
                                   }}
                                 />
-                              ) : null
+                              )
                             }
                           >
-                            {item.color}
+                            Color: {item.color}
                           </Badge>
                         )}
                       </Group>
-                    </Box>
-                  </Flex>
-                </Box>
-              );
-            })}
-          </Stack>
-        </ScrollArea.Autosize>
+                    </Grid.Col>
 
-        <Divider />
+                    <Grid.Col span={{ base: 12, sm: 4 }}>
+                      <Flex
+                        justify={{ base: 'flex-start', sm: 'flex-end' }}
+                        gap="md"
+                        direction={{ base: 'row', sm: 'column' }}
+                      >
+                        <Text>
+                          {formatCurrency(item.price)} × {item.quantity}
+                        </Text>
+                        <Text fw={700}>{formatCurrency(item.price * item.quantity)}</Text>
+                      </Flex>
+                    </Grid.Col>
+                  </Grid>
+                </Card>
+              ))}
+            </Stack>
+          )}
 
-        <Group justify="space-between">
-          <Text fw={600} size="lg">
-            Total
-          </Text>
-          <Text fw={600} size="lg">
-            {formatCurrency(order.total_amount)}
-          </Text>
-        </Group>
+          <Divider my="lg" label="Summary" labelPosition="center" />
+
+          <Card p="md" withBorder bg="gray.0">
+            <Group justify="space-between">
+              <Text fw={500}>Order Total</Text>
+              <Text fw={700} size="lg">
+                {formatCurrency(order.total_amount)}
+              </Text>
+            </Group>
+          </Card>
+        </Card>
       </Stack>
     </Modal>
   );
-};
+}

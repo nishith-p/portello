@@ -11,15 +11,22 @@ interface ProductCardProps {
   onViewProductAction: (item: StoreItem) => void;
 }
 
-export function ProductCard({ item, onViewProductAction }: ProductCardProps) {
-  const [imageError, setImageError] = useState(false);
+export function ProductCard({ item, onViewProductAction }: ProductCardProps): JSX.Element {
+  const [imageError, setImageError] = useState<boolean>(false);
 
-  const handleImageError = () => {
+  const handleImageError = (): void => {
     setImageError(true);
   };
 
   return (
-    <Card padding={0} radius="md" withBorder className={classes.card}>
+    <Card
+      padding={0}
+      radius="md"
+      withBorder
+      className={classes.card}
+      onClick={() => onViewProductAction(item)}
+      style={{ cursor: 'pointer' }}
+    >
       <div className={classes.imageContainer}>
         {item.images.length > 0 && !imageError ? (
           <img
@@ -50,18 +57,6 @@ export function ProductCard({ item, onViewProductAction }: ProductCardProps) {
         <Text size="sm" c="dimmed" mb={8}>
           {item.item_code}
         </Text>
-
-        {/* View Button (Eye Icon) */}
-        <ActionIcon
-          className={classes.viewButton}
-          variant="subtle"
-          color="gray"
-          size="lg"
-          radius="xl"
-          onClick={() => onViewProductAction(item)}
-        >
-          <IconEye size={20} />
-        </ActionIcon>
       </Box>
     </Card>
   );
