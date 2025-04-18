@@ -1,16 +1,4 @@
 /**
- * Store and Order Types
- *
- * This file contains all the type definitions for the store and order system.
- * It is organized in logical sections: basic store items, order types,
- * cart types, and pack-related types.
- */
-
-// ----------------------------------------
-// Basic Store Item Types
-// ----------------------------------------
-
-/**
  * Store item color representation
  */
 export interface StoreItemColor {
@@ -66,10 +54,6 @@ export interface StoreItemListResponse {
   items: StoreItem[];
   total: number;
 }
-
-// ----------------------------------------
-// Order Types
-// ----------------------------------------
 
 /**
  * Order status options
@@ -127,14 +111,7 @@ export interface Order {
   updated_at?: string;
   updated_by?: string | null;
   last_status_change?: string;
-  items?: OrderItem[]; // Using 'items' as the primary property name
-}
-
-/**
- * Extended Order interface with support for pack items
- */
-export interface OrderExtended extends Omit<Order, 'items'> {
-  items: (OrderItem | OrderItemExtended)[];
+  items?: OrderItem[];
 }
 
 /**
@@ -167,16 +144,6 @@ export interface CreateOrderPackItem {
 }
 
 /**
- * Input for creating a basic order (no packs)
- */
-export interface CreateOrderInput {
-  user_id: string;
-  status?: OrderStatus;
-  total_amount: number;
-  items: CreateOrderItemInput[];
-}
-
-/**
  * Input for creating an order with support for pack items
  */
 export interface CreateOrderInputExtended {
@@ -187,21 +154,9 @@ export interface CreateOrderInputExtended {
 }
 
 /**
- * Input for updating an order's status
- */
-export interface UpdateOrderStatusInput {
-  orderId: string;
-  status: OrderStatus;
-}
-
-/**
  * Status color mapping type
  */
 export type StatusColorMap = Record<OrderStatus, string>;
-
-// ----------------------------------------
-// Cart Types
-// ----------------------------------------
 
 /**
  * Cart item interface
@@ -246,10 +201,6 @@ export interface CartPackItem {
   pack_items: CartPackItemDetail[];
 }
 
-// ----------------------------------------
-// Pack Types
-// ----------------------------------------
-
 /**
  * Store pack model
  */
@@ -276,7 +227,6 @@ export interface StorePackItem {
   quantity: number;
   created_at?: string;
   updated_at?: string;
-  // Include item details when needed
   item?: StoreItem;
 }
 
@@ -323,19 +273,4 @@ export interface StorePackSearchParams {
 export interface StorePackListResponse {
   packs: StorePack[];
   total: number;
-}
-
-// ----------------------------------------
-// Utility Types
-// ----------------------------------------
-
-/**
- * Standardized API error response
- */
-export interface ErrorResponse {
-  error: {
-    message: string;
-    code: string;
-    fields?: Record<string, string>;
-  };
 }

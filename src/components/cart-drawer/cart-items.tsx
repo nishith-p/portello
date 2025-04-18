@@ -3,7 +3,7 @@
 import { IconMinus, IconPlus, IconTrash } from '@tabler/icons-react';
 import { ActionIcon, Badge, Box, Collapse, Flex, Group, Image, Stack, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { useCart } from '@/context';
+import { useCart } from '@/context/cart';
 import { CartPackItem } from '@/lib/store/types';
 import { formatCurrency } from '@/lib/utils';
 

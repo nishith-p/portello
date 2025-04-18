@@ -88,7 +88,7 @@ export function OrderDetailModal({
     return <></>;
   }
 
-  const orderItems: OrderItem[] = order.items || order.order_items || [];
+  const orderItems: OrderItem[] = order.items || [];
 
   const handleUpdateStatus = () => {
     if (newStatus && order) {

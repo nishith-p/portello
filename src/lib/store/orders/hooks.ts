@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
-import { isPackItem } from '@/context';
+import { isPackItem } from '@/context/cart';
 import {
   CartItem,
   CartPackItem,

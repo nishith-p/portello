@@ -29,7 +29,7 @@ export function OrderSearch({
     <Group mb="md" justify="space-between">
       <Group>
         <TextInput
-          placeholder="Search by Order ID or User ID"
+          placeholder="Search by Order ID or Name"
           leftSection={<IconSearch size={16} />}
           value={searchInput}
           onChange={(e) => setSearchInput(e.currentTarget.value)}

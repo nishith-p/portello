@@ -58,13 +58,3 @@ export function formatRelativeTime(dateString?: string): string {
 
   return formatDate(dateString);
 }
-
-/**
- * Truncate text to a specific length
- */
-export function truncateText(text: string, maxLength: number): string {
-  if (text.length <= maxLength) {
-    return text;
-  }
-  return `${text.substring(0, maxLength)}...`;
-}

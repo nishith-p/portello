@@ -17,7 +17,7 @@ import {
   Text,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { isPackItem, useCart } from '@/context';
+import { isPackItem, useCart } from '@/context/cart';
 import { useOrderHooks } from '@/lib/store/orders/hooks';
 import { formatCurrency } from '@/lib/utils';
 import { CartPackItemComponent } from './cart-items';

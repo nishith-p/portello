@@ -1,7 +1,7 @@
 import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/components';
-import { Burger, Button, Flex, Image, ActionIcon, Badge, Group } from '@mantine/core';
 import { IconShoppingCart } from '@tabler/icons-react';
-import { useCart } from '@/context';
+import { ActionIcon, Badge, Burger, Button, Flex, Group, Image } from '@mantine/core';
+import { useCart } from '@/context/cart';
 
 type PortalHeaderProps = {
   opened: boolean;
@@ -35,25 +35,13 @@ export const PortalHeader = ({ opened, toggle }: PortalHeaderProps): JSX.Element
           >
             <IconShoppingCart size={20} />
             {totalItems > 0 && (
-              <Badge
-                color="blue"
-                size="xs"
-                radius="xl"
-                pos="absolute"
-                top={-5}
-                right={-5}
-              >
+              <Badge color="blue" size="xs" radius="xl" pos="absolute" top={-5} right={-5}>
                 {totalItems}
               </Badge>
             )}
           </ActionIcon>
         </Flex>
-        <Button
-          variant="outline"
-          size="xs"
-          component={LogoutLink}
-          onClick={handleLogout}
-        >
+        <Button variant="outline" size="xs" component={LogoutLink} onClick={handleLogout}>
           Logout
         </Button>
       </Group>

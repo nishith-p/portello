@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
-import { CartProvider } from '@/context/cart-context';
+import { CartProvider } from '@/context/cart';
 import { queryConfig } from '@/lib/core/react-query';
 import { theme } from '@/theme';
 

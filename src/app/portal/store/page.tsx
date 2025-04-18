@@ -18,7 +18,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { ProductCard, ProductModal } from '@/app/portal/store/(components)';
 import { PackCard } from '@/app/portal/store/(components)/pack-card';
 import { PackModal } from '@/app/portal/store/(components)/pack-modal';
-import { useCart } from '@/context';
+import { useCart } from '@/context/cart';
 import { useStoreItems } from '@/lib/store/items/hooks';
 import { useStorePacks } from '@/lib/store/packs/hooks';
 import { StoreItem, StorePack } from '@/lib/store/types';

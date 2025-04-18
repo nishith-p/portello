@@ -23,7 +23,7 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { createCartPackItem, updateCartPackItemDetail } from '@/components/cart-drawer/utils';
-import { useCart } from '@/context';
+import { useCart } from '@/context/cart';
 import { StorePack } from '@/lib/store/types';
 import classes from './pack-modal.module.css';
 

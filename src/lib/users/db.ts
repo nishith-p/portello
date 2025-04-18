@@ -36,7 +36,6 @@ export async function getUserDocuments(kindeId: string): Promise<UserDocuments |
     .single();
 
   if (error && error.code !== 'PGRST116') {
-    // PGRST116 is not found
     console.error('Error fetching user documents:', error);
     return null;
   }
@@ -111,7 +110,6 @@ export async function searchUsers(
     throw error;
   }
 
-  // Format the response to match the UserListItem interface
   const users = data.map((user) => ({
     id: user.id,
     kinde_id: user.kinde_id,

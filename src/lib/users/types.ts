@@ -1,4 +1,3 @@
-// Define enum types that match your Postgres types
 export enum RegionType {
   APAC = 'Asia Pacific',
   MENA = 'Middle East & Africa',
@@ -21,7 +20,7 @@ export enum TShirtSizeType {
   L = 'L',
   XL = 'XL',
   XXL = 'XXL',
-  XXXL = 'XXXL'
+  XXXL = 'XXXL',
 }
 
 // User data from the users table

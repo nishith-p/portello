@@ -3,7 +3,6 @@ import Image from 'next/image';
 import {
   Badge,
   Box,
-  Button,
   Card,
   Divider,
   Flex,
@@ -39,7 +38,7 @@ export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalP
     return <></>;
   }
 
-  const orderItems: OrderItem[] = order.items || order.order_items || [];
+  const orderItems: OrderItem[] = order.items || [];
 
   return (
     <Modal

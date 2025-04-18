@@ -97,7 +97,7 @@ export default function AdminStorePage(): JSX.Element {
       <Stack gap="lg">
         <Group justify="space-between">
           <Title order={2} c="gray.8">
-            Store Management
+            Item Management
           </Title>
           <Button
             component={Link}

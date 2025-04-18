@@ -1,15 +1,6 @@
 import { BadRequestError, NotFoundError, ValidationError } from '@/lib/core/errors';
 import { supabaseServer } from '@/lib/core/supabase';
-import {
-  StoreItem,
-  StoreItemInput,
-  StoreItemSearchParams,
-  StorePack,
-  StorePackInput,
-  StorePackItemInput,
-  StorePackSearchParams,
-  StorePackWithItemsInput,
-} from '@/lib/store/types';
+import { StoreItem, StoreItemInput, StoreItemSearchParams } from '@/lib/store/types';
 
 /**
  * Get a store item by ID
@@ -109,7 +100,7 @@ export async function searchStoreItems(
 }
 
 /**
- * Create a create store item
+ * Create store item
  */
 export async function createStoreItem(itemData: StoreItemInput): Promise<StoreItem> {
   // Validate required fields

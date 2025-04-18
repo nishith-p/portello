@@ -38,7 +38,7 @@ const navigationData: NavigationItem[] = [
     icon: IconShirt,
     children: [
       { link: '/portal/store', label: 'View Store' },
-      { link: '/portal/admin/store', label: 'Manage Store' },
+      { link: '/portal/admin/store', label: 'Manage Items' },
       { link: '/portal/admin/store/packs', label: 'Manage Packs' },
     ],
   },

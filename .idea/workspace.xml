@@ -4,19 +4,32 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="Working orders (user)">
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="Working pack orders">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/store/orders/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/orders/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/admin-dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/(components)/admin-dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/portal-header/portal-header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/(components)/portal-header/portal-header.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/portal-sidebar/portal-sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/(components)/portal-sidebar/portal-sidebar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/product-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/(components)/product-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-detail-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-detail-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-search.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/(components)/order-details-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/orders/(components)/order-details-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-modal.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/portal/store/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/provider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/provider.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/cart-drawer/cart-drawer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/cart-drawer/cart-drawer.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/context/cart-context.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/context/cart-context.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/cart-drawer/cart-items.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/cart-drawer/cart-items.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/context/cart-context.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/context/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/auth/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/auth/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/auth/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/auth/utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/core/react-query.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/core/react-query.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/core/supabase.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/core/supabase.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/store/items/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/items/db.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/store/orders/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/orders/db.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/store/orders/hooks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/orders/hooks.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/store/orders/validators.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/orders/validators.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/store/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/users/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/users/db.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/users/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/users/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/utils.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,7 +108,7 @@
       <option name="presentableId" value="Default" />
       <updated>1743790678452</updated>
       <workItem from="1743790679486" duration="26388000" />
-      <workItem from="1744462042462" duration="45990000" />
+      <workItem from="1744462042462" duration="48713000" />
     </task>
     <task id="LOCAL-00001" summary="Layout fixes, working orders.">
       <option name="closed" value="true" />
@@ -137,7 +150,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744902519733</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Working pack orders">
+      <option name="closed" value="true" />
+      <created>1744956457043</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1744956457043</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -152,6 +173,7 @@
     <MESSAGE value="Working store management" />
     <MESSAGE value="Working order management (admin)" />
     <MESSAGE value="Working orders (user)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Working orders (user)" />
+    <MESSAGE value="Working pack orders" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working pack orders" />
   </component>
 </project>
