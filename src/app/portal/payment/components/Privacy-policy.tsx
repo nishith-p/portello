@@ -1,7 +1,7 @@
 'use client';
 
 import { Anchor, Box, Container, List, Paper, Stack, Table, Text, Title } from '@mantine/core';
-import styles from './PrivacyPolicy.module.css';
+import styles from './Privacy-policy.module.css';
 
 export default function PrivacyPolicy() {
   return (
