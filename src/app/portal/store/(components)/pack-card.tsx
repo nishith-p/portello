@@ -11,7 +11,7 @@ interface PackCardProps {
   onViewPackAction: (pack: StorePack) => void;
 }
 
-export function PackCard({ pack, onViewPackAction }: PackCardProps): JSX.Element {
+export function PackCard({ pack, onViewPackAction }: PackCardProps) {
   const [imageError, setImageError] = useState<boolean>(false);
 
   const handleImageError = (): void => {

@@ -1,6 +1,6 @@
 import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/components';
 import { IconShoppingCart } from '@tabler/icons-react';
-import { ActionIcon, Badge, Burger, Button, Flex, Group, Image } from '@mantine/core';
+import { ActionIcon, Badge, Box, Burger, Button, Flex, Group, Image } from '@mantine/core';
 import { useCart } from '@/context/cart';
 
 type PortalHeaderProps = {
@@ -8,7 +8,7 @@ type PortalHeaderProps = {
   toggle: () => void;
 };
 
-export const PortalHeader = ({ opened, toggle }: PortalHeaderProps): JSX.Element => {
+export const PortalHeader = ({ opened, toggle }: PortalHeaderProps) => {
   const { toggleCart, totalItems, clearCart } = useCart();
 
   // Handle logout - clear cart when user logs out
@@ -26,7 +26,7 @@ export const PortalHeader = ({ opened, toggle }: PortalHeaderProps): JSX.Element
         />
       </Flex>
       <Group>
-        <Flex align="center" pos="relative">
+        <Box pos="relative" style={{ overflow: 'visible' }}>
           <ActionIcon
             onClick={toggleCart}
             size="lg"
@@ -34,13 +34,13 @@ export const PortalHeader = ({ opened, toggle }: PortalHeaderProps): JSX.Element
             aria-label="Shopping Cart"
           >
             <IconShoppingCart size={20} />
-            {totalItems > 0 && (
-              <Badge color="blue" size="xs" radius="xl" pos="absolute" top={-5} right={-5}>
-                {totalItems}
-              </Badge>
-            )}
           </ActionIcon>
-        </Flex>
+          {totalItems > 0 && (
+            <Badge color="blue" size="xs" radius="xl" pos="absolute" top={-5} right={-5}>
+              {totalItems}
+            </Badge>
+          )}
+        </Box>
         <Button variant="outline" size="xs" component={LogoutLink} onClick={handleLogout}>
           Logout
         </Button>

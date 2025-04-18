@@ -10,11 +10,7 @@ interface StoreItemTableProps {
   onToggleStatus: (item: StoreItem, e: React.MouseEvent) => void;
 }
 
-export function StoreItemTable({
-  items,
-  onViewItem,
-  onToggleStatus,
-}: StoreItemTableProps): JSX.Element {
+export function StoreItemTable({ items, onViewItem, onToggleStatus }: StoreItemTableProps) {
   return (
     <ScrollArea>
       <Table striped highlightOnHover withTableBorder>

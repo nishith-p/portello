@@ -18,7 +18,6 @@ import { useOrderHooks } from '@/lib/store/orders/hooks';
 import { Order, OrderStatus } from '@/lib/store/types';
 import { OrderDetailModal, OrderPagination, OrderSearch, OrderTable } from './(components)';
 
-// Pagination params
 interface OrderSearchParams {
   search?: string;
   status?: OrderStatus;
@@ -26,8 +25,7 @@ interface OrderSearchParams {
   offset: number;
 }
 
-export default function AdminOrdersPage(): JSX.Element {
-  // State for search parameters
+export default function AdminOrdersPage() {
   const [searchParams, setSearchParams] = useState<OrderSearchParams>({
     limit: 10,
     offset: 0,

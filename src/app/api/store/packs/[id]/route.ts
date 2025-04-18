@@ -9,7 +9,6 @@ import {
 } from '@/lib/store/packs/db';
 import { StorePackInput, StorePackItemInput } from '@/lib/store/types';
 
-// Type for route parameters
 interface RouteParams {
   params: {
     id: string;
@@ -39,7 +38,7 @@ export async function GET(request: NextRequest, { params }: RouteParams): Promis
         return errorResponse(error instanceof Error ? error : new Error(String(error)));
       }
     },
-    { requireAuth: false } // Allow public access for viewing store packs
+    { requireAuth: false }
   );
 }
 
@@ -100,7 +99,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams): Promis
         return errorResponse(error instanceof Error ? error : new Error(String(error)));
       }
     },
-    { requireAuth: true, requireAdmin: true } // Admin only
+    { requireAuth: true, requireAdmin: true }
   );
 }
 
@@ -129,7 +128,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams): Prom
         return errorResponse(error instanceof Error ? error : new Error(String(error)));
       }
     },
-    { requireAuth: true, requireAdmin: true } // Admin only
+    { requireAuth: true, requireAdmin: true }
   );
 }
 
@@ -152,6 +151,6 @@ export async function DELETE(request: NextRequest, { params }: RouteParams): Pro
         return errorResponse(error instanceof Error ? error : new Error(String(error)));
       }
     },
-    { requireAuth: true, requireAdmin: true } // Admin only
+    { requireAuth: true, requireAdmin: true }
   );
 }

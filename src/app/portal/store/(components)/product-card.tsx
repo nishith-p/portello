@@ -11,7 +11,7 @@ interface ProductCardProps {
   onViewProductAction: (item: StoreItem) => void;
 }
 
-export function ProductCard({ item, onViewProductAction }: ProductCardProps): JSX.Element {
+export function ProductCard({ item, onViewProductAction }: ProductCardProps) {
   const [imageError, setImageError] = useState<boolean>(false);
 
   const handleImageError = (): void => {

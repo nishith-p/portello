@@ -24,7 +24,7 @@ import {
   StoreItemTable,
 } from './(components)';
 
-export default function AdminStorePage(): JSX.Element {
+export default function AdminStorePage() {
   // State for search parameters
   const [searchParams, setSearchParams] = useState<
     Required<Pick<StoreItemSearchParams, 'limit' | 'offset'>> &

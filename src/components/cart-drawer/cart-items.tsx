@@ -12,7 +12,7 @@ interface CartPackItemProps {
   index: number;
 }
 
-export function CartPackItemComponent({ item, index }: CartPackItemProps): JSX.Element {
+export function CartPackItemComponent({ item, index }: CartPackItemProps) {
   const { removeFromCart, updateQuantity } = useCart();
   const [detailsOpened, { toggle: toggleDetails }] = useDisclosure(false);
 

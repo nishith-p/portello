@@ -29,7 +29,7 @@ interface SizesSectionProps {
   setSizes: (sizes: string[]) => void;
 }
 
-export function SizesSection({ sizes, setSizes }: SizesSectionProps): JSX.Element {
+export function SizesSection({ sizes, setSizes }: SizesSectionProps) {
   const [newSize, setNewSize] = useState<string>('');
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
 

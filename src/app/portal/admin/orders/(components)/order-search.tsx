@@ -17,7 +17,7 @@ export function OrderSearch({
   statusFilter,
   setStatusFilter,
   onSearch,
-}: OrderSearchProps): JSX.Element {
+}: OrderSearchProps) {
   // Handle enter key in search input
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter') {

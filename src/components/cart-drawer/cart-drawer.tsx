@@ -22,7 +22,7 @@ import { useOrderHooks } from '@/lib/store/orders/hooks';
 import { formatCurrency } from '@/lib/utils';
 import { CartPackItemComponent } from './cart-items';
 
-export const CartDrawer = (): JSX.Element => {
+export const CartDrawer = () => {
   const {
     cartItems,
     isCartOpen,

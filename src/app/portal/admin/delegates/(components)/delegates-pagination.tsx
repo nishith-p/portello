@@ -6,16 +6,15 @@ interface DelegatesPaginationProps {
   currentOffset: number;
   limit: number;
   total: number;
-  onPageChange: (newOffset: number) => void;
+  onPageChangeAction: (newOffset: number) => void;
 }
 
 export function DelegatesPagination({
   currentOffset,
   limit,
   total,
-  onPageChange,
-}: DelegatesPaginationProps): JSX.Element {
-  // Don't render if there are no items
+  onPageChangeAction,
+}: DelegatesPaginationProps) {
   if (total === 0) {
     return <></>;
   }
@@ -30,14 +29,14 @@ export function DelegatesPagination({
         <Button
           variant="outline"
           disabled={currentOffset === 0}
-          onClick={() => onPageChange(Math.max(0, currentOffset - limit))}
+          onClick={() => onPageChangeAction(Math.max(0, currentOffset - limit))}
         >
           Previous
         </Button>
         <Button
           variant="outline"
           disabled={currentOffset + limit >= total}
-          onClick={() => onPageChange(currentOffset + limit)}
+          onClick={() => onPageChangeAction(currentOffset + limit)}
         >
           Next
         </Button>

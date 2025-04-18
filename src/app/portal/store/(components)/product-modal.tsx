@@ -23,12 +23,17 @@ import classes from './product-modal.module.css';
 
 interface ProductModalProps {
   opened: boolean;
-  onClose: () => void;
+  onCloseAction: () => void;
   selectedItem: StoreItem | null;
-  onAddToCart: (size?: string, color?: { name: string; hex: string }) => void;
+  onAddToCartAction: (size?: string, color?: { name: string; hex: string }) => void;
 }
 
-export function ProductModal({ opened, onClose, selectedItem, onAddToCart }: ProductModalProps) {
+export function ProductModal({
+  opened,
+  onCloseAction,
+  selectedItem,
+  onAddToCartAction,
+}: ProductModalProps) {
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColorHex, setSelectedColorHex] = useState<string | null>(null);
@@ -72,11 +77,7 @@ export function ProductModal({ opened, onClose, selectedItem, onAddToCart }: Pro
     }
 
     // If product has colors but none selected
-    if (selectedItem.colors.length > 0 && !selectedColorHex) {
-      return true;
-    }
-
-    return false;
+    return selectedItem.colors.length > 0 && !selectedColorHex;
   };
 
   // Get the full color object for the selected color hex
@@ -89,7 +90,10 @@ export function ProductModal({ opened, onClose, selectedItem, onAddToCart }: Pro
 
   // Handle add to cart with selected options
   const handleAddToCart = () => {
-    onAddToCart(selectedSize || undefined, selectedColorHex ? getSelectedColorObject() : undefined);
+    onAddToCartAction(
+      selectedSize || undefined,
+      selectedColorHex ? getSelectedColorObject() : undefined
+    );
   };
 
   // Check if any valid images exist
@@ -115,7 +119,9 @@ export function ProductModal({ opened, onClose, selectedItem, onAddToCart }: Pro
         <div className={classes.thumbnailsWrapper}>
           {selectedItem.images.map((image, index) => {
             // Skip thumbnails for images that failed to load
-            if (imageErrors[index]) return null;
+            if (imageErrors[index]) {
+              return null;
+            }
 
             return (
               <Box
@@ -142,7 +148,7 @@ export function ProductModal({ opened, onClose, selectedItem, onAddToCart }: Pro
   return (
     <Modal
       opened={opened}
-      onClose={onClose}
+      onClose={onCloseAction}
       padding={0}
       radius="md"
       centered
@@ -161,7 +167,7 @@ export function ProductModal({ opened, onClose, selectedItem, onAddToCart }: Pro
       {selectedItem && (
         <Box pos="relative">
           {/* Custom close button in the top right corner */}
-          <CloseButton onClick={onClose} className={classes.closeButton} size="lg" />
+          <CloseButton onClick={onCloseAction} className={classes.closeButton} size="lg" />
 
           <Grid gutter={0} className={classes.modalGrid}>
             {/* Product Images - Left Side */}

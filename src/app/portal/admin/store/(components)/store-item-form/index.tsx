@@ -23,7 +23,7 @@ import { ColorsSection, ImagesSection, SizesSection } from './sections';
 
 export interface StoreItemFormProps {
   initialValues?: Partial<StoreItemInput>;
-  onSubmit: (values: StoreItemInput) => Promise<void>;
+  onSubmitAction: (values: StoreItemInput) => Promise<void>;
   isLoading: boolean;
   error: Error | null;
   submitButtonText: string;
@@ -31,11 +31,11 @@ export interface StoreItemFormProps {
 
 export function StoreItemForm({
   initialValues = {},
-  onSubmit,
+  onSubmitAction,
   isLoading,
   error,
   submitButtonText,
-}: StoreItemFormProps): JSX.Element {
+}: StoreItemFormProps) {
   const router = useRouter();
 
   const form = useForm<StoreItemInput>({
@@ -60,7 +60,7 @@ export function StoreItemForm({
 
   const handleSubmit = async (values: StoreItemInput) => {
     try {
-      await onSubmit(values);
+      await onSubmitAction(values);
       form.reset();
       router.push('/portal/admin/store');
     } catch (err) {

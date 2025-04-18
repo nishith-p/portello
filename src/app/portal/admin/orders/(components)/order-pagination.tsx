@@ -12,7 +12,7 @@ export function OrderPagination({
   limit,
   total,
   onPageChange,
-}: OrderPaginationProps): JSX.Element {
+}: OrderPaginationProps) {
   // Don't render if there are no items
   if (total === 0) {
     return <></>;

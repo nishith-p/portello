@@ -13,7 +13,7 @@ import {
   DelegatesTable,
 } from './(components)';
 
-export default function DelegatesPage(): JSX.Element {
+export default function DelegatesPage() {
   // State for search parameters
   const [searchParams, setSearchParams] = useState<
     Required<Pick<UserSearchParams, 'limit' | 'offset'>> &
@@ -66,9 +66,9 @@ export default function DelegatesPage(): JSX.Element {
         <Paper p="md" radius="md" withBorder>
           <DelegatesSearch
             searchInput={searchInput}
-            setSearchInput={setSearchInput}
-            setSearchParams={setSearchParams}
-            onSearch={handleSearch}
+            setSearchInputAction={setSearchInput}
+            setSearchParamsAction={setSearchParams}
+            onSearchAction={handleSearch}
           />
 
           {isLoading ? (
@@ -81,14 +81,17 @@ export default function DelegatesPage(): JSX.Element {
             </Alert>
           ) : (
             <>
-              <DelegatesTable delegates={data?.users || []} onViewProfile={handleViewProfile} />
+              <DelegatesTable
+                delegates={data?.users || []}
+                onViewProfileAction={handleViewProfile}
+              />
 
               {data && (
                 <DelegatesPagination
                   currentOffset={searchParams.offset}
                   limit={searchParams.limit}
                   total={data.total}
-                  onPageChange={handlePageChange}
+                  onPageChangeAction={handlePageChange}
                 />
               )}
             </>
@@ -96,7 +99,7 @@ export default function DelegatesPage(): JSX.Element {
         </Paper>
       </Stack>
 
-      <DelegateProfileModal opened={opened} onClose={close} userId={selectedUserId} />
+      <DelegateProfileModal opened={opened} onCloseAction={close} userId={selectedUserId} />
     </Container>
   );
 }

@@ -19,8 +19,7 @@ import { useStorePackSearch, useUpdateStorePackStatus } from '@/lib/store/packs/
 import { StorePack, StorePackSearchParams } from '@/lib/store/types';
 import { PackDetailModal, PackTable } from './(components)';
 
-export default function AdminPacksPage(): JSX.Element {
-  // State for search parameters
+export default function AdminPacksPage() {
   const [searchParams, setSearchParams] = useState<
     Required<Pick<StorePackSearchParams, 'limit' | 'offset'>> &
       Omit<StorePackSearchParams, 'limit' | 'offset'>

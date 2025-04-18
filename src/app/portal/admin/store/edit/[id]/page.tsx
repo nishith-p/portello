@@ -1,15 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { IconAlertCircle } from '@tabler/icons-react';
-import { Alert, Anchor, Breadcrumbs, Center, Container, Loader, Stack, Title } from '@mantine/core';
+import { Alert, Center, Container, Loader, Stack, Title } from '@mantine/core';
 import { useStoreItem, useUpdateStoreItem } from '@/lib/store/items/hooks';
 import { StoreItemInput } from '@/lib/store/types';
 import { StoreItemForm } from '../../(components)/store-item-form';
 
-export default function EditStorePage(): JSX.Element {
+export default function EditStorePage() {
   const params = useParams();
   const itemId = Array.isArray(params.id) ? params.id[0] : params.id;
 
@@ -60,7 +59,7 @@ export default function EditStorePage(): JSX.Element {
 
         <StoreItemForm
           initialValues={item}
-          onSubmit={handleUpdateItem}
+          onSubmitAction={handleUpdateItem}
           isLoading={updateItemMutation.isPending}
           error={error}
           submitButtonText="Update Item"

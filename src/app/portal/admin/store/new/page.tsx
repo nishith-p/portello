@@ -6,7 +6,7 @@ import { useCreateStoreItem } from '@/lib/store/items/hooks';
 import { StoreItemInput } from '@/lib/store/types';
 import { StoreItemForm } from '../(components)/store-item-form';
 
-export default function CreateStorePage(): JSX.Element {
+export default function CreateStorePage() {
   const [error, setError] = useState<Error | null>(null);
   const createItemMutation = useCreateStoreItem();
 
@@ -29,7 +29,7 @@ export default function CreateStorePage(): JSX.Element {
         </Title>
 
         <StoreItemForm
-          onSubmit={handleCreateItem}
+          onSubmitAction={handleCreateItem}
           isLoading={createItemMutation.isPending}
           error={error}
           submitButtonText="Submit"

@@ -6,10 +6,10 @@ import { UserListItem } from '@/lib/users/types';
 
 interface DelegatesTableProps {
   delegates: UserListItem[];
-  onViewProfile: (userId: string) => void;
+  onViewProfileAction: (userId: string) => void;
 }
 
-export function DelegatesTable({ delegates, onViewProfile }: DelegatesTableProps): JSX.Element {
+export function DelegatesTable({ delegates, onViewProfileAction }: DelegatesTableProps) {
   return (
     <ScrollArea>
       <Table striped highlightOnHover withTableBorder>
@@ -30,7 +30,7 @@ export function DelegatesTable({ delegates, onViewProfile }: DelegatesTableProps
               <Table.Tr
                 key={user.kinde_id}
                 style={{ cursor: 'pointer' }}
-                onClick={() => onViewProfile(user.kinde_id)}
+                onClick={() => onViewProfileAction(user.kinde_id)}
               >
                 <Table.Td>{user.full_name}</Table.Td>
                 <Table.Td>{user.position}</Table.Td>
@@ -44,7 +44,7 @@ export function DelegatesTable({ delegates, onViewProfile }: DelegatesTableProps
                     color="blue"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onViewProfile(user.kinde_id);
+                      onViewProfileAction(user.kinde_id);
                     }}
                   >
                     <IconEye size={16} />

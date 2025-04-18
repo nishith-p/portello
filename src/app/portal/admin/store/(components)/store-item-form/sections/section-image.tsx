@@ -9,7 +9,7 @@ interface ImagesSectionProps {
   setImages: (images: string[]) => void;
 }
 
-export function ImagesSection({ images, setImages }: ImagesSectionProps): JSX.Element {
+export function ImagesSection({ images, setImages }: ImagesSectionProps) {
   const [newImageUrl, setNewImageUrl] = useState<string>('');
 
   const handleAddImage = (): void => {

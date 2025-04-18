@@ -12,8 +12,7 @@ export function StoreItemPagination({
   limit,
   total,
   onPageChange,
-}: StoreItemPaginationProps): JSX.Element {
-  // Don't render if there are no items
+}: StoreItemPaginationProps) {
   if (total === 0) {
     return <></>;
   }

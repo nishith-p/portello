@@ -22,7 +22,6 @@ interface OrderDetailsModalProps {
   order: Order | null;
 }
 
-// Status color mapping
 const statusColorMap: Record<OrderStatus, string> = {
   pending: 'orange',
   confirmed: 'blue',
@@ -33,7 +32,7 @@ const statusColorMap: Record<OrderStatus, string> = {
   cancelled: 'red',
 };
 
-export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalProps): JSX.Element {
+export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalProps) {
   if (!order) {
     return <></>;
   }
@@ -65,8 +64,8 @@ export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalP
                 <Text
                   size="sm"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    navigator.clipboard.writeText(order.id);
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(order.id);
                   }}
                 >
                   <Text span fw={500}>

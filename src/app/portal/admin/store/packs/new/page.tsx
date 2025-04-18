@@ -6,7 +6,7 @@ import { useCreateStorePack } from '@/lib/store/packs/hooks';
 import { StorePack } from '@/lib/store/types';
 import { PackForm } from '../(components)/pack-form';
 
-export default function CreatePackPage(): JSX.Element {
+export default function CreatePackPage() {
   const [error, setError] = useState<Error | null>(null);
   const createPackMutation = useCreateStorePack();
 
@@ -41,7 +41,7 @@ export default function CreatePackPage(): JSX.Element {
         </Title>
 
         <PackForm
-          onSubmit={handleCreatePack}
+          onSubmitAction={handleCreatePack}
           isLoading={createPackMutation.isPending}
           error={error}
           submitButtonText="Create Pack"

@@ -35,6 +35,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         return errorResponse(error instanceof Error ? error : new Error(String(error)));
       }
     },
-    { requireAuth: true, requireAdmin: true } // Admin only - search is an admin function
+    { requireAuth: true, requireAdmin: true }
   );
 }

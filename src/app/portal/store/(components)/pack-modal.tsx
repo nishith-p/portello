@@ -29,11 +29,11 @@ import classes from './pack-modal.module.css';
 
 interface PackModalProps {
   opened: boolean;
-  onClose: () => void;
+  onCloseAction: () => void;
   selectedPack: StorePack | null;
 }
 
-export function PackModal({ opened, onClose, selectedPack }: PackModalProps) {
+export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProps) {
   const { addToCart } = useCart();
   const [activeImageIndex, setActiveImageIndex] = useState<number>(0);
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
@@ -150,7 +150,7 @@ export function PackModal({ opened, onClose, selectedPack }: PackModalProps) {
       });
 
       // Close the modal
-      onClose();
+      onCloseAction();
     } catch (error) {
       notifications.show({
         title: 'Error',
@@ -217,7 +217,7 @@ export function PackModal({ opened, onClose, selectedPack }: PackModalProps) {
   return (
     <Modal
       opened={opened}
-      onClose={onClose}
+      onClose={onCloseAction}
       padding={0}
       radius="md"
       centered
@@ -236,7 +236,7 @@ export function PackModal({ opened, onClose, selectedPack }: PackModalProps) {
       {selectedPack && cartPackItem && (
         <Box pos="relative">
           {/* Custom close button in the top right corner */}
-          <CloseButton onClick={onClose} className={classes.closeButton} size="lg" />
+          <CloseButton onClick={onCloseAction} className={classes.closeButton} size="lg" />
 
           <Grid gutter={0} className={classes.modalGrid}>
             {/* Pack Images - Left Side */}

@@ -8,26 +8,25 @@ import { UserSearchParams } from '@/lib/users/types';
 
 interface DelegatesSearchProps {
   searchInput: string;
-  setSearchInput: Dispatch<SetStateAction<string>>;
-  setSearchParams: Dispatch<
+  setSearchInputAction: Dispatch<SetStateAction<string>>;
+  setSearchParamsAction: Dispatch<
     SetStateAction<
       Required<Pick<UserSearchParams, 'limit' | 'offset'>> &
         Omit<UserSearchParams, 'limit' | 'offset'>
     >
   >;
-  onSearch: () => void;
+  onSearchAction: () => void;
 }
 
 export function DelegatesSearch({
   searchInput,
-  setSearchInput,
-  setSearchParams,
-  onSearch,
-}: DelegatesSearchProps): JSX.Element {
-  // Handle enter key in search input
+  setSearchInputAction,
+  setSearchParamsAction,
+  onSearchAction,
+}: DelegatesSearchProps) {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter') {
-      onSearch();
+      onSearchAction();
     }
   };
 
@@ -38,11 +37,11 @@ export function DelegatesSearch({
           placeholder="Search by name or email"
           leftSection={<IconSearch size={16} />}
           value={searchInput}
-          onChange={(e) => setSearchInput(e.currentTarget.value)}
+          onChange={(e) => setSearchInputAction(e.currentTarget.value)}
           onKeyDown={handleKeyDown}
           style={{ width: '300px' }}
         />
-        <Button onClick={onSearch}>Search</Button>
+        <Button onClick={onSearchAction}>Search</Button>
       </Group>
 
       <Group>
@@ -51,7 +50,7 @@ export function DelegatesSearch({
           data={ENTITIES}
           clearable
           onChange={(value) =>
-            setSearchParams((prev) => ({ ...prev, entity: value || undefined, offset: 0 }))
+            setSearchParamsAction((prev) => ({ ...prev, entity: value || undefined, offset: 0 }))
           }
         />
         <Select
@@ -60,7 +59,7 @@ export function DelegatesSearch({
           clearable
           onChange={(value) => {
             const round = value ? parseInt(value, 10) : undefined;
-            setSearchParams((prev) => ({ ...prev, round, offset: 0 }));
+            setSearchParamsAction((prev) => ({ ...prev, round, offset: 0 }));
           }}
         />
       </Group>

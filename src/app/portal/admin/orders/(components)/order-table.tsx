@@ -41,7 +41,7 @@ const formatCurrency = (amount: number): string => {
   }).format(amount);
 };
 
-export function OrderTable({ orders, onViewOrder }: OrderTableProps): JSX.Element {
+export function OrderTable({ orders, onViewOrder }: OrderTableProps) {
   return (
     <ScrollArea>
       <Table striped highlightOnHover withTableBorder>
@@ -80,7 +80,7 @@ export function OrderTable({ orders, onViewOrder }: OrderTableProps): JSX.Elemen
                     {order.status.toUpperCase()}
                   </Badge>
                 </Table.Td>
-                <Table.Td>{(order.items || order.order_items || []).length} items</Table.Td>
+                <Table.Td>{(order.items || []).length} items</Table.Td>
                 <Table.Td>{formatCurrency(order.total_amount)}</Table.Td>
                 <Table.Td>
                   <Group gap="xs" justify="center">

@@ -30,7 +30,7 @@ import { StoreItem, StorePack } from '@/lib/store/types';
 
 interface PackFormProps {
   initialValues?: Partial<StorePack>;
-  onSubmit: (values: StorePack) => Promise<void>;
+  onSubmitAction: (values: StorePack) => Promise<void>;
   isLoading: boolean;
   error: Error | null;
   submitButtonText: string;
@@ -38,11 +38,11 @@ interface PackFormProps {
 
 export function PackForm({
   initialValues = {},
-  onSubmit,
+  onSubmitAction,
   isLoading,
   error,
   submitButtonText,
-}: PackFormProps): JSX.Element {
+}: PackFormProps) {
   const router = useRouter();
   const [isEditing] = useState<boolean>(!!initialValues.id);
   const [selectedItems, setSelectedItems] = useState<Array<{ item: StoreItem; quantity: number }>>(
@@ -142,7 +142,7 @@ export function PackForm({
           item: si.item,
         })),
       };
-      await onSubmit(packData as StorePack);
+      await onSubmitAction(packData as StorePack);
       form.reset();
       router.push('/portal/admin/store/packs');
     } catch (err) {

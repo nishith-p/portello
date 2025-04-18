@@ -98,7 +98,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     },
     {
       requireAuth: true,
-      requireAdmin: true, // Only admins can update orders
+      requireAdmin: true,
     }
   );
 }

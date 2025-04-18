@@ -20,7 +20,7 @@ interface ColorsSectionProps {
   setColors: (colors: StoreItemColor[]) => void;
 }
 
-export function ColorsSection({ colors, setColors }: ColorsSectionProps): JSX.Element {
+export function ColorsSection({ colors, setColors }: ColorsSectionProps) {
   const [newColorName, setNewColorName] = useState<string>('');
   const [newColorHex, setNewColorHex] = useState<string>('#000000');
 

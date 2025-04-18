@@ -29,6 +29,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         return errorResponse(error instanceof Error ? error : new Error(String(error)));
       }
     },
-    { requireAuth: true, requireAdmin: true } // Admin only
+    { requireAuth: true, requireAdmin: true }
   );
 }

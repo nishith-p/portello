@@ -24,7 +24,7 @@ const getStatusColor = (status: OrderStatus): string => {
   return statusColorMap[status] || 'gray';
 };
 
-export const OrdersTable = ({ orders, onOrderClick }: OrdersTableProps): JSX.Element => (
+export const OrdersTable = ({ orders, onOrderClick }: OrdersTableProps) => (
   <Table striped highlightOnHover withTableBorder bg="white">
     <Table.Thead>
       <Table.Tr>
@@ -67,7 +67,7 @@ export const OrdersTable = ({ orders, onOrderClick }: OrdersTableProps): JSX.Ele
             <Table.Td>
               <Group gap="xs">
                 <IconPackage size={16} />
-                <Text size="sm">{(order.items || order.order_items || []).length}</Text>
+                <Text size="sm">{(order.items || []).length}</Text>
               </Group>
             </Table.Td>
             <Table.Td>

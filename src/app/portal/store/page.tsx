@@ -23,7 +23,7 @@ import { useStoreItems } from '@/lib/store/items/hooks';
 import { useStorePacks } from '@/lib/store/packs/hooks';
 import { StoreItem, StorePack } from '@/lib/store/types';
 
-export default function StorePage(): JSX.Element {
+export default function StorePage() {
   const [selectedItem, setSelectedItem] = useState<StoreItem | null>(null);
   const [selectedPack, setSelectedPack] = useState<StorePack | null>(null);
 
@@ -110,7 +110,7 @@ export default function StorePage(): JSX.Element {
               <Group align="center" mb="md">
                 <Group gap="xs" align="center">
                   <IconPackages size={24} />
-                  <Title size="h3">Bundles</Title>
+                  <Title size="h3">Packs</Title>
                 </Group>
                 {hasItems && (
                   <Text size="sm" c="dimmed">
@@ -156,12 +156,16 @@ export default function StorePage(): JSX.Element {
 
       <ProductModal
         opened={itemModalOpened}
-        onClose={closeItemModal}
+        onCloseAction={closeItemModal}
         selectedItem={selectedItem}
-        onAddToCart={handleAddToCart}
+        onAddToCartAction={handleAddToCart}
       />
 
-      <PackModal opened={packModalOpened} onClose={closePackModal} selectedPack={selectedPack} />
+      <PackModal
+        opened={packModalOpened}
+        onCloseAction={closePackModal}
+        selectedPack={selectedPack}
+      />
     </Container>
   );
 }

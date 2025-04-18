@@ -8,7 +8,7 @@ interface PackDetailModalProps {
   pack: StorePack | null;
 }
 
-export function PackDetailModal({ opened, onClose, pack }: PackDetailModalProps): JSX.Element {
+export function PackDetailModal({ opened, onClose, pack }: PackDetailModalProps) {
   if (!pack) {
     return <></>;
   }

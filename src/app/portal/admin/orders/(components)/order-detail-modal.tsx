@@ -75,7 +75,7 @@ export function OrderDetailModal({
   order,
   onUpdateStatus,
   isUpdating,
-}: OrderDetailModalProps): JSX.Element {
+}: OrderDetailModalProps) {
   const [newStatus, setNewStatus] = useState<OrderStatus | null>(null);
 
   useEffect(() => {

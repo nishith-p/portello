@@ -8,11 +8,7 @@ interface StoreItemDetailModalProps {
   item: StoreItem | null;
 }
 
-export function StoreItemDetailModal({
-  opened,
-  onClose,
-  item,
-}: StoreItemDetailModalProps): JSX.Element {
+export function StoreItemDetailModal({ opened, onClose, item }: StoreItemDetailModalProps) {
   if (!item) {
     return <></>;
   }
@@ -23,7 +19,7 @@ export function StoreItemDetailModal({
       onClose={onClose}
       title={
         <Text fw={700} size="lg">
-          {`Item Details: ${item.name}`}
+          Item Details
         </Text>
       }
       size="lg"

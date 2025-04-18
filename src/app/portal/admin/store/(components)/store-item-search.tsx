@@ -24,7 +24,7 @@ export function StoreItemSearch({
   activeFilter,
   setActiveFilter,
   onSearch,
-}: StoreItemSearchProps): JSX.Element {
+}: StoreItemSearchProps) {
   // Handle enter key in search input
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter') {

@@ -7,21 +7,17 @@ import { DelegateProfile } from './delegate-profile';
 
 interface DelegateProfileModalProps {
   opened: boolean;
-  onClose: () => void;
+  onCloseAction: () => void;
   userId: string | null;
 }
 
-export function DelegateProfileModal({
-  opened,
-  onClose,
-  userId,
-}: DelegateProfileModalProps): JSX.Element {
+export function DelegateProfileModal({ opened, onCloseAction, userId }: DelegateProfileModalProps) {
   const { data: userProfile, isLoading: isProfileLoading } = useUserProfile(userId);
 
   return (
     <Modal
       opened={opened}
-      onClose={onClose}
+      onClose={onCloseAction}
       title={
         <Text fw={700} size="lg">
           Delegate Profile

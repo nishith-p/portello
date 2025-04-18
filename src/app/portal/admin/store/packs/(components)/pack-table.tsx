@@ -10,7 +10,7 @@ interface PackTableProps {
   onToggleStatus: (pack: StorePack, e: React.MouseEvent) => void;
 }
 
-export function PackTable({ packs, onViewPack, onToggleStatus }: PackTableProps): JSX.Element {
+export function PackTable({ packs, onViewPack, onToggleStatus }: PackTableProps) {
   return (
     <ScrollArea>
       <Table striped highlightOnHover withTableBorder>

@@ -13,7 +13,7 @@ interface EditPackPageProps {
   };
 }
 
-export default function EditPackPage({ params }: EditPackPageProps): JSX.Element {
+export default function EditPackPage({ params }: EditPackPageProps) {
   const packId = params.id;
   const [error, setError] = useState<Error | null>(null);
 
@@ -75,7 +75,7 @@ export default function EditPackPage({ params }: EditPackPageProps): JSX.Element
 
         <PackForm
           initialValues={pack}
-          onSubmit={handleUpdatePack}
+          onSubmitAction={handleUpdatePack}
           isLoading={updatePackMutation.isPending}
           error={error}
           submitButtonText="Update Pack"
