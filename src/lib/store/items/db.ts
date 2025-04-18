@@ -1,6 +1,15 @@
 import { BadRequestError, NotFoundError, ValidationError } from '@/lib/core/errors';
 import { supabaseServer } from '@/lib/core/supabase';
-import { StoreItem, StoreItemInput, StoreItemSearchParams } from '@/lib/store/types';
+import {
+  StoreItem,
+  StoreItemInput,
+  StoreItemSearchParams,
+  StorePack,
+  StorePackInput,
+  StorePackItemInput,
+  StorePackSearchParams,
+  StorePackWithItemsInput,
+} from '@/lib/store/types';
 
 /**
  * Get a store item by ID

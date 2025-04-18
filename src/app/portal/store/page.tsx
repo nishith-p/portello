@@ -1,59 +1,79 @@
 'use client';
 
 import { useState } from 'react';
-import { IconAlertCircle } from '@tabler/icons-react';
-import { Alert, Center, Container, Loader, SimpleGrid, Text, Title } from '@mantine/core';
+import { IconAlertCircle, IconPackages } from '@tabler/icons-react';
+import {
+  Alert,
+  Box,
+  Center,
+  Container,
+  Divider,
+  Group,
+  Loader,
+  SimpleGrid,
+  Text,
+  Title,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { ProductCard, ProductModal } from '@/app/portal/store/(components)';
+import { PackCard } from '@/app/portal/store/(components)/pack-card';
+import { PackModal } from '@/app/portal/store/(components)/pack-modal';
 import { useCart } from '@/context';
 import { useStoreItems } from '@/lib/store/items/hooks';
-import { StoreItem } from '@/lib/store/types';
+import { useStorePacks } from '@/lib/store/packs/hooks';
+import { StoreItem, StorePack } from '@/lib/store/types';
 
 export default function StorePage(): JSX.Element {
   const [selectedItem, setSelectedItem] = useState<StoreItem | null>(null);
-  const [opened, { open, close }] = useDisclosure(false);
+  const [selectedPack, setSelectedPack] = useState<StorePack | null>(null);
+
+  const [itemModalOpened, { open: openItemModal, close: closeItemModal }] = useDisclosure(false);
+  const [packModalOpened, { open: openPackModal, close: closePackModal }] = useDisclosure(false);
+
   const { addToCart } = useCart();
+  const { data: itemsData, isLoading: isLoadingItems, error: itemsError } = useStoreItems();
+  const { data: packsData, isLoading: isLoadingPacks, error: packsError } = useStorePacks();
 
-  // Fetch store items from the API
-  const { data, isLoading, error } = useStoreItems(); // Updated function call
-
-  const handleViewProduct = (item: StoreItem): void => {
+  const handleViewProduct = (item: StoreItem) => {
     setSelectedItem(item);
-    open();
+    openItemModal();
   };
 
-  const handleAddToCart = (size?: string, color?: { name: string; hex: string }): void => {
+  const handleViewPack = (pack: StorePack) => {
+    setSelectedPack(pack);
+    openPackModal();
+  };
+
+  const handleAddToCart = (size?: string, color?: { name: string; hex: string }) => {
     if (!selectedItem) {
       return;
     }
 
-    // Create a new CartItem
-    const newItem = {
+    addToCart({
       id: selectedItem.id,
       item_code: selectedItem.item_code,
       name: selectedItem.name,
       price: selectedItem.price,
-      // Use the first image from the images array if available
-      image: selectedItem.images?.length > 0 ? selectedItem.images[0] : undefined,
-      // Include the selected size and color
+      image: selectedItem.images?.[0],
       size,
       color: color?.name,
       colorHex: color?.hex,
       quantity: 1,
-    };
+    });
 
-    // Add to cart using context function
-    addToCart(newItem);
-
-    // Close modal
-    close();
+    closeItemModal();
   };
 
-  // Render loading state
-  if (isLoading) {
+  const items = itemsData?.items || [];
+  const packs = packsData?.packs || [];
+
+  const hasItems = items.length > 0;
+  const hasPacks = packs.length > 0;
+
+  if (isLoadingItems || isLoadingPacks) {
     return (
       <Container fluid p="md">
-        <Title order={2} c="gray.8" mb="xl">
+        <Title size="h2" mb="xl" c="gray.8">
           Store
         </Title>
         <Center mt="xl">
@@ -63,11 +83,10 @@ export default function StorePage(): JSX.Element {
     );
   }
 
-  // Render error state
-  if (error) {
+  if (itemsError || packsError) {
     return (
       <Container fluid p="md">
-        <Title order={2} c="gray.8" mb="xl">
+        <Title size="h2" mb="xl" c="gray.8">
           Store
         </Title>
         <Alert icon={<IconAlertCircle size={16} />} title="Error" color="red">
@@ -77,22 +96,56 @@ export default function StorePage(): JSX.Element {
     );
   }
 
-  // Check if we have items to display
-  const items = data?.items || [];
-  const hasItems = items.length > 0;
-
   return (
     <Container fluid p="md">
-      <Title order={2} c="gray.8" mb="xl">
+      <Title size="h2" mb="xl" c="gray.8">
         Store
       </Title>
 
-      {hasItems ? (
-        <SimpleGrid cols={{ base: 2, sm: 3, md: 4 }} spacing="lg">
-          {items.map((item: StoreItem) => (
-            <ProductCard key={item.id} item={item} onViewProductAction={handleViewProduct} />
-          ))}
-        </SimpleGrid>
+      {hasItems || hasPacks ? (
+        <>
+          {/* Packs Section */}
+          {hasPacks && (
+            <Box mb="xl">
+              <Group align="center" mb="md">
+                <Group gap="xs" align="center">
+                  <IconPackages size={24} />
+                  <Title size="h3">Bundles</Title>
+                </Group>
+                {hasItems && (
+                  <Text size="sm" c="dimmed">
+                    Get more for less with our bundled packs
+                  </Text>
+                )}
+              </Group>
+
+              <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="lg">
+                {packs.map((pack) => (
+                  <PackCard key={pack.id} pack={pack} onViewPackAction={handleViewPack} />
+                ))}
+              </SimpleGrid>
+            </Box>
+          )}
+
+          {hasItems && hasPacks && <Divider my="xl" />}
+
+          {/* Items Section */}
+          {hasItems && (
+            <Box>
+              {hasPacks && (
+                <Title size="h3" mb="md">
+                  Individual Products
+                </Title>
+              )}
+
+              <SimpleGrid cols={{ base: 2, sm: 3, md: 4 }} spacing="lg">
+                {items.map((item) => (
+                  <ProductCard key={item.id} item={item} onViewProductAction={handleViewProduct} />
+                ))}
+              </SimpleGrid>
+            </Box>
+          )}
+        </>
       ) : (
         <Center mt="xl">
           <Alert icon={<IconAlertCircle size={16} />} title="No Items" color="blue">
@@ -102,11 +155,13 @@ export default function StorePage(): JSX.Element {
       )}
 
       <ProductModal
-        opened={opened}
-        onClose={close}
+        opened={itemModalOpened}
+        onClose={closeItemModal}
         selectedItem={selectedItem}
         onAddToCart={handleAddToCart}
       />
+
+      <PackModal opened={packModalOpened} onClose={closePackModal} selectedPack={selectedPack} />
     </Container>
   );
 }

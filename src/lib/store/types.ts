@@ -1,4 +1,16 @@
 /**
+ * Store and Order Types
+ *
+ * This file contains all the type definitions for the store and order system.
+ * It is organized in logical sections: basic store items, order types,
+ * cart types, and pack-related types.
+ */
+
+// ----------------------------------------
+// Basic Store Item Types
+// ----------------------------------------
+
+/**
  * Store item color representation
  */
 export interface StoreItemColor {
@@ -55,16 +67,9 @@ export interface StoreItemListResponse {
   total: number;
 }
 
-/**
- * Standardized API error response
- */
-export interface ErrorResponse {
-  error: {
-    message: string;
-    code: string;
-    fields?: Record<string, string>;
-  };
-}
+// ----------------------------------------
+// Order Types
+// ----------------------------------------
 
 /**
  * Order status options
@@ -79,20 +84,35 @@ export type OrderStatus =
   | 'cancelled';
 
 /**
- * Order item interface
+ * Base order item properties common to all order item types
  */
-export interface OrderItem {
-  id: string;
+export interface OrderItemBase {
   item_code: string;
-  order_id: string;
   quantity: number;
   price: number;
-  size: string | null;
-  color: string | null;
-  color_hex: string | null;
-  name: string | null;
-  image: string | null;
+  size?: string | null;
+  color?: string | null;
+  color_hex?: string | null;
+  name?: string | null;
+  image?: string | null;
+}
+
+/**
+ * Order item as stored in the database
+ */
+export interface OrderItem extends OrderItemBase {
+  id: string;
+  order_id: string;
   created_at?: string;
+}
+
+/**
+ * Extended OrderItem with pack-related fields
+ */
+export interface OrderItemExtended extends OrderItem {
+  is_pack?: boolean;
+  parent_pack_id?: string | null;
+  pack_items?: OrderItem[]; // For pack items, this will contain child items
 }
 
 /**
@@ -105,11 +125,16 @@ export interface Order {
   total_amount: number;
   created_at: string;
   updated_at?: string;
-  updated_by?: string | null; // Made optional since it may be set automatically
+  updated_by?: string | null;
   last_status_change?: string;
-  order_items?: OrderItem[]; // Made optional for input scenarios
-  // Aliased property for compatibility with existing code
-  items?: OrderItem[];
+  items?: OrderItem[]; // Using 'items' as the primary property name
+}
+
+/**
+ * Extended Order interface with support for pack items
+ */
+export interface OrderExtended extends Omit<Order, 'items'> {
+  items: (OrderItem | OrderItemExtended)[];
 }
 
 /**
@@ -122,33 +147,43 @@ export interface OrderAuditInfo {
 }
 
 /**
- * Cart item interface
+ * Input for creating a standard order item
  */
-export interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image?: string;
-  size?: string;
-  color?: string;
-  colorHex?: string;
-  item_code: string; // Made non-optional since it's needed for orders
+export interface CreateOrderItemInput extends OrderItemBase {
+  // No additional fields needed
 }
 
 /**
- * Status color mapping type
+ * Input for creating a pack item in an order
  */
-export type StatusColorMap = Record<OrderStatus, string>;
+export interface CreateOrderPackItem {
+  item_code: string; // This will be the pack_code
+  quantity: number;
+  price: number;
+  name?: string | null;
+  image?: string | null;
+  is_pack: true;
+  pack_items: CreateOrderItemInput[]; // Use the base input type for pack items
+}
 
 /**
- * Input for creating a new order
+ * Input for creating a basic order (no packs)
  */
 export interface CreateOrderInput {
   user_id: string;
   status?: OrderStatus;
   total_amount: number;
-  items: Omit<OrderItem, 'id' | 'order_id' | 'created_at'>[];
+  items: CreateOrderItemInput[];
+}
+
+/**
+ * Input for creating an order with support for pack items
+ */
+export interface CreateOrderInputExtended {
+  user_id: string;
+  status?: OrderStatus;
+  total_amount: number;
+  items: (CreateOrderItemInput | CreateOrderPackItem)[];
 }
 
 /**
@@ -157,4 +192,150 @@ export interface CreateOrderInput {
 export interface UpdateOrderStatusInput {
   orderId: string;
   status: OrderStatus;
+}
+
+/**
+ * Status color mapping type
+ */
+export type StatusColorMap = Record<OrderStatus, string>;
+
+// ----------------------------------------
+// Cart Types
+// ----------------------------------------
+
+/**
+ * Cart item interface
+ */
+export interface CartItem {
+  id: string;
+  item_code: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image?: string;
+  size?: string;
+  color?: string;
+  colorHex?: string;
+}
+
+/**
+ * Individual item details within a cart pack
+ */
+export interface CartPackItemDetail {
+  item_id: string;
+  item_code: string;
+  name: string;
+  quantity: number;
+  size?: string;
+  color?: string;
+  colorHex?: string;
+  image?: string;
+}
+
+/**
+ * Cart pack item - extends CartItem with size/color selections for each item
+ */
+export interface CartPackItem {
+  id: string;
+  pack_id: string;
+  pack_code: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image?: string;
+  pack_items: CartPackItemDetail[];
+}
+
+// ----------------------------------------
+// Pack Types
+// ----------------------------------------
+
+/**
+ * Store pack model
+ */
+export interface StorePack {
+  id: string;
+  pack_code: string;
+  name: string;
+  description: string;
+  images: string[];
+  price: number;
+  created_at: string;
+  updated_at: string;
+  active: boolean;
+  pack_items?: StorePackItem[];
+}
+
+/**
+ * Store pack item (junction between pack and item)
+ */
+export interface StorePackItem {
+  id: string;
+  pack_id: string;
+  item_id: string;
+  quantity: number;
+  created_at?: string;
+  updated_at?: string;
+  // Include item details when needed
+  item?: StoreItem;
+}
+
+/**
+ * Input for creating or updating a store pack
+ */
+export interface StorePackInput {
+  pack_code: string;
+  name: string;
+  description: string;
+  images: string[];
+  price: number;
+  active: boolean;
+}
+
+/**
+ * Input for pack items when creating or updating a pack
+ */
+export interface StorePackItemInput {
+  item_id: string;
+  quantity: number;
+}
+
+/**
+ * Full pack input with items
+ */
+export interface StorePackWithItemsInput extends StorePackInput {
+  pack_items: StorePackItemInput[];
+}
+
+/**
+ * Parameters for searching store packs
+ */
+export interface StorePackSearchParams {
+  search?: string;
+  active?: boolean;
+  limit?: number;
+  offset?: number;
+}
+
+/**
+ * Response for a list of store packs
+ */
+export interface StorePackListResponse {
+  packs: StorePack[];
+  total: number;
+}
+
+// ----------------------------------------
+// Utility Types
+// ----------------------------------------
+
+/**
+ * Standardized API error response
+ */
+export interface ErrorResponse {
+  error: {
+    message: string;
+    code: string;
+    fields?: Record<string, string>;
+  };
 }

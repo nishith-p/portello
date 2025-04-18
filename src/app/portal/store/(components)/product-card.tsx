@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { IconEye, IconShirt } from '@tabler/icons-react';
-import { ActionIcon, Box, Card, Center, Text } from '@mantine/core';
+import { IconShirt } from '@tabler/icons-react';
+import { Box, Card, Center, Text } from '@mantine/core';
 import { StoreItem } from '@/lib/store/types';
 import classes from './product-card.module.css';
 

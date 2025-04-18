@@ -1,24 +1,11 @@
 'use client';
 
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { CartItem, CartPackItem } from '@/lib/store/types';
 
-// Define the CartItem type
-export interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-  image?: string;
-  size?: string;
-  color?: string;
-  colorHex?: string; // Added to store the color hex code
-  item_code: string; // Required for foreign key reference to store_items
-}
-
-// Define the CartContext type
 interface CartContextType {
-  cartItems: CartItem[];
-  addToCart: (item: CartItem) => void;
+  cartItems: (CartItem | CartPackItem)[];
+  addToCart: (item: CartItem | CartPackItem) => void;
   removeFromCart: (itemId: string, size?: string, color?: string) => void;
   updateQuantity: (itemId: string, quantity: number, size?: string, color?: string) => void;
   clearCart: () => void;
@@ -31,17 +18,20 @@ interface CartContextType {
   getItemKey: (id: string, size?: string, color?: string) => string;
 }
 
-// Create the context with undefined as initial value
 const CartContext = createContext<CartContextType | undefined>(undefined);
+
+// Helper function to check if an item is a pack
+function isPackItem(item: CartItem | CartPackItem): item is CartPackItem {
+  return 'pack_items' in item && Array.isArray((item as CartPackItem).pack_items);
+}
 
 // Generate a unique key for cart items based on id, size, and color
 const getItemKey = (id: string, size?: string, color?: string): string => {
   return `${id}_${size || 'no-size'}_${color || 'no-color'}`;
 };
 
-// CartProvider component
 export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<(CartItem | CartPackItem)[]>([]);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
   const [totalItems, setTotalItems] = useState<number>(0);
   const [subtotal, setSubtotal] = useState<number>(0);
@@ -51,12 +41,11 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     try {
       const savedCart = localStorage.getItem('cart');
       if (savedCart) {
-        const parsedCart = JSON.parse(savedCart) as CartItem[];
+        const parsedCart = JSON.parse(savedCart) as (CartItem | CartPackItem)[];
         setCartItems(parsedCart);
       }
     } catch (error) {
       console.error('Failed to load cart from localStorage:', error);
-      // If there's an error parsing, clear localStorage
       localStorage.removeItem('cart');
     }
   }, []);
@@ -73,40 +62,115 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setSubtotal(cartSubtotal);
   }, [cartItems]);
 
-  // Add an item to the cart
-  const addToCart = (newItem: CartItem): void => {
-    // Make sure item_code is required and not defaulting to id
-    if (!newItem.item_code) {
-      console.error('Cannot add item to cart: item_code is required');
-      return;
+  // Check if two pack items are the same (including their customizations)
+  const areSamePackItems = (item1: CartPackItem, item2: CartPackItem): boolean => {
+    if (item1.pack_id !== item2.pack_id) {
+      return false;
     }
 
-    setCartItems((prevItems) => {
-      // Use getItemKey function to find matching items
-      const newItemKey = getItemKey(newItem.id, newItem.size, newItem.color);
+    // Check if they have the same number of items
+    if (item1.pack_items.length !== item2.pack_items.length) {
+      return false;
+    }
 
-      // Check if item already exists in cart with the same key
-      const existingItemIndex = prevItems.findIndex(
-        (item) => getItemKey(item.id, item.size, item.color) === newItemKey
-      );
-
-      if (existingItemIndex >= 0) {
-        // Increment quantity of existing item
-        const updatedCart = [...prevItems];
-        updatedCart[existingItemIndex].quantity += newItem.quantity || 1;
-        return updatedCart;
+    // Compare each item's customization
+    for (const packItem1 of item1.pack_items) {
+      const matchingItem = item2.pack_items.find((pi) => pi.item_id === packItem1.item_id);
+      if (!matchingItem) {
+        return false;
       }
-      // Add as create item
-      return [...prevItems, { ...newItem, quantity: newItem.quantity || 1 }];
-    });
+
+      // Check if customizations match
+      if (packItem1.size !== matchingItem.size || packItem1.color !== matchingItem.color) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  // Add an item to the cart
+  const addToCart = (newItem: CartItem | CartPackItem): void => {
+    if (isPackItem(newItem)) {
+      // It's a pack item
+      setCartItems((prevItems) => {
+        // Check if a matching pack item (same selections) already exists
+        const existingPackIndex = prevItems.findIndex(
+          (item) =>
+            isPackItem(item) &&
+            // For packs, we need to check if it's the same pack with the same customizations
+            areSamePackItems(item as CartPackItem, newItem)
+        );
+
+        if (existingPackIndex >= 0) {
+          // Increment quantity of existing pack
+          const updatedCart = [...prevItems];
+          updatedCart[existingPackIndex].quantity += newItem.quantity || 1;
+          return updatedCart;
+        }
+        // Add as new pack item
+        return [...prevItems, { ...newItem, quantity: newItem.quantity || 1 }];
+      });
+    } else {
+      // It's a regular item
+      if (!newItem.item_code) {
+        console.error('Cannot add item to cart: item_code is required');
+        return;
+      }
+
+      setCartItems((prevItems) => {
+        // Handle regular items
+        const newItemKey = getItemKey(newItem.id, newItem.size, newItem.color);
+
+        // Check if item already exists in cart with the same key
+        const existingItemIndex = prevItems.findIndex((item) => {
+          if (isPackItem(item)) {
+            return false;
+          }
+          return getItemKey(item.id, item.size, item.color) === newItemKey;
+        });
+
+        if (existingItemIndex >= 0) {
+          // Increment quantity of existing item
+          const updatedCart = [...prevItems];
+          updatedCart[existingItemIndex].quantity += newItem.quantity || 1;
+          return updatedCart;
+        }
+        // Add as new item
+        return [...prevItems, { ...newItem, quantity: newItem.quantity || 1 }];
+      });
+    }
   };
 
   // Remove an item from the cart
   const removeFromCart = (itemId: string, size?: string, color?: string): void => {
-    const itemKey = getItemKey(itemId, size, color);
-    setCartItems((prevItems) =>
-      prevItems.filter((item) => getItemKey(item.id, item.size, item.color) !== itemKey)
-    );
+    // Check if it's a pack item by ID format
+    const packIndexMatch = itemId.match(/^pack_item_(\d+)$/);
+
+    if (packIndexMatch) {
+      // It's a pack item reference by index
+      const index = parseInt(packIndexMatch[1], 10);
+
+      setCartItems((prevItems) => {
+        if (index >= 0 && index < prevItems.length) {
+          // Remove the pack at the specific index
+          return [...prevItems.slice(0, index), ...prevItems.slice(index + 1)];
+        }
+        return prevItems;
+      });
+    } else {
+      // Regular item or direct pack ID
+      setCartItems((prevItems) =>
+        prevItems.filter((item) => {
+          if (isPackItem(item)) {
+            // Remove pack by direct ID reference
+            return item.id !== itemId;
+          }
+          // Remove regular item by composite key
+          return getItemKey(item.id, item.size, item.color) !== getItemKey(itemId, size, color);
+        })
+      );
+    }
   };
 
   // Update the quantity of an item in the cart
@@ -121,12 +185,37 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       return;
     }
 
-    const itemKey = getItemKey(itemId, size, color);
-    setCartItems((prevItems) => {
-      return prevItems.map((item) =>
-        getItemKey(item.id, item.size, item.color) === itemKey ? { ...item, quantity } : item
+    // Check if it's a pack item by ID format
+    const packIndexMatch = itemId.match(/^pack_item_(\d+)$/);
+
+    if (packIndexMatch) {
+      // It's a pack item reference by index
+      const index = parseInt(packIndexMatch[1], 10);
+
+      setCartItems((prevItems) => {
+        if (index >= 0 && index < prevItems.length) {
+          // Update the quantity of the pack at the specific index
+          const updatedItems = [...prevItems];
+          updatedItems[index] = { ...updatedItems[index], quantity };
+          return updatedItems;
+        }
+        return prevItems;
+      });
+    } else {
+      // Regular item or direct pack ID
+      setCartItems((prevItems) =>
+        prevItems.map((item) => {
+          if (isPackItem(item)) {
+            // Update pack by direct ID reference
+            return item.id === itemId ? { ...item, quantity } : item;
+          }
+          // Update regular item by composite key
+          return getItemKey(item.id, item.size, item.color) === getItemKey(itemId, size, color)
+            ? { ...item, quantity }
+            : item;
+        })
       );
-    });
+    }
   };
 
   // Clear the entire cart
@@ -167,3 +256,6 @@ export const useCart = (): CartContextType => {
   }
   return context;
 };
+
+// Export the helper function for use in other components
+export { isPackItem };

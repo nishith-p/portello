@@ -12,13 +12,15 @@ import {
   Flex,
   Group,
   Image,
+  ScrollArea,
   Stack,
   Text,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { useCart } from '@/context';
+import { isPackItem, useCart } from '@/context';
 import { useOrderHooks } from '@/lib/store/orders/hooks';
 import { formatCurrency } from '@/lib/utils';
+import { CartPackItemComponent } from './cart-items';
 
 export const CartDrawer = (): JSX.Element => {
   const {
@@ -55,13 +57,11 @@ export const CartDrawer = (): JSX.Element => {
     setIsPlacingOrder(true);
 
     try {
-      // Place the order using the mutation
       await placeOrderMutation.mutateAsync({
         items: cartItems,
         total_amount: subtotal,
       });
 
-      // Clear the cart after successful order placement
       setTimeout(() => {
         clearCart();
         closeCart();
@@ -77,6 +77,112 @@ export const CartDrawer = (): JSX.Element => {
         color: 'red',
       });
     }
+  };
+
+  // Render cart item based on type (regular or pack)
+  const renderCartItem = (item: any, index: number) => {
+    const isLastItem = index === cartItems.length - 1;
+
+    // If it's a pack item, use the special component and pass the index
+    if (isPackItem(item)) {
+      return <CartPackItemComponent key={`pack_item_${index}`} item={item} index={index} />;
+    }
+
+    // Otherwise, render regular item
+    return (
+      <Box
+        key={getItemKey(item.id, item.size, item.color)}
+        p="sm"
+        style={{
+          borderBottom: isLastItem ? 'none' : '1px solid var(--mantine-color-gray-2)',
+        }}
+      >
+        <Flex justify="space-between" align="flex-start" gap="md">
+          {item.image && (
+            <Box
+              w={70}
+              h={70}
+              style={{
+                overflow: 'hidden',
+                borderRadius: 'var(--mantine-radius-sm)',
+                border: '1px solid var(--mantine-color-gray-3)',
+              }}
+            >
+              <Image src={item.image} alt={item.name} fit="cover" h={70} w={70} />
+            </Box>
+          )}
+
+          <Box style={{ flex: 1 }}>
+            <Flex justify="space-between" align="center" mb="xs">
+              <Text fw={500}>{item.name}</Text>
+              <ActionIcon
+                variant="subtle"
+                color="red"
+                onClick={() => removeFromCart(item.id, item.size, item.color)}
+              >
+                <IconTrash size={16} />
+              </ActionIcon>
+            </Flex>
+
+            {/* Display item variations */}
+            <Group gap="xs" mb="xs">
+              {item.size && (
+                <Badge size="sm" variant="outline">
+                  Size: {item.size}
+                </Badge>
+              )}
+
+              {item.color && (
+                <Badge
+                  size="sm"
+                  variant="outline"
+                  leftSection={
+                    item.colorHex ? (
+                      <div
+                        style={{
+                          width: 10,
+                          height: 10,
+                          borderRadius: '50%',
+                          backgroundColor: item.colorHex,
+                          border: '1px solid rgba(0, 0, 0, 0.1)',
+                        }}
+                      />
+                    ) : null
+                  }
+                >
+                  {item.color}
+                </Badge>
+              )}
+            </Group>
+
+            <Flex justify="space-between" align="center">
+              <Flex gap="xs" align="center">
+                <ActionIcon
+                  size="sm"
+                  variant="subtle"
+                  onClick={() => updateQuantity(item.id, item.quantity - 1, item.size, item.color)}
+                  disabled={item.quantity <= 1}
+                >
+                  <IconMinus size={14} />
+                </ActionIcon>
+
+                <Text size="sm">{item.quantity}</Text>
+
+                <ActionIcon
+                  size="sm"
+                  variant="subtle"
+                  onClick={() => updateQuantity(item.id, item.quantity + 1, item.size, item.color)}
+                >
+                  <IconPlus size={14} />
+                </ActionIcon>
+              </Flex>
+
+              <Text fw={500}>{formatCurrency(item.price * item.quantity)}</Text>
+            </Flex>
+          </Box>
+        </Flex>
+      </Box>
+    );
   };
 
   return (
@@ -116,134 +222,34 @@ export const CartDrawer = (): JSX.Element => {
           </Button>
         </Stack>
       ) : (
-        <Stack gap="lg" align="stretch">
-          {cartItems.map((item, index) => {
-            // Determine if this is the last item
-            const isLastItem = index === cartItems.length - 1;
+        <Stack gap="lg" align="stretch" h="calc(100vh - 140px)">
+          <ScrollArea h="calc(100% - 100px)" offsetScrollbars>
+            <Stack gap={0}>{cartItems.map((item, index) => renderCartItem(item, index))}</Stack>
+          </ScrollArea>
 
-            return (
-              <Box
-                key={getItemKey(item.id, item.size, item.color)}
-                p="sm"
-                style={{
-                  // Only apply the bottom border if it's not the last item
-                  borderBottom: isLastItem ? 'none' : '1px solid var(--mantine-color-gray-2)',
-                }}
+          <Box>
+            <Divider my="sm" />
+            <Box p="sm">
+              <Flex justify="space-between" align="center" mb="md">
+                <Text fw={600} size="lg">
+                  Subtotal
+                </Text>
+                <Text fw={600} size="lg">
+                  {formatCurrency(subtotal)}
+                </Text>
+              </Flex>
+
+              <Button
+                fullWidth
+                color="green"
+                size="md"
+                onClick={handlePlaceOrder}
+                disabled={isPlacingOrder || placeOrderMutation.isPending || cartItems.length === 0}
+                loading={isPlacingOrder || placeOrderMutation.isPending}
               >
-                <Flex justify="space-between" align="flex-start" gap="md">
-                  {item.image && (
-                    <Box
-                      w={70}
-                      h={70}
-                      style={{
-                        overflow: 'hidden',
-                        borderRadius: 'var(--mantine-radius-sm)',
-                        border: '1px solid var(--mantine-color-gray-3)',
-                      }}
-                    >
-                      <Image src={item.image} alt={item.name} fit="cover" h={70} w={70} />
-                    </Box>
-                  )}
-
-                  <Box style={{ flex: 1 }}>
-                    <Flex justify="space-between" align="center" mb="xs">
-                      <Text fw={500}>{item.name}</Text>
-                      <ActionIcon
-                        variant="subtle"
-                        color="red"
-                        onClick={() => removeFromCart(item.id, item.size, item.color)}
-                      >
-                        <IconTrash size={16} />
-                      </ActionIcon>
-                    </Flex>
-
-                    {/* Display item variations */}
-                    <Group gap="xs" mb="xs">
-                      {item.size && (
-                        <Badge size="sm" variant="outline">
-                          Size: {item.size}
-                        </Badge>
-                      )}
-
-                      {item.color && (
-                        <Badge
-                          size="sm"
-                          variant="outline"
-                          leftSection={
-                            item.colorHex ? (
-                              <div
-                                style={{
-                                  width: 10,
-                                  height: 10,
-                                  borderRadius: '50%',
-                                  backgroundColor: item.colorHex,
-                                  border: '1px solid rgba(0, 0, 0, 0.1)',
-                                }}
-                              />
-                            ) : null
-                          }
-                        >
-                          {item.color}
-                        </Badge>
-                      )}
-                    </Group>
-
-                    <Flex justify="space-between" align="center">
-                      <Flex gap="xs" align="center">
-                        <ActionIcon
-                          size="sm"
-                          variant="subtle"
-                          onClick={() =>
-                            updateQuantity(item.id, item.quantity - 1, item.size, item.color)
-                          }
-                          disabled={item.quantity <= 1}
-                        >
-                          <IconMinus size={14} />
-                        </ActionIcon>
-
-                        <Text size="sm">{item.quantity}</Text>
-
-                        <ActionIcon
-                          size="sm"
-                          variant="subtle"
-                          onClick={() =>
-                            updateQuantity(item.id, item.quantity + 1, item.size, item.color)
-                          }
-                        >
-                          <IconPlus size={14} />
-                        </ActionIcon>
-                      </Flex>
-
-                      <Text fw={500}>{formatCurrency(item.price * item.quantity)}</Text>
-                    </Flex>
-                  </Box>
-                </Flex>
-              </Box>
-            );
-          })}
-
-          <Divider my="sm" />
-
-          <Box p="sm">
-            <Flex justify="space-between" align="center" mb="md">
-              <Text fw={600} size="lg">
-                Subtotal
-              </Text>
-              <Text fw={600} size="lg">
-                {formatCurrency(subtotal)}
-              </Text>
-            </Flex>
-
-            <Button
-              fullWidth
-              color="green"
-              size="md"
-              onClick={handlePlaceOrder}
-              disabled={isPlacingOrder || placeOrderMutation.isPending || cartItems.length === 0}
-              loading={isPlacingOrder || placeOrderMutation.isPending}
-            >
-              {isPlacingOrder || placeOrderMutation.isPending ? 'Processing...' : 'Place Order'}
-            </Button>
+                {isPlacingOrder || placeOrderMutation.isPending ? 'Processing...' : 'Place Order'}
+              </Button>
+            </Box>
           </Box>
         </Stack>
       )}

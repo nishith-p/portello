@@ -39,6 +39,7 @@ const navigationData: NavigationItem[] = [
     children: [
       { link: '/portal/store', label: 'View Store' },
       { link: '/portal/admin/store', label: 'Manage Store' },
+      { link: '/portal/admin/store/packs', label: 'Manage Packs' },
     ],
   },
   {
