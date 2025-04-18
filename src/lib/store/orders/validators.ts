@@ -1,5 +1,5 @@
 import { ValidationError } from '@/lib/core/errors';
-import { CreateOrderPackItem, Order, OrderItem, OrderItemExtended } from '@/lib/store/types';
+import { Order, OrderItem, OrderItemExtended, OrderStatus } from '@/lib/store/types';
 
 export function validateOrder(data: Order): void {
   const errors: Record<string, string> = {};
@@ -119,60 +119,18 @@ export function validateOrder(data: Order): void {
   }
 }
 
-/**
- * Validate a pack item for ordering
- */
-export function validatePackItem(packItem: CreateOrderPackItem): void {
-  const errors: Record<string, string> = {};
+export function validateOrderStatus(status: string): void {
+  const validStatuses: OrderStatus[] = [
+    'pending',
+    'confirmed',
+    'paid',
+    'processing',
+    'shipped',
+    'delivered',
+    'cancelled',
+  ];
 
-  if (!packItem.item_code) {
-    errors.item_code = 'Pack code is required';
-  }
-
-  if (
-    packItem.quantity == null ||
-    isNaN(Number(packItem.quantity)) ||
-    Number(packItem.quantity) <= 0
-  ) {
-    errors.quantity = 'Valid quantity is required';
-  }
-
-  if (packItem.price == null || isNaN(Number(packItem.price)) || Number(packItem.price) < 0) {
-    errors.price = 'Valid price is required';
-  }
-
-  if (
-    !packItem.pack_items ||
-    !Array.isArray(packItem.pack_items) ||
-    packItem.pack_items.length === 0
-  ) {
-    errors.pack_items = 'At least one pack item is required';
-  } else {
-    // Validate each pack item detail
-    const packItemErrors: Record<number, Record<string, string>> = {};
-
-    packItem.pack_items.forEach((item, index) => {
-      const itemError: Record<string, string> = {};
-
-      if (!item.item_code) {
-        itemError.item_code = 'Item code is required';
-      }
-
-      if (item.quantity == null || isNaN(Number(item.quantity)) || Number(item.quantity) <= 0) {
-        itemError.quantity = 'Valid quantity is required';
-      }
-
-      if (Object.keys(itemError).length > 0) {
-        packItemErrors[index] = itemError;
-      }
-    });
-
-    if (Object.keys(packItemErrors).length > 0) {
-      errors.pack_items_validation = JSON.stringify(packItemErrors);
-    }
-  }
-
-  if (Object.keys(errors).length > 0) {
-    throw new ValidationError('Invalid pack item data', errors);
+  if (!validStatuses.includes(status as OrderStatus)) {
+    throw new ValidationError(`Invalid order status: ${status}.`);
   }
 }
