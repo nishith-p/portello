@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { IconAlertCircle, IconShoppingBag } from '@tabler/icons-react';
-import { Alert, Button, Center, Container, Loader, Stack, Text, Title } from '@mantine/core';
+import { Alert, Button, Center, Container, Loader, Paper, Stack, Text, Title } from '@mantine/core';
 import { useOrderHooks } from '@/lib/store/orders/hooks';
 import { Order } from '@/lib/store/types';
 import { OrderDetailsModal } from './(components)/order-details-modal';
@@ -96,7 +96,9 @@ export default function OrdersPage() {
           Show the Order ID to the DX Team to pay and collect your order.
         </Text>
 
-        <OrdersTable orders={orders} onOrderClick={handleOrderClick} />
+        <Paper p="md" radius="md" withBorder>
+          <OrdersTable orders={orders} onOrderClick={handleOrderClick} />
+        </Paper>
       </Stack>
 
       <OrderDetailsModal order={selectedOrder} opened={modalOpened} onClose={closeModal} />

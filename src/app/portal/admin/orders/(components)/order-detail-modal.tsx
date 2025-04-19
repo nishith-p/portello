@@ -334,12 +334,6 @@ export function OrderDetailModal({
             </Group>
           </Card>
         </Card>
-
-        <Group justify="flex-end" mt="md">
-          <Button variant="outline" onClick={onClose}>
-            Close
-          </Button>
-        </Group>
       </Stack>
     </Modal>
   );
