@@ -111,11 +111,11 @@ export default function AdminStorePage() {
         <Paper p="md" radius="md" withBorder>
           <StoreItemSearch
             searchInput={searchInput}
-            setSearchInput={setSearchInput}
+            setSearchInputAction={setSearchInput}
             activeFilter={activeFilter}
-            setActiveFilter={setActiveFilter}
+            setActiveFilterAction={setActiveFilter}
             setSearchParams={setSearchParams}
-            onSearch={handleSearch}
+            onSearchAction={handleSearch}
           />
 
           {isLoading ? (
@@ -134,8 +134,8 @@ export default function AdminStorePage() {
             <>
               <StoreItemTable
                 items={data?.items || []}
-                onViewItem={handleViewItem}
-                onToggleStatus={handleToggleStatus}
+                onViewItemAction={handleViewItem}
+                onToggleStatusAction={handleToggleStatus}
               />
 
               {data && (

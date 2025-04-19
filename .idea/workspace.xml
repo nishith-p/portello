@@ -4,12 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="Minor fixes">
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="Better mobile responsiveness">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/(components)/order-details-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/orders/(components)/order-details-modal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/(components)/orders-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/orders/(components)/orders-table.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/orders/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/store/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-search.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-search.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/orders/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-search.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/(components)/pack-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/packs/(components)/pack-table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/packs/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,7 +97,7 @@
       <option name="presentableId" value="Default" />
       <updated>1743790678452</updated>
       <workItem from="1743790679486" duration="26388000" />
-      <workItem from="1744462042462" duration="73158000" />
+      <workItem from="1744462042462" duration="77083000" />
     </task>
     <task id="LOCAL-00001" summary="Layout fixes, working orders.">
       <option name="closed" value="true" />
@@ -189,7 +195,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745062401087</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Better mobile responsiveness">
+      <option name="closed" value="true" />
+      <created>1745064750261</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1745064750261</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -211,6 +225,7 @@
     <MESSAGE value="Working discounts" />
     <MESSAGE value="Discount functionalities" />
     <MESSAGE value="Minor fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Minor fixes" />
+    <MESSAGE value="Better mobile responsiveness" />
+    <option name="LAST_COMMIT_MESSAGE" value="Better mobile responsiveness" />
   </component>
 </project>

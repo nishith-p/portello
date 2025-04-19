@@ -105,8 +105,8 @@ export default function AdminPacksPage() {
             <>
               <PackTable
                 packs={data?.packs || []}
-                onViewPack={handleViewPack}
-                onToggleStatus={handleToggleStatus}
+                onViewPackAction={handleViewPack}
+                onToggleStatusAction={handleToggleStatus}
               />
 
               {data && data.total > searchParams.limit && (

@@ -1,6 +1,9 @@
+'use client';
+
 import React, { Dispatch, SetStateAction } from 'react';
 import { IconSearch } from '@tabler/icons-react';
-import { Button, Group, Select, TextInput } from '@mantine/core';
+import { Button, Group, Select, Stack, TextInput } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 
 interface SearchParams {
   search?: string;
@@ -11,26 +14,64 @@ interface SearchParams {
 
 interface StoreItemSearchProps {
   searchInput: string;
-  setSearchInput: Dispatch<SetStateAction<string>>;
+  setSearchInputAction: Dispatch<SetStateAction<string>>;
   activeFilter: boolean | undefined;
-  setActiveFilter: Dispatch<SetStateAction<boolean | undefined>>;
+  setActiveFilterAction: Dispatch<SetStateAction<boolean | undefined>>;
   setSearchParams: Dispatch<SetStateAction<SearchParams>>;
-  onSearch: () => void;
+  onSearchAction: () => void;
 }
 
 export function StoreItemSearch({
   searchInput,
-  setSearchInput,
+  setSearchInputAction,
   activeFilter,
-  setActiveFilter,
-  onSearch,
+  setActiveFilterAction,
+  onSearchAction,
 }: StoreItemSearchProps) {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
   // Handle enter key in search input
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter') {
-      onSearch();
+      onSearchAction();
     }
   };
+
+  // Status options for dropdown
+  const statusOptions = [
+    { value: 'true', label: 'Active' },
+    { value: 'false', label: 'Inactive' },
+  ];
+
+  if (isMobile) {
+    return (
+      <Stack mb="md" gap="xs">
+        <TextInput
+          placeholder="Search items"
+          leftSection={<IconSearch size={16} />}
+          value={searchInput}
+          onChange={(e) => setSearchInputAction(e.currentTarget.value)}
+          onKeyDown={handleKeyDown}
+          w="100%"
+        />
+
+        <Group grow>
+          <Select
+            placeholder="Status"
+            data={statusOptions}
+            clearable
+            value={activeFilter === undefined ? null : activeFilter.toString()}
+            onChange={(value) => {
+              const active = value === 'true' ? true : value === 'false' ? false : undefined;
+              setActiveFilterAction(active);
+            }}
+          />
+
+          <Button onClick={onSearchAction}>Search</Button>
+        </Group>
+      </Stack>
+    );
+  }
 
   return (
     <Group mb="md" justify="space-between">
@@ -39,25 +80,22 @@ export function StoreItemSearch({
           placeholder="Search items"
           leftSection={<IconSearch size={16} />}
           value={searchInput}
-          onChange={(e) => setSearchInput(e.currentTarget.value)}
+          onChange={(e) => setSearchInputAction(e.currentTarget.value)}
           onKeyDown={handleKeyDown}
           style={{ width: '300px' }}
         />
-        <Button onClick={onSearch}>Search</Button>
+        <Button onClick={onSearchAction}>Search</Button>
       </Group>
 
       <Group>
         <Select
           placeholder="Status"
-          data={[
-            { value: 'true', label: 'Active' },
-            { value: 'false', label: 'Inactive' },
-          ]}
+          data={statusOptions}
           clearable
           value={activeFilter === undefined ? null : activeFilter.toString()}
           onChange={(value) => {
             const active = value === 'true' ? true : value === 'false' ? false : undefined;
-            setActiveFilter(active);
+            setActiveFilterAction(active);
           }}
         />
       </Group>

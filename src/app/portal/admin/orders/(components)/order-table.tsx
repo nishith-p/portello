@@ -1,15 +1,29 @@
+'use client';
+
 import React from 'react';
-import { IconEye } from '@tabler/icons-react';
-import { ActionIcon, Badge, Group, ScrollArea, Table, Text } from '@mantine/core';
-import { Order, StatusColorMap } from '@/lib/store/types';
+import { IconEye, IconPackage } from '@tabler/icons-react';
+import {
+  ActionIcon,
+  Badge,
+  Card,
+  Divider,
+  Group,
+  Paper,
+  ScrollArea,
+  Stack,
+  Table,
+  Text,
+} from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
+import { Order, OrderStatus } from '@/lib/store/types';
+import { formatCurrency, formatDate } from '@/lib/utils';
 
 interface OrderTableProps {
   orders: Order[];
-  onViewOrder: (order: Order) => void;
+  onViewOrderAction: (order: Order) => void;
 }
 
-// Status color mapping
-const statusColorMap: StatusColorMap = {
+const statusColorMap: Record<OrderStatus, string> = {
   pending: 'orange',
   confirmed: 'blue',
   paid: 'teal',
@@ -19,36 +33,125 @@ const statusColorMap: StatusColorMap = {
   cancelled: 'red',
 };
 
-// Format date for display
-const formatDate = (dateString?: string): string => {
-  if (!dateString) {
-    return 'N/A';
+export function OrderTable({ orders, onViewOrderAction }: OrderTableProps) {
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
+  if (isMobile) {
+    return (
+      <Stack>
+        {orders.length === 0 ? (
+          <Paper p="md" withBorder radius="md">
+            <Text ta="center" c="dimmed">
+              No orders found
+            </Text>
+          </Paper>
+        ) : (
+          orders.map((order) => (
+            <Card
+              key={order.id}
+              shadow="sm"
+              padding="md"
+              radius="md"
+              withBorder
+              onClick={() => onViewOrderAction(order)}
+              style={{ cursor: 'pointer' }}
+            >
+              <Stack gap="xs">
+                <Group justify="space-between">
+                  <Text fw={500} size="sm">
+                    Order ID
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    {order.id.substring(0, 8)}...
+                  </Text>
+                </Group>
+
+                <Group justify="space-between">
+                  <Text fw={500} size="sm">
+                    Customer
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    {order.user_id}
+                  </Text>
+                </Group>
+
+                <Group justify="space-between">
+                  <Text fw={500} size="sm">
+                    Date
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    {formatDate(order.created_at)}
+                  </Text>
+                </Group>
+
+                <Group justify="space-between">
+                  <Text fw={500} size="sm">
+                    Status
+                  </Text>
+                  <Badge color={statusColorMap[order.status]} variant="filled">
+                    {order.status.toUpperCase()}
+                  </Badge>
+                </Group>
+
+                <Group justify="space-between">
+                  <Text fw={500} size="sm">
+                    Items
+                  </Text>
+                  <Group gap="xs">
+                    <IconPackage size={16} />
+                    <Text size="sm" c="dimmed">
+                      {(order.items || []).length}
+                    </Text>
+                  </Group>
+                </Group>
+
+                <Divider />
+
+                <Group justify="space-between">
+                  <Text fw={500} size="sm">
+                    Total
+                  </Text>
+                  <Text size="sm" fw={600}>
+                    {formatCurrency(order.total_amount)}
+                  </Text>
+                </Group>
+
+                <Group mt="xs" justify="flex-end">
+                  <ActionIcon
+                    variant="subtle"
+                    color="blue"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onViewOrderAction(order);
+                    }}
+                  >
+                    <IconEye size={18} />
+                  </ActionIcon>
+                </Group>
+              </Stack>
+            </Card>
+          ))
+        )}
+      </Stack>
+    );
   }
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
 
-// Format currency for display
-const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(amount);
-};
-
-export function OrderTable({ orders, onViewOrder }: OrderTableProps) {
+  // Desktop Table View
   return (
     <ScrollArea>
-      <Table striped highlightOnHover withTableBorder>
+      <Table
+        striped
+        highlightOnHover
+        withTableBorder
+        bg="white"
+        horizontalSpacing="md"
+        verticalSpacing="sm"
+        fz="sm"
+      >
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Order ID</Table.Th>
-            <Table.Th>Full Name</Table.Th>
+            <Table.Th>Customer</Table.Th>
             <Table.Th>Date</Table.Th>
             <Table.Th>Status</Table.Th>
             <Table.Th>Items</Table.Th>
@@ -70,18 +173,35 @@ export function OrderTable({ orders, onViewOrder }: OrderTableProps) {
               <Table.Tr
                 key={order.id}
                 style={{ cursor: 'pointer' }}
-                onClick={() => onViewOrder(order)}
+                onClick={() => onViewOrderAction(order)}
               >
-                <Table.Td>{order.id.substring(0, 8)}...</Table.Td>
-                <Table.Td>{order.user_id}</Table.Td>
-                <Table.Td>{formatDate(order.created_at)}</Table.Td>
+                <Table.Td>
+                  <Text size="sm" fw={500}>
+                    {order.id.substring(0, 8)}...
+                  </Text>
+                </Table.Td>
+                <Table.Td>
+                  <Text size="sm">{order.user_id}</Text>
+                </Table.Td>
+                <Table.Td>
+                  <Text size="sm">{formatDate(order.created_at)}</Text>
+                </Table.Td>
                 <Table.Td>
                   <Badge color={statusColorMap[order.status]} variant="filled">
                     {order.status.toUpperCase()}
                   </Badge>
                 </Table.Td>
-                <Table.Td>{(order.items || []).length} items</Table.Td>
-                <Table.Td>{formatCurrency(order.total_amount)}</Table.Td>
+                <Table.Td>
+                  <Group gap="xs">
+                    <IconPackage size={16} />
+                    <Text size="sm">{(order.items || []).length}</Text>
+                  </Group>
+                </Table.Td>
+                <Table.Td>
+                  <Text size="sm" fw={500}>
+                    {formatCurrency(order.total_amount)}
+                  </Text>
+                </Table.Td>
                 <Table.Td>
                   <Group gap="xs" justify="center">
                     <ActionIcon
@@ -89,7 +209,7 @@ export function OrderTable({ orders, onViewOrder }: OrderTableProps) {
                       color="blue"
                       onClick={(e) => {
                         e.stopPropagation();
-                        onViewOrder(order);
+                        onViewOrderAction(order);
                       }}
                     >
                       <IconEye size={16} />

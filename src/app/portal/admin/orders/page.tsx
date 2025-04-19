@@ -135,10 +135,10 @@ export default function AdminOrdersPage() {
         <Paper p="md" radius="md" withBorder>
           <OrderSearch
             searchInput={searchInput}
-            setSearchInput={setSearchInput}
-            statusFilter={statusFilter}
-            setStatusFilter={setStatusFilter}
-            onSearch={handleSearch}
+            setSearchInputAction={setSearchInput}
+            statusFilterAction={statusFilter}
+            setStatusFilterAction={setStatusFilter}
+            onSearchAction={handleSearch}
           />
 
           {isLoading ? (
@@ -151,7 +151,7 @@ export default function AdminOrdersPage() {
             </Alert>
           ) : (
             <>
-              <OrderTable orders={paginatedOrders} onViewOrder={handleViewOrder} />
+              <OrderTable orders={paginatedOrders} onViewOrderAction={handleViewOrder} />
 
               <OrderPagination
                 currentOffset={searchParams.offset}
