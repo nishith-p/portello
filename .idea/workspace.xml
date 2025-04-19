@@ -4,30 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="More code cleanup">
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="minor fix: forgot about hardcoded discount">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/store/packs/[id]/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/packs/[id]/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/users/documents/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/users/documents/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-search.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-pagination.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-pagination.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-search.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-search.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/edit/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/edit/[id]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/new/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/new/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/edit/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/packs/edit/[id]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/new/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/packs/new/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/packs/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-card.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/product-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/(components)/product-card.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/core/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/core/constants.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/core/supabase.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/core/supabase.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/store/items/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/items/db.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/store/items/hooks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/items/hooks.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/store/packs/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/packs/db.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/users/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/users/db.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/favicon.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/admin-dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/(components)/admin-dashboard/admin-dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/(components)/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/users/hooks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/users/hooks.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/users/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/users/types.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,7 +52,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;dev-packorder&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/nishith/Desktop/Clean Project/portello&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/nishith/Desktop/Clean Project/portello/src/app&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -85,12 +67,16 @@
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/app" />
+      <recent name="$PROJECT_DIR$/public" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/app/portal/(components)/admin-dashboard" />
       <recent name="$PROJECT_DIR$/src/app/portal/admin/store/packs/edit/[id]" />
       <recent name="$PROJECT_DIR$/src/app/portal/admin" />
       <recent name="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-form/sections" />
       <recent name="$PROJECT_DIR$/src/lib/auth" />
-      <recent name="$PROJECT_DIR$/src/lib/users" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -109,7 +95,7 @@
       <option name="presentableId" value="Default" />
       <updated>1743790678452</updated>
       <workItem from="1743790679486" duration="26388000" />
-      <workItem from="1744462042462" duration="80541000" />
+      <workItem from="1744462042462" duration="88821000" />
     </task>
     <task id="LOCAL-00001" summary="Layout fixes, working orders.">
       <option name="closed" value="true" />
@@ -239,7 +225,23 @@
       <option name="project" value="LOCAL" />
       <updated>1745073858361</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="More code cleanup">
+      <option name="closed" value="true" />
+      <created>1745075724855</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1745075724855</updated>
+    </task>
+    <task id="LOCAL-00018" summary="minor fix: forgot about hardcoded discount">
+      <option name="closed" value="true" />
+      <created>1745075752154</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1745075752154</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -266,6 +268,7 @@
     <MESSAGE value="lil housekeeping" />
     <MESSAGE value="Fixed route param issue with promise" />
     <MESSAGE value="More code cleanup" />
-    <option name="LAST_COMMIT_MESSAGE" value="More code cleanup" />
+    <MESSAGE value="minor fix: forgot about hardcoded discount" />
+    <option name="LAST_COMMIT_MESSAGE" value="minor fix: forgot about hardcoded discount" />
   </component>
 </project>

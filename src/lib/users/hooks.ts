@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
+import { UserStats } from '@/lib/users/stats/db';
 import {
   UpdateDocumentParams,
   UserListResponse,
@@ -184,4 +185,32 @@ export function useUpdateDocument() {
       });
     },
   });
+}
+
+/**
+ * Hook for user statistics operations
+ */
+export function useUserHooks() {
+  /**
+   * Hook to fetch user statistics (admin only)
+   */
+  const useUserStats = () => {
+    return useQuery<UserStats>({
+      queryKey: ['users', 'stats'],
+      queryFn: async () => {
+        const response = await fetch('/api/users/stats');
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || 'Failed to fetch user statistics');
+        }
+
+        return response.json();
+      },
+    });
+  };
+
+  return {
+    useUserStats,
+  };
 }

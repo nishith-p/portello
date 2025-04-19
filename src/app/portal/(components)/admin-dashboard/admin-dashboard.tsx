@@ -1,6 +1,7 @@
 'use client';
 
 import { Stack, Title } from '@mantine/core';
+import { StatSection } from '@/app/portal/(components)/admin-dashboard/stat-section';
 
 export const AdminDashboard = () => {
   return (
@@ -8,6 +9,7 @@ export const AdminDashboard = () => {
       <Title order={2} c="gray.8">
         Dashboard
       </Title>
+      <StatSection />
     </Stack>
   );
 };
