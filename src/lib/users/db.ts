@@ -70,7 +70,6 @@ export async function searchUsers(
 ): Promise<{ users: UserListItem[]; total: number }> {
   const { search = '', entity, position, round, limit = 10, offset = 0 } = params;
 
-  // Start building the query
   let query = supabaseServer
     .from('users')
     .select(
@@ -80,7 +79,6 @@ export async function searchUsers(
       }
     );
 
-  // Add filters if provided
   if (search) {
     query = query.or(
       `first_name.ilike.%${search}%,last_name.ilike.%${search}%,aiesec_email.ilike.%${search}%`
@@ -102,7 +100,6 @@ export async function searchUsers(
   // Add pagination
   query = query.order('created_at', { ascending: false }).range(offset, offset + limit - 1);
 
-  // Execute the query
   const { data, error, count } = await query;
 
   if (error) {

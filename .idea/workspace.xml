@@ -4,12 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="lil housekeeping">
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="More code cleanup">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/store/items/[id]/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/items/[id]/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/store/orders/[id]/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/orders/[id]/route.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/api/store/packs/[id]/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/packs/[id]/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/users/documents/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/users/documents/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-search.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-pagination.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-pagination.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-search.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-search.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/edit/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/edit/[id]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/new/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/new/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/edit/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/packs/edit/[id]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/new/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/packs/new/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/packs/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/product-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/(components)/product-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/core/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/core/constants.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/core/supabase.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/core/supabase.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/store/items/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/items/db.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/store/items/hooks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/items/hooks.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/store/packs/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/packs/db.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/users/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/users/db.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/users/hooks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/users/hooks.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/users/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/users/types.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,7 +109,7 @@
       <option name="presentableId" value="Default" />
       <updated>1743790678452</updated>
       <workItem from="1743790679486" duration="26388000" />
-      <workItem from="1744462042462" duration="78726000" />
+      <workItem from="1744462042462" duration="80541000" />
     </task>
     <task id="LOCAL-00001" summary="Layout fixes, working orders.">
       <option name="closed" value="true" />
@@ -213,7 +231,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745072793352</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Fixed route param issue with promise">
+      <option name="closed" value="true" />
+      <created>1745073858361</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1745073858361</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -238,6 +264,8 @@
     <MESSAGE value="Better mobile responsiveness" />
     <MESSAGE value="Fixed mobile views" />
     <MESSAGE value="lil housekeeping" />
-    <option name="LAST_COMMIT_MESSAGE" value="lil housekeeping" />
+    <MESSAGE value="Fixed route param issue with promise" />
+    <MESSAGE value="More code cleanup" />
+    <option name="LAST_COMMIT_MESSAGE" value="More code cleanup" />
   </component>
 </project>

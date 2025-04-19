@@ -3,7 +3,12 @@
 import { useEffect } from 'react';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
-import { UserListResponse, UserProfile, UserSearchParams } from '@/lib/users/types';
+import {
+  UpdateDocumentParams,
+  UserListResponse,
+  UserProfile,
+  UserSearchParams,
+} from '@/lib/users/types';
 
 /**
  * Hook to fetch the current user's profile
@@ -123,21 +128,10 @@ export function useUserProfile(kindeId: string | null) {
 
   return query;
 }
-// Interface for document update params
-interface UpdateDocumentParams {
-  userId: string;
-  document:
-    | 'passport'
-    | 'anti_harassment'
-    | 'indemnity'
-    | 'anti_substance'
-    | 'visa_confirmation'
-    | 'flight_ticket';
-  status?: boolean;
-  link?: string;
-}
 
-// Function to update document status or link
+/**
+ * Function to update user documents
+ */
 const updateDocument = async (params: UpdateDocumentParams) => {
   // For document names, we need to strip "_link" suffix if present
   const documentName = params.document.endsWith('_link')
@@ -165,17 +159,17 @@ const updateDocument = async (params: UpdateDocumentParams) => {
   return response.json();
 };
 
-// Hook for updating documents
+/**
+ * Hook to update user documents
+ */
 export function useUpdateDocument() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: updateDocument,
-    onSuccess: (_data, variables) => {
-      // Invalidate queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ['userProfile', variables.userId] });
+    onSuccess: async (_data, variables) => {
+      await queryClient.invalidateQueries({ queryKey: ['userProfile', variables.userId] });
 
-      // Show success notification
       notifications.show({
         title: 'Document Updated',
         message: `Document status has been updated successfully`,
@@ -183,7 +177,6 @@ export function useUpdateDocument() {
       });
     },
     onError: (error) => {
-      // Show error notification
       notifications.show({
         title: 'Update Failed',
         message: error.message || 'Failed to update document status',
@@ -192,37 +185,3 @@ export function useUpdateDocument() {
     },
   });
 }
-
-// Document type mapping
-export const documentTypes = {
-  passport: {
-    label: 'Passport',
-    statusField: 'passport',
-    linkField: 'passport_link',
-  },
-  anti_harassment: {
-    label: 'Anti-Harassment Form',
-    statusField: 'anti_harassment',
-    linkField: 'anti_harassment_link',
-  },
-  indemnity: {
-    label: 'Indemnity Form',
-    statusField: 'indemnity',
-    linkField: 'indemnity_link',
-  },
-  anti_substance: {
-    label: 'Anti-Substance Form',
-    statusField: 'anti_substance',
-    linkField: 'anti_substance_link',
-  },
-  visa_confirmation: {
-    label: 'Visa Details',
-    statusField: 'visa_confirmation',
-    linkField: 'visa_link',
-  },
-  flight_ticket: {
-    label: 'Flight Details',
-    statusField: 'flight_ticket',
-    linkField: 'flight_link',
-  },
-};

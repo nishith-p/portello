@@ -4,7 +4,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { IconSearch } from '@tabler/icons-react';
 import { Button, Group, Select, Stack, TextInput } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { ENTITIES } from '@/lib/core/constants';
+import { ENTITIES, ROUNDS } from '@/lib/core/constants';
 import { UserSearchParams } from '@/lib/users/types';
 
 interface DelegatesSearchProps {
@@ -57,7 +57,7 @@ export function DelegatesSearch({
 
           <Select
             placeholder="Round"
-            data={['1', '2', '3']} // Replace with your rounds
+            data={ROUNDS}
             clearable
             onChange={(value) => {
               const round = value ? parseInt(value, 10) : undefined;
@@ -96,7 +96,7 @@ export function DelegatesSearch({
         />
         <Select
           placeholder="Round"
-          data={['1', '2', '3']} // Replace with your rounds
+          data={ROUNDS}
           clearable
           onChange={(value) => {
             const round = value ? parseInt(value, 10) : undefined;

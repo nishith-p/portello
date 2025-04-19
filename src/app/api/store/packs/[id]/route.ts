@@ -55,14 +55,12 @@ export async function PUT(
 
         const body = await req.json();
 
-        // Validate input
         if (!body || typeof body !== 'object') {
           throw new BadRequestError('Invalid request body');
         }
 
         const packData: Partial<StorePackInput> = {};
 
-        // Only include fields that were provided in the request
         if (body.pack_code !== undefined) {
           packData.pack_code = body.pack_code;
         }
@@ -156,7 +154,6 @@ export async function DELETE(
       try {
         const { id } = await context.params;
 
-        // We use updateStorePackStatus to deactivate the pack as a soft delete
         const updatedPack = await updateStorePackStatus(id, false);
 
         return NextResponse.json(updatedPack);

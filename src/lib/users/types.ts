@@ -23,7 +23,6 @@ export enum TShirtSizeType {
   XXXL = 'XXXL',
 }
 
-// User data from the users table
 export interface User {
   id: number;
   kinde_id: string;
@@ -46,7 +45,6 @@ export interface User {
   round: number | null;
 }
 
-// User documents from the user_documents table
 export interface UserDocuments {
   user_id: string;
   passport: boolean;
@@ -64,13 +62,11 @@ export interface UserDocuments {
   created_at: string;
 }
 
-// Complete user profile with both user info and documents
 export interface UserProfile {
   user: User;
   documents: UserDocuments | null;
 }
 
-// For admin list view with limited fields
 export interface UserListItem {
   id: number;
   kinde_id: string;
@@ -82,7 +78,6 @@ export interface UserListItem {
   round: number | null;
 }
 
-// Request parameters for search and filtering
 export interface UserSearchParams {
   search?: string;
   entity?: string;
@@ -92,15 +87,20 @@ export interface UserSearchParams {
   offset?: number;
 }
 
-// API response structures
 export interface UserListResponse {
   users: UserListItem[];
   total: number;
 }
 
-export interface ErrorResponse {
-  error: {
-    message: string;
-    code: string;
-  };
+export interface UpdateDocumentParams {
+  userId: string;
+  document:
+    | 'passport'
+    | 'anti_harassment'
+    | 'indemnity'
+    | 'anti_substance'
+    | 'visa_confirmation'
+    | 'flight_ticket';
+  status?: boolean;
+  link?: string;
 }

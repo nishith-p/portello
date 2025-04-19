@@ -10,7 +10,6 @@ export default function CreatePackPage() {
   const [error, setError] = useState<Error | null>(null);
   const createPackMutation = useCreateStorePack();
 
-  // Handle form submission to create a new store pack
   const handleCreatePack = async (formData: StorePack): Promise<void> => {
     try {
       setError(null);
@@ -31,7 +30,7 @@ export default function CreatePackPage() {
       });
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to create store pack'));
-      throw err; // Re-throw to let the form component handle it
+      throw err;
     }
   };
 

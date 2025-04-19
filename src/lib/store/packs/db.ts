@@ -13,7 +13,6 @@ import {
  * Get a store pack by ID with its items
  */
 export async function getStorePackById(id: string): Promise<StorePack | null> {
-  // First get the pack
   const { data: pack, error } = await supabaseServer
     .from('store_packs')
     .select('*')
@@ -22,7 +21,7 @@ export async function getStorePackById(id: string): Promise<StorePack | null> {
 
   if (error) {
     if (error.code === 'PGRST116') {
-      return null; // No pack found is not an error
+      return null;
     }
     throw error;
   }
@@ -64,7 +63,7 @@ export async function getStorePackByCode(packCode: string): Promise<StorePack | 
 
   if (error) {
     if (error.code === 'PGRST116') {
-      return null; // No pack found is not an error
+      return null;
     }
     throw error;
   }
@@ -73,7 +72,6 @@ export async function getStorePackByCode(packCode: string): Promise<StorePack | 
     return null;
   }
 
-  // Then get the pack items
   const { data: packItems, error: itemsError } = await supabaseServer
     .from('store_pack_items')
     .select(
@@ -155,12 +153,10 @@ export async function searchStorePacks(
 ): Promise<{ packs: StorePack[]; total: number }> {
   const { search = '', active, limit = 10, offset = 0 } = params;
 
-  // Start building the query
   let query = supabaseServer.from('store_packs').select('*', {
     count: 'exact',
   });
 
-  // Add filters if provided
   if (search) {
     query = query.or(
       `pack_code.ilike.%${search}%,name.ilike.%${search}%,description.ilike.%${search}%`
@@ -174,7 +170,6 @@ export async function searchStorePacks(
   // Add pagination
   query = query.order('created_at', { ascending: false }).range(offset, offset + limit - 1);
 
-  // Execute the query
   const { data, error, count } = await query;
 
   if (error) {
@@ -232,7 +227,6 @@ export async function searchStorePacks(
  * Create a new store pack with items
  */
 export async function createStorePack(packData: StorePackWithItemsInput): Promise<StorePack> {
-  // Validate required fields
   if (
     !packData.pack_code ||
     !packData.name ||
@@ -293,10 +287,8 @@ export async function createStorePack(packData: StorePackWithItemsInput): Promis
     }
   }
 
-  // Start a transaction to insert the pack and its items
   const { pack_items, ...packOnly } = packData;
 
-  // Create the pack first
   const { data: newPack, error: packError } = await supabaseServer
     .from('store_packs')
     .insert([packOnly])
@@ -307,7 +299,6 @@ export async function createStorePack(packData: StorePackWithItemsInput): Promis
     throw packError || new Error('Failed to create store pack');
   }
 
-  // Now insert all pack items
   const packItemsToInsert = packItems.map((item) => ({
     pack_id: newPack.id,
     item_id: item.item_id,
@@ -327,7 +318,6 @@ export async function createStorePack(packData: StorePackWithItemsInput): Promis
     throw itemsError;
   }
 
-  // Return the complete pack with items
   return {
     ...newPack,
     pack_items: newPackItems || [],
@@ -374,7 +364,6 @@ export async function updateStorePack(
  * Update a store pack's active status
  */
 export async function updateStorePackStatus(id: string, active: boolean): Promise<StorePack> {
-  // Check if pack exists
   const existingPack = await getStorePackById(id);
   if (!existingPack) {
     throw new NotFoundError(`Store pack with ID ${id} not found`);
@@ -402,7 +391,6 @@ export async function updateStorePackItems(
   id: string,
   packItems: StorePackItemInput[]
 ): Promise<StorePack> {
-  // Check if pack exists
   const existingPack = await getStorePackById(id);
   if (!existingPack) {
     throw new NotFoundError(`Store pack with ID ${id} not found`);

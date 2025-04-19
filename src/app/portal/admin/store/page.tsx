@@ -25,7 +25,6 @@ import {
 } from './(components)';
 
 export default function AdminStorePage() {
-  // State for search parameters
   const [searchParams, setSearchParams] = useState<
     Required<Pick<StoreItemSearchParams, 'limit' | 'offset'>> &
       Omit<StoreItemSearchParams, 'limit' | 'offset'>
@@ -34,19 +33,15 @@ export default function AdminStorePage() {
     offset: 0,
   });
 
-  // State for quick search input
   const [searchInput, setSearchInput] = useState<string>('');
   const [activeFilter, setActiveFilter] = useState<boolean | undefined>(undefined);
 
-  // State for item details modal
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedItem, setSelectedItem] = useState<StoreItem | null>(null);
 
-  // Fetch store items with search parameters
   const { data, isLoading, error } = useStoreItemSearch(searchParams);
   const updateStatusMutation = useUpdateStoreItemStatus();
 
-  // Handle search form submission
   const handleSearch = (): void => {
     setSearchParams((prev) => ({
       ...prev,
@@ -56,13 +51,11 @@ export default function AdminStorePage() {
     }));
   };
 
-  // View item details
   const handleViewItem = (item: StoreItem): void => {
     setSelectedItem(item);
     open();
   };
 
-  // Toggle item active status
   const handleToggleStatus = (item: StoreItem, e: React.MouseEvent): void => {
     e.stopPropagation();
     updateStatusMutation.mutate(
@@ -84,7 +77,6 @@ export default function AdminStorePage() {
     );
   };
 
-  // Handle pagination
   const handlePageChange = (newOffset: number): void => {
     setSearchParams((prev) => ({
       ...prev,

@@ -20,7 +20,6 @@ export default function EditPackPage() {
   } = useStorePack(packId as string);
   const updatePackMutation = useUpdateStorePack();
 
-  // Handle form submission to update the pack
   const handleUpdatePack = async (formData: StorePack): Promise<void> => {
     try {
       setError(null);
@@ -44,7 +43,7 @@ export default function EditPackPage() {
       });
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to update store pack'));
-      throw err; // Re-throw to let the form component handle it
+      throw err;
     }
   };
 

@@ -28,21 +28,17 @@ export default function AdminPacksPage() {
     offset: 0,
   });
 
-  // State for pack details modal
   const [opened, { open, close }] = useDisclosure(false);
   const [selectedPack, setSelectedPack] = useState<StorePack | null>(null);
 
-  // Fetch store packs with search parameters
   const { data, isLoading, error } = useStorePackSearch(searchParams);
   const updateStatusMutation = useUpdateStorePackStatus();
 
-  // View pack details
   const handleViewPack = (pack: StorePack): void => {
     setSelectedPack(pack);
     open();
   };
 
-  // Toggle pack active status
   const handleToggleStatus = (pack: StorePack, e: React.MouseEvent): void => {
     e.stopPropagation();
     updateStatusMutation.mutate(
@@ -64,7 +60,6 @@ export default function AdminPacksPage() {
     );
   };
 
-  // Handle pagination
   const handlePageChange = (newOffset: number): void => {
     setSearchParams((prev) => ({
       ...prev,

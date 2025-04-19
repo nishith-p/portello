@@ -16,7 +16,6 @@ export default function EditStorePage() {
   const { data: item, isLoading, error: fetchError } = useStoreItem(itemId as string);
   const updateItemMutation = useUpdateStoreItem();
 
-  // Handle form submission to update an existing store item
   const handleUpdateItem = async (formData: StoreItemInput): Promise<void> => {
     try {
       setError(null);
@@ -26,7 +25,7 @@ export default function EditStorePage() {
       });
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to update store item'));
-      throw err; // Re-throw to let the form component handle it
+      throw err;
     }
   };
 

@@ -14,7 +14,7 @@ export async function getStoreItemById(id: string): Promise<StoreItem | null> {
 
   if (error) {
     if (error.code === 'PGRST116') {
-      return null; // No item found is not an error
+      return null;
     }
     throw error;
   }
@@ -34,7 +34,7 @@ export async function getStoreItemByCode(itemCode: string): Promise<StoreItem | 
 
   if (error) {
     if (error.code === 'PGRST116') {
-      return null; // No item found is not an error
+      return null;
     }
     throw error;
   }
@@ -67,12 +67,10 @@ export async function searchStoreItems(
 ): Promise<{ items: StoreItem[]; total: number }> {
   const { search = '', active, limit = 10, offset = 0 } = params;
 
-  // Start building the query
   let query = supabaseServer.from('store_items').select('*', {
     count: 'exact',
   });
 
-  // Add filters if provided
   if (search) {
     query = query.or(
       `item_code.ilike.%${search}%,name.ilike.%${search}%,description.ilike.%${search}%`
@@ -86,7 +84,6 @@ export async function searchStoreItems(
   // Add pagination
   query = query.order('created_at', { ascending: false }).range(offset, offset + limit - 1);
 
-  // Execute the query
   const { data, error, count } = await query;
 
   if (error) {
@@ -103,7 +100,6 @@ export async function searchStoreItems(
  * Create store item
  */
 export async function createStoreItem(itemData: StoreItemInput): Promise<StoreItem> {
-  // Validate required fields
   if (
     !itemData.item_code ||
     !itemData.name ||
@@ -127,7 +123,6 @@ export async function createStoreItem(itemData: StoreItemInput): Promise<StoreIt
     throw new ValidationError('Missing required store item fields', missingFields);
   }
 
-  // Check if item with the same code already exists
   const existingItem = await getStoreItemByCode(itemData.item_code);
   if (existingItem) {
     throw new BadRequestError(`Store item with code '${itemData.item_code}' already exists`);
@@ -158,7 +153,6 @@ export async function updateStoreItem(
   id: string,
   itemData: Partial<StoreItemInput>
 ): Promise<StoreItem> {
-  // Check if item exists
   const existingItem = await getStoreItemById(id);
   if (!existingItem) {
     throw new NotFoundError(`Store item with ID ${id} not found`);
@@ -190,7 +184,6 @@ export async function updateStoreItem(
  * Update a store item's active status
  */
 export async function updateStoreItemStatus(id: string, active: boolean): Promise<StoreItem> {
-  // Check if item exists
   const existingItem = await getStoreItemById(id);
   if (!existingItem) {
     throw new NotFoundError(`Store item with ID ${id} not found`);

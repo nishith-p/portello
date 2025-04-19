@@ -23,14 +23,12 @@ export function OrderSearch({
 }: OrderSearchProps) {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  // Handle enter key in search input
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter') {
       onSearchAction();
     }
   };
 
-  // Status options for the dropdown
   const statusOptions = [
     { value: 'pending', label: 'Pending' },
     { value: 'confirmed', label: 'Confirmed' },

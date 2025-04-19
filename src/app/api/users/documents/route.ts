@@ -8,7 +8,6 @@ import {
 } from '@/lib/core/errors';
 import { supabaseServer } from '@/lib/core/supabase';
 
-// Define the interface for update document request body
 interface UpdateDocumentRequest {
   userId: string;
   document: string;
@@ -26,17 +25,14 @@ export async function PATCH(request: NextRequest) {
     request,
     async (req) => {
       try {
-        // Check if the user is an admin
         const userIsAdmin = await isAdmin();
         if (!userIsAdmin) {
           throw new AuthorizationError('Admin access required to update document status');
         }
 
-        // Parse the request body
         const body = (await req.json()) as UpdateDocumentRequest;
         const { userId, document, status, link } = body;
 
-        // Validate the request
         if (!userId) {
           throw new BadRequestError('User ID is required');
         }
@@ -49,7 +45,6 @@ export async function PATCH(request: NextRequest) {
           throw new BadRequestError('Either status or link must be provided');
         }
 
-        // Check if user exists
         const { data: user, error: userError } = await supabaseServer
           .from('users')
           .select('kinde_id')
@@ -60,17 +55,14 @@ export async function PATCH(request: NextRequest) {
           throw new NotFoundError('User not found');
         }
 
-        // Check if document record exists
         const { error: docError } = await supabaseServer
           .from('user_documents')
           .select('user_id')
           .eq('user_id', userId)
           .single();
 
-        // Prepare the update data
         const updateData: Record<string, boolean | string> = {};
 
-        // Handle different document types
         switch (document) {
           case 'passport':
             if (status !== undefined) {
@@ -128,7 +120,6 @@ export async function PATCH(request: NextRequest) {
 
         // If document record doesn't exist, create it
         if (docError) {
-          // Set default values for required fields
           const defaultValues = {
             user_id: userId,
             passport: false,

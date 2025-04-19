@@ -13,7 +13,6 @@ export function OrderPagination({
   total,
   onPageChange,
 }: OrderPaginationProps) {
-  // Don't render if there are no items
   if (total === 0) {
     return <></>;
   }

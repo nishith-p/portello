@@ -10,14 +10,13 @@ export default function CreateStorePage() {
   const [error, setError] = useState<Error | null>(null);
   const createItemMutation = useCreateStoreItem();
 
-  // Handle form submission to create a new store item
   const handleCreateItem = async (formData: StoreItemInput): Promise<void> => {
     try {
       setError(null);
       await createItemMutation.mutateAsync(formData);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to create store item'));
-      throw err; // Re-throw to let the form component handle it
+      throw err;
     }
   };
 
