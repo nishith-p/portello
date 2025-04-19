@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { IconAlertCircle, IconShoppingBag } from '@tabler/icons-react';
 import { Alert, Button, Center, Container, Loader, Paper, Stack, Text, Title } from '@mantine/core';
+import { OrderDetailsModal } from '@/app/portal/orders/(components)';
 import { useOrderHooks } from '@/lib/store/orders/hooks';
 import { Order } from '@/lib/store/types';
-import { OrderDetailsModal } from './(components)/order-details-modal';
 import { OrdersTable } from './(components)/orders-table';
 
 export default function OrdersPage() {
@@ -17,23 +17,19 @@ export default function OrdersPage() {
   const { useUserOrders } = useOrderHooks();
   const { data: orders, isLoading, error } = useUserOrders();
 
-  // Handle row click
   const handleOrderClick = (order: Order): void => {
     setSelectedOrder(order);
     setModalOpened(true);
   };
 
-  // Close modal
   const closeModal = (): void => {
     setModalOpened(false);
   };
 
-  // Navigate to store
   const handleGoToStore = (): void => {
     router.push('/portal/store');
   };
 
-  // Render loading state
   if (isLoading) {
     return (
       <Container fluid p="md">
@@ -44,20 +40,16 @@ export default function OrdersPage() {
     );
   }
 
-  // Render error state
   if (error) {
     return (
       <Container fluid p="md">
         <Alert icon={<IconAlertCircle size={16} />} title="Error" color="red">
-          {error instanceof Error
-            ? error.message
-            : 'Failed to load orders. Please try again later.'}
+          {error.message}
         </Alert>
       </Container>
     );
   }
 
-  // Render empty state
   if (!orders || orders.length === 0) {
     return (
       <Container fluid p="md">
@@ -97,11 +89,11 @@ export default function OrdersPage() {
         </Text>
 
         <Paper p="md" radius="md" withBorder>
-          <OrdersTable orders={orders} onOrderClick={handleOrderClick} />
+          <OrdersTable orders={orders} onOrderClickAction={handleOrderClick} />
         </Paper>
       </Stack>
 
-      <OrderDetailsModal order={selectedOrder} opened={modalOpened} onClose={closeModal} />
+      <OrderDetailsModal order={selectedOrder} opened={modalOpened} onCloseAction={closeModal} />
     </Container>
   );
 }

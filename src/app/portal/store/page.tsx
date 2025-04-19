@@ -140,7 +140,7 @@ export default function StorePage() {
                 </Title>
               )}
 
-              <SimpleGrid cols={{ base: 2, sm: 3, md: 4 }} spacing="lg">
+              <SimpleGrid cols={{ sm: 2, md: 4 }} spacing="lg">
                 {items.map((item) => (
                   <ProductCard key={item.id} item={item} onViewProductAction={handleViewProduct} />
                 ))}

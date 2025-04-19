@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import Image from 'next/image';
 import {
@@ -13,12 +15,13 @@ import {
   Text,
   Tooltip,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { Order, OrderItem, OrderStatus } from '@/lib/store/types';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
 interface OrderDetailsModalProps {
   opened: boolean;
-  onClose: () => void;
+  onCloseAction: () => void;
   order: Order | null;
 }
 
@@ -32,7 +35,8 @@ const statusColorMap: Record<OrderStatus, string> = {
   cancelled: 'red',
 };
 
-export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalProps) {
+export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetailsModalProps) {
+  const isMobile = useMediaQuery('(max-width: 768px)');
   if (!order) {
     return <></>;
   }
@@ -42,13 +46,13 @@ export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalP
   return (
     <Modal
       opened={opened}
-      onClose={onClose}
+      onClose={onCloseAction}
       title={
         <Text fw={700} size="lg">
           Order Details
         </Text>
       }
-      size="lg"
+      size={isMobile ? '95%' : 'lg'}
       centered
     >
       <Stack gap="md">
@@ -58,7 +62,6 @@ export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalP
           </Text>
 
           <Stack gap="xs">
-            {/* Order ID with copy tooltip */}
             <Box py={5} px="sm" bg="gray.0" style={{ borderRadius: 4 }}>
               <Tooltip label="Click to copy" position="right">
                 <Text
@@ -78,7 +81,7 @@ export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalP
 
             {/* Date and Status */}
             <Grid gutter="xs">
-              <Grid.Col span={6}>
+              <Grid.Col span={isMobile ? 12 : 6}>
                 <Box py={5} px="sm">
                   <Text size="sm">
                     <Text span fw={500}>
@@ -89,7 +92,7 @@ export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalP
                 </Box>
               </Grid.Col>
 
-              <Grid.Col span={6}>
+              <Grid.Col span={isMobile ? 12 : 6}>
                 <Box py={5} px="sm">
                   <Group gap="xs">
                     <Text size="sm" fw={500}>
@@ -129,11 +132,16 @@ export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalP
             <Stack gap="md">
               {orderItems.map((item) => (
                 <Card key={item.id} withBorder>
-                  <Grid gutter="md">
-                    <Grid.Col span={{ base: 3, sm: 2 }}>
+                  <Grid gutter="md" align="center">
+                    <Grid.Col span={{ base: 12, sm: 2 }}>
                       {item.image ? (
                         <Box
-                          style={{ width: 60, height: 60, position: 'relative', margin: '0 auto' }}
+                          style={{
+                            width: 60,
+                            height: 60,
+                            position: 'relative',
+                            margin: isMobile ? '0 auto 8px' : '0 auto',
+                          }}
                         >
                           <Image
                             src={item.image}
@@ -152,7 +160,7 @@ export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalP
                             alignItems: 'center',
                             justifyContent: 'center',
                             borderRadius: 4,
-                            margin: '0 auto',
+                            margin: isMobile ? '0 auto 8px' : '0 auto',
                           }}
                         >
                           <Text size="xs" c="dimmed">
@@ -162,12 +170,12 @@ export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalP
                       )}
                     </Grid.Col>
 
-                    <Grid.Col span={{ base: 9, sm: 6 }}>
+                    <Grid.Col span={{ base: 12, sm: 6 }}>
                       <Text fw={500}>{item.name || `Product ${item.item_code}`}</Text>
                       <Text size="sm" c="dimmed">
                         Code: {item.item_code}
                       </Text>
-                      <Group mt={5} gap="xs">
+                      <Group mt={5} gap="xs" wrap="wrap">
                         {item.size && (
                           <Badge variant="outline" size="sm">
                             Size: {item.size}
@@ -198,9 +206,11 @@ export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalP
 
                     <Grid.Col span={{ base: 12, sm: 4 }}>
                       <Flex
-                        justify={{ base: 'flex-start', sm: 'flex-end' }}
-                        gap="md"
-                        direction={{ base: 'row', sm: 'column' }}
+                        justify={isMobile ? 'space-between' : 'flex-end'}
+                        align={isMobile ? 'center' : 'flex-end'}
+                        direction={isMobile ? 'row' : 'column'}
+                        wrap="wrap"
+                        gap="sm"
                       >
                         <Text>
                           {formatCurrency(item.price)} × {item.quantity}

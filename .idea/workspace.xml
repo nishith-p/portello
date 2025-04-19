@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="Discount functionalities">
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="Minor fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-detail-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-detail-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/(components)/order-details-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/orders/(components)/order-details-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/(components)/orders-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/orders/(components)/orders-table.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/portal/orders/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/orders/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,7 +91,7 @@
       <option name="presentableId" value="Default" />
       <updated>1743790678452</updated>
       <workItem from="1743790679486" duration="26388000" />
-      <workItem from="1744462042462" duration="71665000" />
+      <workItem from="1744462042462" duration="73158000" />
     </task>
     <task id="LOCAL-00001" summary="Layout fixes, working orders.">
       <option name="closed" value="true" />
@@ -180,7 +181,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745061613190</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Minor fixes">
+      <option name="closed" value="true" />
+      <created>1745062401087</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1745062401087</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -201,6 +210,7 @@
     <MESSAGE value="Minor validation fixes" />
     <MESSAGE value="Working discounts" />
     <MESSAGE value="Discount functionalities" />
-    <option name="LAST_COMMIT_MESSAGE" value="Discount functionalities" />
+    <MESSAGE value="Minor fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Minor fixes" />
   </component>
 </project>
