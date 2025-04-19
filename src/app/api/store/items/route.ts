@@ -49,6 +49,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           colors: body.colors || [],
           description: body.description,
           active: body.active !== undefined ? body.active : true,
+          pre_price: body.pre_price || undefined,
+          discount_perc: body.discount_perc || undefined,
         };
 
         const newItem = await createStoreItem(itemData);

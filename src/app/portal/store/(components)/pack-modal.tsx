@@ -281,10 +281,23 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
                     {selectedPack.name}
                   </Text>
 
-                  {/* Price just under the name */}
-                  <Badge color="green" size="lg" variant="filled" w="fit-content" mt="xs">
-                    ${selectedPack.price.toFixed(2)}
-                  </Badge>
+                  {selectedPack.pre_price !== 0 && selectedPack.discount_perc !== 0 ? (
+                    <Flex gap={10} align="center" mt="xs">
+                      <Badge variant="light" color="gray" size="lg" w="fit-content">
+                        <Text fw={700} td="line-through">
+                          ${selectedPack.pre_price?.toFixed(2)}
+                        </Text>
+                      </Badge>
+                      <Text c="red">-{selectedPack.discount_perc}%</Text>
+                      <Badge color="green" size="lg" variant="filled" w="fit-content">
+                        ${selectedPack.price.toFixed(2)}
+                      </Badge>
+                    </Flex>
+                  ) : (
+                    <Badge color="green" size="lg" variant="filled" w="fit-content" mt="xs">
+                      ${selectedPack.price.toFixed(2)}
+                    </Badge>
+                  )}
 
                   {/* Pack ID */}
                   <Text size="sm" c="dimmed" mt="xs">

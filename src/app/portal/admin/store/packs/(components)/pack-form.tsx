@@ -188,6 +188,16 @@ export function PackForm({
                 {...form.getInputProps('price')}
                 required
               />
+              <NumberInput
+                label="Pre Price (USD)"
+                placeholder="0.00"
+                {...form.getInputProps('pre_price')}
+              />
+              <NumberInput
+                label="Discount Percentage"
+                placeholder="%"
+                {...form.getInputProps('discount_perc')}
+              />
               <Stack gap={0}>
                 <Switch
                   label="Active"

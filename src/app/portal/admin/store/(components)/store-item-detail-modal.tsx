@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Badge, Button, Group, Modal, Stack, Text } from '@mantine/core';
+import { Badge, Button, Flex, Group, Modal, Stack, Text } from '@mantine/core';
 import { StoreItem } from '@/lib/store/types';
 
 interface StoreItemDetailModalProps {
@@ -51,7 +51,21 @@ export function StoreItemDetailModal({ opened, onClose, item }: StoreItemDetailM
           <Text fw={600} size="sm" style={{ width: 120 }}>
             Price:
           </Text>
-          <Text>${item.price.toFixed(2)}</Text>
+          {item.pre_price !== 0 && item.discount_perc !== 0 ? (
+            <>
+              <Flex gap={8} align="center">
+                <Text td="line-through" c="red">
+                  ${item.pre_price?.toFixed(2)}
+                </Text>
+                <Text fw={700}>${item.price.toFixed(2)}</Text>
+                <Badge variant="light" color="red">
+                  -${item.discount_perc}%
+                </Badge>
+              </Flex>
+            </>
+          ) : (
+            <Text>${item.price.toFixed(2)}</Text>
+          )}
         </Group>
 
         <Group align="flex-start">

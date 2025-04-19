@@ -4,9 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="A lil housekeeping">
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="Minor validation fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/store/orders/validators.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/orders/validators.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/items/[id]/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/items/[id]/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/items/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/items/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/orders/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/orders/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/packs/[id]/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/packs/[id]/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/packs/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/packs/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-detail-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-detail-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-form/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-form/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/(components)/pack-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/packs/(components)/pack-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/edit/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/packs/edit/[id]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/new/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/packs/new/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/(components)/order-details-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/orders/(components)/order-details-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-card.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-card.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/product-card.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/(components)/product-card.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/product-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/(components)/product-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/product-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/(components)/product-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/store/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/store/types.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,7 +105,7 @@
       <option name="presentableId" value="Default" />
       <updated>1743790678452</updated>
       <workItem from="1743790679486" duration="26388000" />
-      <workItem from="1744462042462" duration="53734000" />
+      <workItem from="1744462042462" duration="65263000" />
     </task>
     <task id="LOCAL-00001" summary="Layout fixes, working orders.">
       <option name="closed" value="true" />
@@ -154,7 +171,15 @@
       <option name="project" value="LOCAL" />
       <updated>1744961559134</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Minor validation fixes">
+      <option name="closed" value="true" />
+      <created>1744991835169</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1744991835169</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -172,6 +197,7 @@
     <MESSAGE value="Working pack orders" />
     <MESSAGE value="Better code struct, cleaning" />
     <MESSAGE value="A lil housekeeping" />
-    <option name="LAST_COMMIT_MESSAGE" value="A lil housekeeping" />
+    <MESSAGE value="Minor validation fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Minor validation fixes" />
   </component>
 </project>

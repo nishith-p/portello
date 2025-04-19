@@ -24,7 +24,7 @@ export async function GET(request: NextRequest, { params }: RouteParams): Promis
     request,
     async () => {
       try {
-        const id = params.id;
+        const { id } = await params;
 
         // Get the specific pack by ID
         const pack = await getStorePackById(id);
@@ -51,7 +51,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams): Promis
     request,
     async (req) => {
       try {
-        const id = params.id;
+        const { id } = await params;
         const body = await req.json();
 
         // Validate input
@@ -79,6 +79,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams): Promis
         }
         if (body.active !== undefined) {
           packData.active = body.active;
+        }
+        if (body.pre_price !== undefined) {
+          packData.pre_price = body.pre_price;
+        }
+        if (body.discount_perc !== undefined) {
+          packData.discount_perc = body.discount_perc;
         }
 
         // If pack items are provided, update them separately

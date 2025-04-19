@@ -21,6 +21,8 @@ export interface StoreItem {
   created_at: string;
   updated_at: string;
   active: boolean;
+  pre_price?: number;
+  discount_perc?: number;
 }
 
 /**
@@ -35,6 +37,8 @@ export interface StoreItemInput {
   colors: StoreItemColor[];
   description: string;
   active: boolean;
+  pre_price?: number;
+  discount_perc?: number;
 }
 
 /**
@@ -79,6 +83,8 @@ export interface OrderItemBase {
   color_hex?: string | null;
   name?: string | null;
   image?: string | null;
+  pre_price?: number;
+  discount_perc?: number;
 }
 
 /**
@@ -171,6 +177,8 @@ export interface CartItem {
   size?: string;
   color?: string;
   colorHex?: string;
+  pre_price?: number;
+  discount_perc?: number;
 }
 
 /**
@@ -185,6 +193,8 @@ export interface CartPackItemDetail {
   color?: string;
   colorHex?: string;
   image?: string;
+  pre_price?: number;
+  discount_perc?: number;
 }
 
 /**
@@ -199,6 +209,8 @@ export interface CartPackItem {
   quantity: number;
   image?: string;
   pack_items: CartPackItemDetail[];
+  pre_price?: number;
+  discount_perc?: number;
 }
 
 /**
@@ -215,6 +227,8 @@ export interface StorePack {
   updated_at: string;
   active: boolean;
   pack_items?: StorePackItem[];
+  pre_price?: number;
+  discount_perc?: number;
 }
 
 /**
@@ -228,6 +242,8 @@ export interface StorePackItem {
   created_at?: string;
   updated_at?: string;
   item?: StoreItem;
+  pre_price?: number;
+  discount_perc?: number;
 }
 
 /**
@@ -240,6 +256,8 @@ export interface StorePackInput {
   images: string[];
   price: number;
   active: boolean;
+  pre_price?: number;
+  discount_perc?: number;
 }
 
 /**

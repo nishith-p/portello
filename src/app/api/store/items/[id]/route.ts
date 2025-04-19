@@ -81,6 +81,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams): Promis
         if (body.active !== undefined) {
           itemData.active = body.active;
         }
+        if (body.pre_price !== undefined) {
+          itemData.pre_price = body.pre_price;
+        }
+        if (body.discount_perc !== undefined) {
+          itemData.discount_perc = body.discount_perc;
+        }
 
         const updatedItem = await updateStoreItem(id, itemData);
         return NextResponse.json(updatedItem);

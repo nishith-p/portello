@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { IconShirt } from '@tabler/icons-react';
-import { Box, Card, Center, Text } from '@mantine/core';
+import { Box, Card, Center, Flex, Text } from '@mantine/core';
 import { StoreItem } from '@/lib/store/types';
 import classes from './product-card.module.css';
 
@@ -40,13 +40,29 @@ export function ProductCard({ item, onViewProductAction }: ProductCardProps) {
             <IconShirt size={80} color="gray" />
           </Center>
         )}
+
+        {item.pre_price !== 0 && item.discount_perc !== 0 && (
+          <div className={classes.discountBadge}>-20%</div>
+        )}
       </div>
 
       <Box px="md" py="xs" pos="relative">
-        {/* Price */}
-        <Text fw={700} size="xl" mb={8}>
-          ${item.price.toFixed(2)}
-        </Text>
+        {item.pre_price !== 0 && item.discount_perc !== 0 ? (
+          <>
+            <Flex gap={8} align="center" mb={4}>
+              <Text td="line-through" c="gray">
+                ${item.pre_price?.toFixed(2)}
+              </Text>
+              <Text fw={700} size="xl" c="blue">
+                ${item.price.toFixed(2)}
+              </Text>
+            </Flex>
+          </>
+        ) : (
+          <Text fw={700} size="xl" c="gray" mb={4}>
+            ${item.price.toFixed(2)}
+          </Text>
+        )}
 
         {/* Product Name */}
         <Text fw={600} size="md" mb={4} lineClamp={1}>

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { IconPackages } from '@tabler/icons-react';
-import { Badge, Box, Card, Center, Text } from '@mantine/core';
+import { Badge, Box, Card, Center, Flex, Text } from '@mantine/core';
 import { StorePack } from '@/lib/store/types';
 import classes from './pack-card.module.css';
 
@@ -46,13 +46,29 @@ export function PackCard({ pack, onViewPackAction }: PackCardProps) {
         <Badge className={classes.packBadge} size="md" color="blue">
           Pack
         </Badge>
+
+        {pack.pre_price !== 0 && pack.discount_perc !== 0 && (
+          <div className={classes.discountBadge}>-20%</div>
+        )}
       </div>
 
       <Box px="md" py="xs" pos="relative">
-        {/* Price */}
-        <Text fw={700} size="xl" mb={8}>
-          ${pack.price.toFixed(2)}
-        </Text>
+        {pack.pre_price !== 0 && pack.discount_perc !== 0 ? (
+          <>
+            <Flex gap={8} align="center" mb={4}>
+              <Text td="line-through" c="gray">
+                ${pack.pre_price?.toFixed(2)}
+              </Text>
+              <Text fw={700} size="xl" c="blue">
+                ${pack.price.toFixed(2)}
+              </Text>
+            </Flex>
+          </>
+        ) : (
+          <Text fw={700} size="xl" c="gray" mb={4}>
+            ${pack.price.toFixed(2)}
+          </Text>
+        )}
 
         {/* Pack Name */}
         <Text fw={600} size="md" mb={4} lineClamp={1}>

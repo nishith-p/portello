@@ -207,6 +207,11 @@ export function OrderDetailsModal({ opened, onClose, order }: OrderDetailsModalP
                         </Text>
                         <Text fw={700}>{formatCurrency(item.price * item.quantity)}</Text>
                       </Flex>
+                      <Text fz={10}>
+                        {item.pre_price !== 0 && item.discount_perc !== 0
+                          ? 'Includes Discount'
+                          : null}
+                      </Text>
                     </Grid.Col>
                   </Grid>
                 </Card>

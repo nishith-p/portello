@@ -21,6 +21,8 @@ export default function CreatePackPage() {
         price: formData.price,
         images: formData.images,
         active: formData.active,
+        pre_price: formData.pre_price,
+        discount_perc: formData.discount_perc,
         pack_items:
           formData.pack_items?.map((item) => ({
             item_id: item.item_id,

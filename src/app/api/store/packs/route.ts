@@ -56,6 +56,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             item_id: item.item_id,
             quantity: item.quantity,
           })),
+          pre_price: body.pre_price || undefined,
+          discount_perc: body.discount_perc || undefined,
         };
 
         const newPack = await createStorePack(packData);

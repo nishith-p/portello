@@ -1,23 +1,23 @@
 'use client';
 
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { Alert, Center, Container, Loader, Stack, Title } from '@mantine/core';
 import { useStorePack, useUpdateStorePack } from '@/lib/store/packs/hooks';
 import { StorePack } from '@/lib/store/types';
 import { PackForm } from '../../(components)';
 
-interface EditPackPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function EditPackPage({ params }: EditPackPageProps) {
-  const packId = params.id;
+export default function EditPackPage() {
+  const params = useParams();
+  const packId = Array.isArray(params.id) ? params.id[0] : params.id;
   const [error, setError] = useState<Error | null>(null);
 
-  const { data: pack, isLoading: isLoadingPack, error: fetchError } = useStorePack(packId);
+  const {
+    data: pack,
+    isLoading: isLoadingPack,
+    error: fetchError,
+  } = useStorePack(packId as string);
   const updatePackMutation = useUpdateStorePack();
 
   // Handle form submission to update the pack
@@ -25,7 +25,7 @@ export default function EditPackPage({ params }: EditPackPageProps) {
     try {
       setError(null);
       await updatePackMutation.mutateAsync({
-        id: packId,
+        id: packId as string,
         data: {
           pack_code: formData.pack_code,
           name: formData.name,
@@ -33,6 +33,8 @@ export default function EditPackPage({ params }: EditPackPageProps) {
           price: formData.price,
           images: formData.images,
           active: formData.active,
+          pre_price: formData.pre_price,
+          discount_perc: formData.discount_perc,
         },
         packItems:
           formData.pack_items?.map((item) => ({
@@ -70,7 +72,7 @@ export default function EditPackPage({ params }: EditPackPageProps) {
     <Container fluid p="md">
       <Stack gap="md">
         <Title order={2} c="gray.8">
-          Edit Pack: {pack.name}
+          Edit Pack
         </Title>
 
         <PackForm
