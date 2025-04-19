@@ -122,7 +122,7 @@ export function PackDetailModal({ opened, onClose, pack }: PackDetailModalProps)
           <Button variant="outline" onClick={onClose}>
             Close
           </Button>
-          <Button component={Link} href={`/portal/admin/packs/edit/${pack.id}`} color="blue">
+          <Button component={Link} href={`/portal/admin/store/packs/edit/${pack.id}`} color="blue">
             Edit
           </Button>
         </Group>

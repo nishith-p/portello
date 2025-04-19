@@ -143,6 +143,8 @@ export interface CreateOrderPackItem {
   item_code: string; // This will be the pack_code
   quantity: number;
   price: number;
+  pre_price?: number;
+  discount_perc?: number;
   name?: string | null;
   image?: string | null;
   is_pack: true;

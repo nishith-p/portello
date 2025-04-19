@@ -11,18 +11,15 @@ import {
   OrderStatus,
 } from '@/lib/store/types';
 
-// Define types for the raw DB responses to properly handle the nested order_items
 type OrderWithNestedItems = Omit<Order, 'items'> & {
   order_items: OrderItemExtended[];
 };
 
-// Define the user information returned from the database
 interface UserInfo {
   first_name: string | null;
   last_name: string | null;
 }
 
-// Define the full database response structure
 interface OrderDatabaseResponse extends OrderWithNestedItems {
   users: UserInfo | null;
 }
@@ -56,7 +53,9 @@ export async function getOrders(): Promise<Order[]> {
         image,
         created_at,
         is_pack,
-        parent_pack_id
+        parent_pack_id,
+        pre_price,
+        discount_perc
       ),
       users:user_id (
         first_name,
@@ -117,7 +116,9 @@ export async function getUserOrders(userId: string): Promise<Order[]> {
         image,
         created_at,
         is_pack,
-        parent_pack_id
+        parent_pack_id,
+        pre_price,
+        discount_perc
       ),
       users:user_id (
         first_name,
@@ -179,7 +180,9 @@ export async function getOrder(orderId: string): Promise<Order> {
         image,
         created_at,
         is_pack,
-        parent_pack_id
+        parent_pack_id,
+        pre_price,
+        discount_perc
       ),
       users:user_id (
         first_name,
@@ -223,14 +226,10 @@ function processOrderItems(items: OrderItemExtended[]): OrderItem[] {
     return [];
   }
 
-  // First, find all pack items
   const packItems = items.filter((item) => item.is_pack === true);
   const nonPackItems = items.filter((item) => !item.is_pack || !item.is_pack);
-
-  // Find all child items of pack items
   const childItems = items.filter((item) => item.parent_pack_id != null);
 
-  // Create a map of pack IDs to their child items
   const packChildrenMap: Record<string, OrderItem[]> = {};
 
   childItems.forEach((childItem) => {
@@ -251,23 +250,18 @@ function processOrderItems(items: OrderItemExtended[]): OrderItem[] {
     } as OrderItemExtended;
   });
 
-  // Return the non-pack items plus the processed pack items
   return [...nonPackItems, ...processedPackItems];
 }
 
 /**
  * Create a new order
  */
-/**
- * Create a new order
- */
 export async function createOrder(orderInput: CreateOrderInputExtended): Promise<Order> {
-  // Prepare order data for insertion
   const orderData = {
     user_id: orderInput.user_id,
     status: orderInput.status || ('pending' as OrderStatus),
     total_amount: orderInput.total_amount,
-    updated_by: orderInput.user_id, // Initial update is by the creator
+    updated_by: orderInput.user_id,
   };
 
   // Start a transaction
@@ -303,6 +297,8 @@ export async function createOrder(orderInput: CreateOrderInputExtended): Promise
         color_hex: item.color_hex || null,
         name: item.name || null,
         image: item.image || null,
+        pre_price: item.pre_price || 0,
+        discount_perc: item.discount_perc || 0,
         is_pack: false,
         pack_code: null, // Explicitly set pack_code to null for regular items
       }));
@@ -312,7 +308,6 @@ export async function createOrder(orderInput: CreateOrderInputExtended): Promise
         .insert(regularItemsToInsert);
 
       if (regularItemsError) {
-        // Rollback by deleting the order
         await supabaseServer.from('orders').delete().eq('id', newOrder.id);
         throw regularItemsError;
       }
@@ -325,19 +320,20 @@ export async function createOrder(orderInput: CreateOrderInputExtended): Promise
         .from('order_items')
         .insert({
           order_id: newOrder.id,
-          item_code: packItem.item_code, // This is needed for existing code compatibility
-          pack_code: packItem.item_code, // Store the pack code in the dedicated column
+          item_code: packItem.item_code,
+          pack_code: packItem.item_code,
           quantity: packItem.quantity,
           price: packItem.price,
           name: packItem.name || null,
           image: packItem.image || null,
+          pre_price: packItem.pre_price || 0,
+          discount_perc: packItem.discount_perc || 0,
           is_pack: true,
         })
         .select()
         .single();
 
       if (packError) {
-        // Rollback by deleting the order
         await supabaseServer.from('orders').delete().eq('id', newOrder.id);
         throw packError;
       }
@@ -355,6 +351,8 @@ export async function createOrder(orderInput: CreateOrderInputExtended): Promise
           color_hex: childItem.color_hex || null,
           name: childItem.name || null,
           image: childItem.image || null,
+          pre_price: 0,
+          discount_perc: 0,
           is_pack: false,
           pack_code: null, // Explicitly set pack_code to null for child items
         }));
@@ -364,17 +362,14 @@ export async function createOrder(orderInput: CreateOrderInputExtended): Promise
           .insert(packChildrenToInsert);
 
         if (childrenError) {
-          // Rollback by deleting the order
           await supabaseServer.from('orders').delete().eq('id', newOrder.id);
           throw childrenError;
         }
       }
     }
 
-    // Fetch the complete order with all items
     return await getOrder(newOrder.id);
   } catch (error) {
-    // Ensure order is deleted if anything fails
     await supabaseServer.from('orders').delete().eq('id', newOrder.id);
     throw error;
   }
@@ -407,7 +402,6 @@ export async function updateOrderStatus(
     throw error;
   }
 
-  // Return the complete updated order (using getOrder to process items correctly)
   return await getOrder(orderId);
 }
 

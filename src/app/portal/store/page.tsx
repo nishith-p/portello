@@ -54,6 +54,8 @@ export default function StorePage() {
       item_code: selectedItem.item_code,
       name: selectedItem.name,
       price: selectedItem.price,
+      pre_price: selectedItem.pre_price || 0,
+      discount_perc: selectedItem.discount_perc || 0,
       image: selectedItem.images?.[0],
       size,
       color: color?.name,

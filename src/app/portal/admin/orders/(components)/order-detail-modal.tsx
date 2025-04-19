@@ -311,6 +311,11 @@ export function OrderDetailModal({
                         </Text>
                         <Text fw={700}>{formatCurrency(item.price * item.quantity)}</Text>
                       </Flex>
+                      <Text fz={10} c="red">
+                        {item.pre_price !== 0 && item.discount_perc !== 0
+                          ? `Incl. Discount: ${item.discount_perc}%`
+                          : null}
+                      </Text>
                     </Grid.Col>
                   </Grid>
                 </Card>

@@ -76,30 +76,28 @@ export function useOrderHooks() {
   };
 
   // Place a new order
-  // The fixed usePlaceOrder function with proper user_id handling
-  // Fixed usePlaceOrder hook with proper handling of user_id
   const usePlaceOrder = () => {
     const queryClient = useQueryClient();
 
     return useMutation<Order, Error, PlaceOrderInput>({
       mutationFn: async (orderData: PlaceOrderInput) => {
-        // Transform cart items to order items, handling both regular items and pack items
         const orderItems: (CreateOrderItemInput | CreateOrderPackItem)[] = [];
 
         for (const item of orderData.items) {
           if (isPackItem(item)) {
-            // It's a pack item - transform it to match the expected structure for the backend
             const packItemInput: CreateOrderPackItem = {
               item_code: item.pack_code,
               quantity: item.quantity,
               price: item.price,
+              pre_price: item.pre_price,
+              discount_perc: item.discount_perc,
               name: item.name,
               image: item.image,
               is_pack: true,
               pack_items: item.pack_items.map((packItem: CartPackItemDetail) => ({
                 item_code: packItem.item_code,
                 quantity: packItem.quantity || 1,
-                price: 0, // Individual pack items don't have separate prices in cart
+                price: 0,
                 size: packItem.size,
                 color: packItem.color,
                 color_hex: packItem.colorHex,
@@ -110,11 +108,12 @@ export function useOrderHooks() {
 
             orderItems.push(packItemInput);
           } else {
-            // Regular item
             const regularItem: CreateOrderItemInput = {
               item_code: item.item_code,
               quantity: item.quantity,
               price: item.price,
+              pre_price: item.pre_price || 0,
+              discount_perc: item.discount_perc || 0,
               size: item.size,
               color: item.color,
               color_hex: item.colorHex,
@@ -126,7 +125,6 @@ export function useOrderHooks() {
           }
         }
 
-        // Create the payload - user_id is omitted, it will be set from auth on the server
         const payload = {
           items: orderItems,
           total_amount: orderData.total_amount,
@@ -186,7 +184,6 @@ export function useOrderHooks() {
         return response.json();
       },
       onSuccess: async (_, variables) => {
-        // Invalidate the specific order query and all orders
         await queryClient.invalidateQueries({ queryKey: ['orders', variables.orderId] });
         await queryClient.invalidateQueries({ queryKey: ['orders'] });
 

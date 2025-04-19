@@ -101,6 +101,8 @@ export async function POST(request: NextRequest) {
                   item_code: String(item.item_code),
                   quantity: Number(item.quantity),
                   price: Number(item.price),
+                  pre_price: 'pre_price' in item ? Number(item.pre_price) : 0,
+                  discount_perc: 'discount_perc' in item ? Number(item.discount_perc) : 0,
                   name: 'name' in item ? String(item.name) : null,
                   image: 'image' in item ? String(item.image) : null,
                   is_pack: true,

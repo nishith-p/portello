@@ -220,7 +220,7 @@ export function ProductModal({
                     </Badge>
                   </Flex>
                 ) : (
-                  <Badge color="green" size="lg" variant="filled" w="fit-content">
+                  <Badge color="gray" size="lg" variant="filled" w="fit-content">
                     ${selectedItem.price.toFixed(2)}
                   </Badge>
                 )}
