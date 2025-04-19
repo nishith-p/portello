@@ -139,15 +139,7 @@ export function OrderTable({ orders, onViewOrderAction }: OrderTableProps) {
   // Desktop Table View
   return (
     <ScrollArea>
-      <Table
-        striped
-        highlightOnHover
-        withTableBorder
-        bg="white"
-        horizontalSpacing="md"
-        verticalSpacing="sm"
-        fz="sm"
-      >
+      <Table striped highlightOnHover withTableBorder>
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Order ID</Table.Th>

@@ -10,9 +10,9 @@ import {
   Divider,
   Group,
   Paper,
+  ScrollArea,
   Stack,
   Table,
-  TableScrollContainer,
   Text,
 } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
@@ -131,7 +131,7 @@ export function StoreItemTable({
 
   // Desktop Table View
   return (
-    <TableScrollContainer minWidth={700}>
+    <ScrollArea>
       <Table striped highlightOnHover withTableBorder>
         <Table.Thead>
           <Table.Tr>
@@ -204,6 +204,6 @@ export function StoreItemTable({
           )}
         </Table.Tbody>
       </Table>
-    </TableScrollContainer>
+    </ScrollArea>
   );
 }

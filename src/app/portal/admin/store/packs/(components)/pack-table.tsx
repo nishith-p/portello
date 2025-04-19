@@ -142,7 +142,7 @@ export function PackTable({ packs, onViewPackAction, onToggleStatusAction }: Pac
   // Desktop Table View
   return (
     <ScrollArea>
-      <Table withRowBorders highlightOnHover>
+      <Table striped highlightOnHover withTableBorder>
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Code</Table.Th>
