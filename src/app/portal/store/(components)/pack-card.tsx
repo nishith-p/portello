@@ -48,7 +48,7 @@ export function PackCard({ pack, onViewPackAction }: PackCardProps) {
         </Badge>
 
         {pack.pre_price !== 0 && pack.discount_perc !== 0 && (
-          <div className={classes.discountBadge}>-20%</div>
+          <div className={classes.discountBadge}>-{pack.discount_perc}%</div>
         )}
       </div>
 
