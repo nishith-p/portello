@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="Fixed mobile views">
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="lil housekeeping">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-table.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-table.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/(components)/pack-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/store/packs/(components)/pack-table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/items/[id]/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/items/[id]/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/orders/[id]/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/orders/[id]/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/store/packs/[id]/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/store/packs/[id]/route.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,7 +91,7 @@
       <option name="presentableId" value="Default" />
       <updated>1743790678452</updated>
       <workItem from="1743790679486" duration="26388000" />
-      <workItem from="1744462042462" duration="77585000" />
+      <workItem from="1744462042462" duration="78726000" />
     </task>
     <task id="LOCAL-00001" summary="Layout fixes, working orders.">
       <option name="closed" value="true" />
@@ -204,7 +205,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745072113929</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="lil housekeeping">
+      <option name="closed" value="true" />
+      <created>1745072793352</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1745072793352</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -228,6 +237,7 @@
     <MESSAGE value="Minor fixes" />
     <MESSAGE value="Better mobile responsiveness" />
     <MESSAGE value="Fixed mobile views" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed mobile views" />
+    <MESSAGE value="lil housekeeping" />
+    <option name="LAST_COMMIT_MESSAGE" value="lil housekeeping" />
   </component>
 </project>

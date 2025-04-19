@@ -1,27 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/utils';
+import { RouteContext } from '@/lib/common-types';
 import { BadRequestError, errorResponse, NotFoundError } from '@/lib/core/errors';
 import { getStoreItemById, updateStoreItem, updateStoreItemStatus } from '@/lib/store/items/db';
 import { StoreItemInput } from '@/lib/store/types';
-
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
 
 /**
  * GET /api/store/items/[id]
  * - Public: Get a specific store item by ID
  */
-export async function GET(request: NextRequest, { params }: RouteParams): Promise<NextResponse> {
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<RouteContext['params']> }
+): Promise<NextResponse> {
   return withAuth(
     request,
     async () => {
       try {
-        const id = params.id;
+        const { id } = await context.params;
 
-        // Get the specific item by ID
         const item = await getStoreItemById(id);
 
         if (!item) {
@@ -41,22 +38,24 @@ export async function GET(request: NextRequest, { params }: RouteParams): Promis
  * PUT /api/store/items/[id]
  * - Admin only: Update an existing store item
  */
-export async function PUT(request: NextRequest, { params }: RouteParams): Promise<NextResponse> {
+export async function PUT(
+  request: NextRequest,
+  context: { params: Promise<RouteContext['params']> }
+): Promise<NextResponse> {
   return withAuth(
     request,
     async (req) => {
       try {
-        const id = params.id;
+        const { id } = await context.params;
+
         const body = await req.json();
 
-        // Validate input
         if (!body || typeof body !== 'object') {
           throw new BadRequestError('Invalid request body');
         }
 
         const itemData: Partial<StoreItemInput> = {};
 
-        // Only include fields that were provided in the request
         if (body.item_code !== undefined) {
           itemData.item_code = body.item_code;
         }
@@ -102,15 +101,18 @@ export async function PUT(request: NextRequest, { params }: RouteParams): Promis
  * PATCH /api/store/items/[id]
  * - Admin only: Update a store item's status
  */
-export async function PATCH(request: NextRequest, { params }: RouteParams): Promise<NextResponse> {
+export async function PATCH(
+  request: NextRequest,
+  context: { params: Promise<RouteContext['params']> }
+): Promise<NextResponse> {
   return withAuth(
     request,
     async (req) => {
       try {
-        const id = params.id;
+        const { id } = await context.params;
+
         const body = await req.json();
 
-        // Validate input
         if (!body || typeof body !== 'object' || body.active === undefined) {
           throw new BadRequestError('Invalid request body, missing active status');
         }
@@ -131,14 +133,16 @@ export async function PATCH(request: NextRequest, { params }: RouteParams): Prom
  * DELETE /api/store/items/[id]
  * - Admin only: Deactivate a store item (soft delete)
  */
-export async function DELETE(request: NextRequest, { params }: RouteParams): Promise<NextResponse> {
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<RouteContext['params']> }
+): Promise<NextResponse> {
   return withAuth(
     request,
     async () => {
       try {
-        const id = params.id;
+        const { id } = await context.params;
 
-        // We use updateStoreItemStatus to deactivate the item as a soft delete
         const updatedItem = await updateStoreItemStatus(id, false);
 
         return NextResponse.json(updatedItem);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/utils';
+import { RouteContext } from '@/lib/common-types';
 import { BadRequestError, errorResponse, NotFoundError } from '@/lib/core/errors';
 import {
   getStorePackById,
@@ -9,24 +10,20 @@ import {
 } from '@/lib/store/packs/db';
 import { StorePackInput, StorePackItemInput } from '@/lib/store/types';
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
 /**
  * GET /api/store/packs/[id]
  * - Public: Get a specific store pack by ID
  */
-export async function GET(request: NextRequest, { params }: RouteParams): Promise<NextResponse> {
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<RouteContext['params']> }
+): Promise<NextResponse> {
   return withAuth(
     request,
     async () => {
       try {
-        const { id } = await params;
+        const { id } = await context.params;
 
-        // Get the specific pack by ID
         const pack = await getStorePackById(id);
 
         if (!pack) {
@@ -46,12 +43,16 @@ export async function GET(request: NextRequest, { params }: RouteParams): Promis
  * PUT /api/store/packs/[id]
  * - Admin only: Update an existing store pack
  */
-export async function PUT(request: NextRequest, { params }: RouteParams): Promise<NextResponse> {
+export async function PUT(
+  request: NextRequest,
+  context: { params: Promise<RouteContext['params']> }
+): Promise<NextResponse> {
   return withAuth(
     request,
     async (req) => {
       try {
-        const { id } = await params;
+        const { id } = await context.params;
+
         const body = await req.json();
 
         // Validate input
@@ -113,12 +114,15 @@ export async function PUT(request: NextRequest, { params }: RouteParams): Promis
  * PATCH /api/store/packs/[id]
  * - Admin only: Update a store pack's status
  */
-export async function PATCH(request: NextRequest, { params }: RouteParams): Promise<NextResponse> {
+export async function PATCH(
+  request: NextRequest,
+  context: { params: Promise<RouteContext['params']> }
+): Promise<NextResponse> {
   return withAuth(
     request,
     async (req) => {
       try {
-        const id = params.id;
+        const { id } = await context.params;
         const body = await req.json();
 
         // Validate input
@@ -142,12 +146,15 @@ export async function PATCH(request: NextRequest, { params }: RouteParams): Prom
  * DELETE /api/store/packs/[id]
  * - Admin only: Deactivate a store pack (soft delete)
  */
-export async function DELETE(request: NextRequest, { params }: RouteParams): Promise<NextResponse> {
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<RouteContext['params']> }
+): Promise<NextResponse> {
   return withAuth(
     request,
     async () => {
       try {
-        const id = params.id;
+        const { id } = await context.params;
 
         // We use updateStorePackStatus to deactivate the pack as a soft delete
         const updatedPack = await updateStorePackStatus(id, false);
