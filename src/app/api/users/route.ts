@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAdmin, withAuth } from '@/lib/auth/utils';
 import { errorResponse, NotFoundError } from '@/lib/core/errors';
-import { getUserProfile, searchUsers } from '@/lib/users/db';
+import { getUserProfile, searchUsers, updateUserDeleteRequest } from '@/lib/users/db';
 import { UserSearchParams } from '@/lib/users/types';
 
 /**
@@ -62,6 +62,46 @@ export async function GET(request: NextRequest) {
           throw new NotFoundError('User profile not found');
         }
         return NextResponse.json(userProfile);
+      } catch (error) {
+        return errorResponse(error as Error);
+      }
+    },
+    { requireAuth: true }
+  );
+}
+
+/**
+* PATCH /api/users
+* - Update the current user's delete request status
+*/
+export async function PATCH(request: NextRequest) {
+  return withAuth(
+    request,
+    async (req, user) => {
+      try {
+        // Check if we have a user ID from authentication
+        if (!user?.id) {
+          throw new Error('User ID not found in authentication');
+        }
+
+        const body = await req.json();
+        const { deleteRequested } = body;
+
+        // Validate input
+        if (typeof deleteRequested !== 'boolean') {
+          return NextResponse.json(
+            { error: { message: 'Invalid input: deleteRequested must be a boolean' } },
+            { status: 400 }
+          );
+        }
+
+        const updatedUser = await updateUserDeleteRequest(user.id, deleteRequested);
+
+        if (!updatedUser) {
+          throw new NotFoundError('User not found');
+        }
+
+        return NextResponse.json({ success: true });
       } catch (error) {
         return errorResponse(error as Error);
       }

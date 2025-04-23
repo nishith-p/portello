@@ -4,11 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="minor fix: forgot about hardcoded discount">
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="Admin Dashboard fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/favicon.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/admin-dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/(components)/admin-dashboard/admin-dashboard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/(components)/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/next.config.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/users/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/users/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/portal-header/portal-header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/(components)/portal-header/portal-header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/portal-sidebar/portal-sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/(components)/portal-sidebar/portal-sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/user-dashboard/document-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/(components)/user-dashboard/document-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/user-dashboard/user-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/(components)/user-dashboard/user-profile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/contact/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/contact/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/users/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/users/db.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/users/hooks.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/users/hooks.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -72,11 +77,11 @@
       <recent name="$PROJECT_DIR$/public" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/app/portal/contact" />
+      <recent name="$PROJECT_DIR$/src/app/portal/contact/(components)" />
       <recent name="$PROJECT_DIR$/src/app/portal/(components)/admin-dashboard" />
       <recent name="$PROJECT_DIR$/src/app/portal/admin/store/packs/edit/[id]" />
       <recent name="$PROJECT_DIR$/src/app/portal/admin" />
-      <recent name="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-form/sections" />
-      <recent name="$PROJECT_DIR$/src/lib/auth" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -95,7 +100,8 @@
       <option name="presentableId" value="Default" />
       <updated>1743790678452</updated>
       <workItem from="1743790679486" duration="26388000" />
-      <workItem from="1744462042462" duration="88821000" />
+      <workItem from="1744462042462" duration="92324000" />
+      <workItem from="1745336227173" duration="10050000" />
     </task>
     <task id="LOCAL-00001" summary="Layout fixes, working orders.">
       <option name="closed" value="true" />
@@ -241,7 +247,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745075752154</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Admin Dashboard fixes">
+      <option name="closed" value="true" />
+      <created>1745084145472</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1745084145472</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -269,6 +283,7 @@
     <MESSAGE value="Fixed route param issue with promise" />
     <MESSAGE value="More code cleanup" />
     <MESSAGE value="minor fix: forgot about hardcoded discount" />
-    <option name="LAST_COMMIT_MESSAGE" value="minor fix: forgot about hardcoded discount" />
+    <MESSAGE value="Admin Dashboard fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Admin Dashboard fixes" />
   </component>
 </project>

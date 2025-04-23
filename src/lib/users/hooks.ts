@@ -214,3 +214,45 @@ export function useUserHooks() {
     useUserStats,
   };
 }
+
+/**
+ * Hook to handle account deletion request
+ */
+export function useRequestAccountDeletion() {
+  const queryClient = useQueryClient();
+
+  return useMutation<unknown, Error, boolean>({
+    mutationFn: async (deleteRequested: boolean) => {
+      const response = await fetch('/api/users', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ deleteRequested }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to request account deletion');
+      }
+
+      return response.json();
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['userProfile', 'current'] });
+
+      notifications.show({
+        title: 'Request Submitted',
+        message: 'Your account deletion request has been submitted successfully',
+        color: 'green',
+      });
+    },
+    onError: (error) => {
+      notifications.show({
+        title: 'Request Failed',
+        message: error.message || 'Failed to submit account deletion request',
+        color: 'red',
+      });
+    },
+  });
+}

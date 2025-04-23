@@ -53,7 +53,7 @@ export function DocumentStatusCard({ documents }: DocumentCardProps) {
         </Text>
 
         <Text size="sm" c="dimmed" mb="md">
-          {completedCount} of {totalCount} documents submitted
+          {completedCount} of {totalCount} documents verified.
         </Text>
 
         <Timeline active={completedCount} bulletSize={24} lineWidth={1} color="gray">
@@ -70,15 +70,7 @@ export function DocumentStatusCard({ documents }: DocumentCardProps) {
                   <Text fw={500}>{document.name}</Text>
                 </Group>
               }
-            >
-              <Group mt={4}>
-                <Text size="sm" c="dimmed">
-                  {document.status
-                    ? 'Document successfully submitted and verified.'
-                    : 'Please submit this document as soon as possible.'}
-                </Text>
-              </Group>
-            </Timeline.Item>
+            />
           ))}
         </Timeline>
       </Paper>

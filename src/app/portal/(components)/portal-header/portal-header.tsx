@@ -21,8 +21,8 @@ export const PortalHeader = ({ opened, toggle }: PortalHeaderProps) => {
       <Flex align="center" gap="md">
         <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
         <Image
-          h={24}
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Bluesky_Logo.svg/600px-Bluesky_Logo.svg.png"
+          h={32}
+          src="https://ugfvgfyujpvclouvgfow.supabase.co/storage/v1/object/public/ic-portal/brand/IC_PORTAL_LOGO.png"
         />
       </Flex>
       <Group>

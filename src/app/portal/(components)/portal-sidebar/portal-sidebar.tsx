@@ -4,7 +4,15 @@ import { memo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
-import { IconHome, IconShirt, IconShoppingBag, IconUsers } from '@tabler/icons-react';
+import {
+  IconAddressBook,
+  IconCreditCard,
+  IconHome,
+  IconSettings,
+  IconShirt,
+  IconShoppingBag,
+  IconUsers,
+} from '@tabler/icons-react';
 import { Box, NavLink, Stack, Tooltip } from '@mantine/core';
 import classes from './portal-sidebar.module.css';
 
@@ -47,6 +55,22 @@ const navigationData: NavigationItem[] = [
     label: 'Orders',
     icon: IconShoppingBag,
     children: [{ link: '/portal/admin/orders', label: 'Manage Orders' }],
+  },
+  {
+    link: '/',
+    label: 'Payments',
+    icon: IconCreditCard,
+    disabledMessage: 'Coming soon!',
+  },
+  {
+    link: '/portal/contact',
+    label: 'Contact',
+    icon: IconAddressBook,
+  },
+  {
+    link: '/portal/settings',
+    label: 'Settings',
+    icon: IconSettings,
   },
 ];
 

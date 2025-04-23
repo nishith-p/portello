@@ -1,55 +1,26 @@
 'use client';
 
-// import { Container, Stack } from '@mantine/core';
-// import { ContactHeader } from '@/app/portal/contact/(components)/contact-header';
-// import { ContactTable } from '@/app/portal/contact/(components)/contact-table';
-
-const dxTeam = [
-  {
-    id: '1',
-    name: 'Sarah Johnson',
-    position: 'DX Team Lead',
-    email: 'sarah.johnson@aiesec.net',
-    phone: '+94 71 234 5678',
-  },
-  {
-    id: '2',
-    name: 'David Lee',
-    position: 'DX Team Member',
-    email: 'david.lee@aiesec.net',
-    phone: '+94 71 234 5679',
-  },
-];
-
-const coreTeam = [
-  {
-    id: '1',
-    name: 'Michael Chen',
-    position: 'Core Committee Lead',
-    email: 'michael.chen@aiesec.net',
-    phone: '+94 71 876 5432',
-  },
-  {
-    id: '2',
-    name: 'Emma Wilson',
-    position: 'Core Committee Member',
-    email: 'emma.wilson@aiesec.net',
-    phone: '+94 71 876 5433',
-  },
-];
+import { Container, Stack, Text, Title } from '@mantine/core';
+import { ContactTable } from '@/app/portal/contact/(components)';
+import { coreTeam, dxTeam } from '@/app/portal/contact/constants';
 
 const ContactPage = () => {
   return (
-    <div>Hello World!</div>
-    // <Container fluid p="md" style={{ minHeight: '100vh' }}>
-    //   <Stack gap="xl">
-    //     <ContactHeader />
-    //
-    //     <ContactTable title="DX Team" members={dxTeam} />
-    //
-    //     <ContactTable title="Core Committee Team" members={coreTeam} />
-    //   </Stack>
-    // </Container>
+    <Container fluid p="md">
+      <Stack gap="lg">
+        <Title order={2} c="gray.8" fz={{ base: 'h3', sm: 'h2' }}>
+          Contact Information
+        </Title>
+
+        <Text c="dimmed" fz={{ base: 'sm', sm: 'md' }}>
+          Contact our team members for any questions or assistance during the event.
+        </Text>
+
+        <ContactTable title="Delegates Experience Team" members={dxTeam} />
+
+        <ContactTable title="Core Committee Team" members={coreTeam} />
+      </Stack>
+    </Container>
   );
 };
 

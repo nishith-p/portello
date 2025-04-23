@@ -123,3 +123,24 @@ export async function searchUsers(
     total: count || 0,
   };
 }
+
+/**
+ * Update a user's delete request status
+ */
+export async function updateUserDeleteRequest(
+  kindeId: string,
+  deleteRequested: boolean
+): Promise<User | null> {
+  const { data, error } = await supabaseServer
+    .from('users')
+    .update({ delete_requested: deleteRequested })
+    .eq('kinde_id', kindeId)
+    .select('*')
+    .single();
+
+  if (error) {
+    throw error;
+  }
+
+  return data as User;
+}

@@ -90,28 +90,6 @@ export function UserProfile({ user }: UserProfileProps) {
               </Stack>
             </Grid.Col>
           )}
-
-          {user.shirt_size && (
-            <Grid.Col span={{ base: 12, sm: 6 }}>
-              <Stack gap="xs">
-                <Text c="dimmed" size="sm">
-                  T-Shirt Size
-                </Text>
-                <Text>{user.shirt_size}</Text>
-              </Stack>
-            </Grid.Col>
-          )}
-
-          {user.meal_type && (
-            <Grid.Col span={{ base: 12, sm: 6 }}>
-              <Stack gap="xs">
-                <Text c="dimmed" size="sm">
-                  Meal Preference
-                </Text>
-                <Text>{user.meal_type}</Text>
-              </Stack>
-            </Grid.Col>
-          )}
         </Grid>
 
         <Divider my="lg" />
@@ -159,13 +137,13 @@ export function UserProfile({ user }: UserProfileProps) {
             </Grid.Col>
           )}
 
-          {user.room_no && (
+          {user.shirt_size && (
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <Stack gap="xs">
                 <Text c="dimmed" size="sm">
-                  Room Number
+                  T-Shirt Size
                 </Text>
-                <Text>{user.room_no}</Text>
+                <Text>{user.shirt_size}</Text>
               </Stack>
             </Grid.Col>
           )}
@@ -177,17 +155,6 @@ export function UserProfile({ user }: UserProfileProps) {
                   Tribe Number
                 </Text>
                 <Text>{user.tribe_no}</Text>
-              </Stack>
-            </Grid.Col>
-          )}
-
-          {user.round !== null && (
-            <Grid.Col span={12}>
-              <Stack gap="xs">
-                <Text c="dimmed" size="sm">
-                  Registration Round
-                </Text>
-                <Text>{user.round}</Text>
               </Stack>
             </Grid.Col>
           )}
