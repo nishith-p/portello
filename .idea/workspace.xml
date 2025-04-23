@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="Admin Dashboard fixes">
-      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" afterPath="$PROJECT_DIR$/.env.example" afterDir="false" />
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment=".env example fix">
+      <change afterPath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/constants.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-search.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/core/constants.ts" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,11 +71,11 @@
       <recent name="$PROJECT_DIR$/public" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)" />
+      <recent name="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegate-profile" />
       <recent name="$PROJECT_DIR$/src/app/portal/contact" />
       <recent name="$PROJECT_DIR$/src/app/portal/contact/(components)" />
       <recent name="$PROJECT_DIR$/src/app/portal/(components)/admin-dashboard" />
-      <recent name="$PROJECT_DIR$/src/app/portal/admin/store/packs/edit/[id]" />
-      <recent name="$PROJECT_DIR$/src/app/portal/admin" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -95,7 +96,7 @@
       <workItem from="1743790679486" duration="26388000" />
       <workItem from="1744462042462" duration="92324000" />
       <workItem from="1745336227173" duration="10050000" />
-      <workItem from="1745444134551" duration="399000" />
+      <workItem from="1745444134551" duration="1808000" />
     </task>
     <task id="LOCAL-00001" summary="Layout fixes, working orders.">
       <option name="closed" value="true" />
@@ -249,7 +250,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745084145472</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary=".env example fix">
+      <option name="closed" value="true" />
+      <created>1745444569033</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1745444569033</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -278,6 +287,7 @@
     <MESSAGE value="More code cleanup" />
     <MESSAGE value="minor fix: forgot about hardcoded discount" />
     <MESSAGE value="Admin Dashboard fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Admin Dashboard fixes" />
+    <MESSAGE value=".env example fix" />
+    <option name="LAST_COMMIT_MESSAGE" value=".env example fix" />
   </component>
 </project>

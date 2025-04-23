@@ -4,7 +4,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 import { IconSearch } from '@tabler/icons-react';
 import { Button, Group, Select, Stack, TextInput } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { ENTITIES, ROUNDS } from '@/lib/core/constants';
+import { ENTITIES, ROUNDS } from '@/app/portal/admin/delegates/(components)/constants';
 import { UserSearchParams } from '@/lib/users/types';
 
 interface DelegatesSearchProps {
@@ -90,6 +90,7 @@ export function DelegatesSearch({
           placeholder="Entity"
           data={ENTITIES}
           clearable
+          searchable
           onChange={(value) =>
             setSearchParamsAction((prev) => ({ ...prev, entity: value || undefined, offset: 0 }))
           }
