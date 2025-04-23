@@ -8,7 +8,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 const nextConfig = {
   reactStrictMode: false,
   transpilePackages: [],
-  basePath: '/portal',
+  basePath: '',
   eslint: {
     ignoreDuringBuilds: true,
   },
