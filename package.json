@@ -1,12 +1,12 @@
 {
-  "name": "mantine-next-template",
+  "name": "portal",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3000",
     "build": "next build",
     "analyze": "ANALYZE=true next build",
-    "start": "next start",
+    "start": "next start -p 3000",
     "typecheck": "tsc --noEmit",
     "lint": "npm run eslint && npm run stylelint",
     "eslint": "next lint",
@@ -55,7 +55,7 @@
     "stylelint-config-standard-scss": "^13.1.0",
     "ts-jest": "^29.1.5",
     "typescript": "5.5.2",
-    "typescript-eslint": "^8.14.0"
-  },
-  "packageManager": "yarn@4.5.3"
+    "typescript-eslint": "^8.14.0",
+    "tsconfig": "workspace:*"
+  }
 }

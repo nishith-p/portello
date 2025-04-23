@@ -1,4 +1,10 @@
-export const PUBLIC_ROUTES = ['/', '/api/auth/login', '/api/auth/register'] as const;
+export const PUBLIC_ROUTES = [
+  '/',
+  '/register',
+  '/store',
+  '/api/auth/login',
+  '/api/auth/register',
+] as const;
 
 export const ROUTE_PERMISSIONS = {
   '/portal/admin': ['dx:admin'],

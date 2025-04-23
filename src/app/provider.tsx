@@ -27,7 +27,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   );
 
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} classNamesPrefix="mt-">
       <ErrorBoundary FallbackComponent={MainErrorFallback}>
         <QueryClientProvider client={queryClient}>
           <KindeProvider>

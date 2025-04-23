@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment=".env example fix">
-      <change afterPath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/constants.ts" afterDir="false" />
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="full list of entities added, searchable select">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-search.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/core/constants.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/auth.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,7 +16,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="dev-main" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -50,7 +48,7 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "dev/merge-ic",
     "last_opened_file_path": "/Users/nishith/Desktop/Repos/portello",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.stylelint": "true",
@@ -96,7 +94,7 @@
       <workItem from="1743790679486" duration="26388000" />
       <workItem from="1744462042462" duration="92324000" />
       <workItem from="1745336227173" duration="10050000" />
-      <workItem from="1745444134551" duration="1808000" />
+      <workItem from="1745444134551" duration="4336000" />
     </task>
     <task id="LOCAL-00001" summary="Layout fixes, working orders.">
       <option name="closed" value="true" />
@@ -258,7 +256,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745444569033</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="full list of entities added, searchable select">
+      <option name="closed" value="true" />
+      <created>1745445991264</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1745445991264</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -288,6 +294,7 @@
     <MESSAGE value="minor fix: forgot about hardcoded discount" />
     <MESSAGE value="Admin Dashboard fixes" />
     <MESSAGE value=".env example fix" />
-    <option name="LAST_COMMIT_MESSAGE" value=".env example fix" />
+    <MESSAGE value="full list of entities added, searchable select" />
+    <option name="LAST_COMMIT_MESSAGE" value="full list of entities added, searchable select" />
   </component>
 </project>

@@ -4,8 +4,11 @@ const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === 'true',
 });
 
-export default withBundleAnalyzer({
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   reactStrictMode: false,
+  transpilePackages: [],
+  basePath: '/portal',
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -15,4 +18,6 @@ export default withBundleAnalyzer({
   images: {
     domains: ['images.unsplash.com', 'store.ferrari.com', 'assets.adidas.com', 'supabase.co'],
   },
-});
+};
+
+export default withBundleAnalyzer(nextConfig);
