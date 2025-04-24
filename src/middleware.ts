@@ -8,7 +8,7 @@ export default withAuth(
     const { pathname } = req.nextUrl;
 
     // Skip all checks for public routes
-    if (PUBLIC_ROUTES.includes(pathname as any)) {
+    if (PUBLIC_ROUTES.includes(pathname as (typeof PUBLIC_ROUTES)[number])) {
       return NextResponse.next();
     }
 
@@ -31,7 +31,7 @@ export default withAuth(
       requiredPermissions?.length &&
       !requiredPermissions.some((p) => userPermissions.includes(p))
     ) {
-      return NextResponse.redirect(new URL('/portal', req.url));
+      return NextResponse.redirect(new URL('/', req.url));
     }
 
     return NextResponse.next();
@@ -44,5 +44,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ['/((?!api/|_next/static|_next/image|favicon.ico|$).*)'],
+  matcher: ['/((?!api/|_next/static|_next/image|favicon.ico).*)'],
 };

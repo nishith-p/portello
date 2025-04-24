@@ -4,8 +4,94 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment=".env example fix">
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="moved portal dir to root">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/admin-dashboard/admin-dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/admin-dashboard/admin-dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/admin-dashboard/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/admin-dashboard/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/admin-dashboard/stat-section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/admin-dashboard/stat-section.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/layout-shell.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/layout-shell.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/portal-header/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/portal-header/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/portal-header/portal-header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/portal-header/portal-header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/portal-sidebar/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/portal-sidebar/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/portal-sidebar/portal-sidebar.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/portal-sidebar/portal-sidebar.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/portal-sidebar/portal-sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/portal-sidebar/portal-sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/user-dashboard/document-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/user-dashboard/document-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/user-dashboard/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/user-dashboard/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/user-dashboard/quick-info-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/user-dashboard/quick-info-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/user-dashboard/user-dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/user-dashboard/user-dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/(components)/user-dashboard/user-profile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(components)/user-dashboard/user-profile.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/delegates/(components)/constants.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegate-profile/(components)/document-item.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/delegates/(components)/delegate-profile/(components)/document-item.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegate-profile/(components)/document-link-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/delegates/(components)/delegate-profile/(components)/document-link-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegate-profile/(components)/documents-section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/delegates/(components)/delegate-profile/(components)/documents-section.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegate-profile/(components)/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/delegates/(components)/delegate-profile/(components)/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegate-profile/(components)/other-details-section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/delegates/(components)/delegate-profile/(components)/other-details-section.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegate-profile/(components)/personal-info-section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/delegates/(components)/delegate-profile/(components)/personal-info-section.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegate-profile/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/delegates/(components)/delegate-profile/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/delegates/(components)/delegates-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-pagination.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/delegates/(components)/delegates-pagination.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/delegates/(components)/delegates-search.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegates-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/delegates/(components)/delegates-table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/delegates/(components)/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/delegates/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/delegates/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/orders/(components)/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-detail-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/orders/(components)/order-detail-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-pagination.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/orders/(components)/order-pagination.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/orders/(components)/order-search.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/(components)/order-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/orders/(components)/order-table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/orders/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/orders/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/(components)/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-detail-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-detail-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-form/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-form/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-form/sections/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-form/sections/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-form/sections/section-colors.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-form/sections/section-colors.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-form/sections/section-image.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-form/sections/section-image.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-form/sections/section-size.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-form/sections/section-size.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-form/unique-item.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-form/unique-item.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-pagination.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-pagination.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-search.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-search.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/(components)/store-item-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/edit/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/edit/[id]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/new/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/new/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/(components)/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/packs/(components)/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/(components)/pack-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/packs/(components)/pack-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/(components)/pack-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/packs/(components)/pack-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/(components)/pack-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/packs/(components)/pack-table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/edit/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/packs/edit/[id]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/new/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/packs/new/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/packs/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/packs/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/admin/store/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/contact/(components)/contact-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/contact/(components)/contact-table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/contact/(components)/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/contact/(components)/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/contact/(components)/types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/contact/(components)/types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/contact/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/contact/constants.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/contact/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/contact/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/layout.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/(components)/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/orders/(components)/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/(components)/order-details-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/orders/(components)/order-details-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/(components)/orders-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/orders/(components)/orders-table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/(utils)/order-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/orders/(utils)/order-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/orders/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/orders/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/settings/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/settings/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/(components)/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-card.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/(components)/pack-card.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/(components)/pack-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-modal.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/(components)/pack-modal.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/pack-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/(components)/pack-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/product-card.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/(components)/product-card.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/product-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/(components)/product-card.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/product-modal.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/(components)/product-modal.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/(components)/product-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/(components)/product-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/portal/store/store.module.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/store.module.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/cart-drawer/cart-drawer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/cart-drawer/cart-drawer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/config/auth.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/config/auth.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/middleware.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/middleware.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +142,7 @@
     "node.js.selected.package.stylelint": "/Users/nishith/Desktop/Clean Project/portello/node_modules/stylelint",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "/Users/nishith/Desktop/Clean Project/portello/node_modules/prettier",
+    "prettierjs.PrettierConfiguration.Package": "/Users/nishith/Desktop/MERGER/portello/node_modules/prettier",
     "settings.editor.selected.configurable": "reference.settingsdialog.project.grazie",
     "ts.external.directory.path": "/Users/nishith/Desktop/MERGER/portello/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
@@ -69,11 +155,11 @@
       <recent name="$PROJECT_DIR$/public" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/app" />
       <recent name="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)" />
       <recent name="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegate-profile" />
       <recent name="$PROJECT_DIR$/src/app/portal/contact" />
       <recent name="$PROJECT_DIR$/src/app/portal/contact/(components)" />
-      <recent name="$PROJECT_DIR$/src/app/portal/(components)/admin-dashboard" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -256,7 +342,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745444569033</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="workspace file, default config">
+      <option name="closed" value="true" />
+      <created>1745505981894</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1745505981894</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -286,6 +380,8 @@
     <MESSAGE value="minor fix: forgot about hardcoded discount" />
     <MESSAGE value="Admin Dashboard fixes" />
     <MESSAGE value=".env example fix" />
-    <option name="LAST_COMMIT_MESSAGE" value=".env example fix" />
+    <MESSAGE value="workspace file, default config" />
+    <MESSAGE value="moved portal dir to root" />
+    <option name="LAST_COMMIT_MESSAGE" value="moved portal dir to root" />
   </component>
 </project>

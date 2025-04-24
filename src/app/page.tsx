@@ -1,9 +1,11 @@
-import { AuthButtons } from '@/components/auth-buttons/auth-buttons';
+// app/page.tsx - Server Component
+import { Metadata } from 'next';
+import ClientHomePage from './home-client';
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Discover | IC 2025',
 };
 
 export default function HomePage() {
-  return <AuthButtons />;
+  return <ClientHomePage />;
 }

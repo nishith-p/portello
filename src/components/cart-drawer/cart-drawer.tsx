@@ -41,7 +41,7 @@ export const CartDrawer = () => {
 
   const handleGoToStore = () => {
     closeCart();
-    router.push('/portal/store');
+    router.push('/store');
   };
 
   const handlePlaceOrder = async () => {
@@ -65,7 +65,7 @@ export const CartDrawer = () => {
       setTimeout(() => {
         clearCart();
         closeCart();
-        router.push('/portal/orders');
+        router.push('/orders');
         setIsPlacingOrder(false);
       }, 1000);
     } catch (error) {
