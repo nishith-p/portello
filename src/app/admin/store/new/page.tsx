@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Container, Stack, Title } from '@mantine/core';
 import { useCreateStoreItem } from '@/lib/store/items/hooks';
 import { StoreItemInput } from '@/lib/store/types';
-import { StoreItemForm } from '../(components)/store-item-form';
+import { StoreItemForm } from '@/app/admin/store/(components)';
 
 export default function CreateStorePage() {
   const [error, setError] = useState<Error | null>(null);

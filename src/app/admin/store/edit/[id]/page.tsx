@@ -6,7 +6,7 @@ import { IconAlertCircle } from '@tabler/icons-react';
 import { Alert, Center, Container, Loader, Stack, Title } from '@mantine/core';
 import { useStoreItem, useUpdateStoreItem } from '@/lib/store/items/hooks';
 import { StoreItemInput } from '@/lib/store/types';
-import { StoreItemForm } from '../../(components)/store-item-form';
+import { StoreItemForm } from '@/app/admin/store/(components)';
 
 export default function EditStorePage() {
   const params = useParams();
