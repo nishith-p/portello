@@ -182,14 +182,14 @@ export function PackForm({
 
             <Group grow align="flex-end">
               <NumberInput
-                label="Price (USD)"
+                label="Price (EUR)"
                 placeholder="0.00"
                 min={0}
                 {...form.getInputProps('price')}
                 required
               />
               <NumberInput
-                label="Pre Price (USD)"
+                label="Pre Price (EUR)"
                 placeholder="0.00"
                 {...form.getInputProps('pre_price')}
               />
@@ -305,7 +305,7 @@ export function PackForm({
                         <Table.Tr key={selectedItem.item.id}>
                           <Table.Td>{selectedItem.item.item_code}</Table.Td>
                           <Table.Td>{selectedItem.item.name}</Table.Td>
-                          <Table.Td>${selectedItem.item.price.toFixed(2)}</Table.Td>
+                          <Table.Td>€{selectedItem.item.price.toFixed(2)}</Table.Td>
                           <Table.Td>
                             <NumberInput
                               min={1}
@@ -389,7 +389,7 @@ export function PackForm({
                       <Table.Tr key={item.id}>
                         <Table.Td>{item.item_code}</Table.Td>
                         <Table.Td>{item.name}</Table.Td>
-                        <Table.Td>${item.price.toFixed(2)}</Table.Td>
+                        <Table.Td>€{item.price.toFixed(2)}</Table.Td>
                         <Table.Td>
                           <Button
                             size="xs"

@@ -51,7 +51,7 @@ export function PackDetailModal({ opened, onClose, pack }: PackDetailModalProps)
           <Text fw={600} size="sm" style={{ width: 120 }}>
             Price:
           </Text>
-          <Text>${pack.price.toFixed(2)}</Text>
+          <Text>€{pack.price.toFixed(2)}</Text>
         </Group>
 
         <Group align="flex-start">
@@ -107,7 +107,7 @@ export function PackDetailModal({ opened, onClose, pack }: PackDetailModalProps)
                   <Table.Td>{packItem.item?.name || 'Unknown Item'}</Table.Td>
                   <Table.Td>{packItem.item?.item_code || 'Unknown Code'}</Table.Td>
                   <Table.Td>{packItem.quantity}</Table.Td>
-                  <Table.Td>${packItem.item?.price.toFixed(2) || '0.00'}</Table.Td>
+                  <Table.Td>€{packItem.item?.price.toFixed(2) || '0.00'}</Table.Td>
                 </Table.Tr>
               ))}
             </Table.Tbody>

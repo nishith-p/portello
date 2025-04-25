@@ -55,16 +55,16 @@ export function StoreItemDetailModal({ opened, onClose, item }: StoreItemDetailM
             <>
               <Flex gap={8} align="center">
                 <Text td="line-through" c="red">
-                  ${item.pre_price?.toFixed(2)}
+                  €{item.pre_price?.toFixed(2)}
                 </Text>
-                <Text fw={700}>${item.price.toFixed(2)}</Text>
+                <Text fw={700}>€{item.price.toFixed(2)}</Text>
                 <Badge variant="light" color="red">
-                  -${item.discount_perc}%
+                  -€{item.discount_perc}%
                 </Badge>
               </Flex>
             </>
           ) : (
-            <Text>${item.price.toFixed(2)}</Text>
+            <Text>€{item.price.toFixed(2)}</Text>
           )}
         </Group>
 

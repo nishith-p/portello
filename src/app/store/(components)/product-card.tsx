@@ -51,16 +51,16 @@ export function ProductCard({ item, onViewProductAction }: ProductCardProps) {
           <>
             <Flex gap={8} align="center" mb={4}>
               <Text td="line-through" c="gray">
-                ${item.pre_price?.toFixed(2)}
+                €{item.pre_price?.toFixed(2)}
               </Text>
               <Text fw={700} size="xl" c="blue">
-                ${item.price.toFixed(2)}
+                €{item.price.toFixed(2)}
               </Text>
             </Flex>
           </>
         ) : (
           <Text fw={700} size="xl" c="gray" mb={4}>
-            ${item.price.toFixed(2)}
+            €{item.price.toFixed(2)}
           </Text>
         )}
 

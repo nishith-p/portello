@@ -285,17 +285,17 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
                     <Flex gap={10} align="center" mt="xs">
                       <Badge variant="light" color="gray" size="lg" w="fit-content">
                         <Text fw={700} td="line-through">
-                          ${selectedPack.pre_price?.toFixed(2)}
+                          €{selectedPack.pre_price?.toFixed(2)}
                         </Text>
                       </Badge>
                       <Text c="red">-{selectedPack.discount_perc}%</Text>
                       <Badge color="green" size="lg" variant="filled" w="fit-content">
-                        ${selectedPack.price.toFixed(2)}
+                        €{selectedPack.price.toFixed(2)}
                       </Badge>
                     </Flex>
                   ) : (
                     <Badge color="gray" size="lg" variant="filled" w="fit-content" mt="xs">
-                      ${selectedPack.price.toFixed(2)}
+                      €{selectedPack.price.toFixed(2)}
                     </Badge>
                   )}
 
@@ -325,7 +325,7 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
                             <Text>{packItem.item?.name || 'Unknown Item'}</Text>
                           </Group>
                           <Text size="sm" fw={500}>
-                            ${packItem.item?.price.toFixed(2)}
+                            €{packItem.item?.price.toFixed(2)}
                           </Text>
                         </Group>
                       ))}
@@ -336,7 +336,7 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
                     <Group justify="space-between">
                       <Text fw={700}>Bundle Price:</Text>
                       <Text fw={700} size="lg">
-                        ${selectedPack.price.toFixed(2)}
+                        €{selectedPack.price.toFixed(2)}
                       </Text>
                     </Group>
                   </Paper>

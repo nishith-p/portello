@@ -100,14 +100,14 @@ export function StoreItemForm({
 
             <Group grow align="flex-end">
               <NumberInput
-                label="Price (USD)"
+                label="Price (EUR)"
                 placeholder="0.00"
                 min={0}
                 {...form.getInputProps('price')}
                 required
               />
               <NumberInput
-                label="Pre Price (USD)"
+                label="Pre Price (EUR)"
                 placeholder="0.00"
                 {...form.getInputProps('pre_price')}
               />

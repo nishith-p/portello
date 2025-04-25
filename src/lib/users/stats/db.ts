@@ -114,7 +114,7 @@ export async function getUserStats(): Promise<UserStats> {
   const { count: mcpCount, error: mcpError } = await supabaseServer
     .from('users')
     .select('*', { count: 'exact', head: true })
-    .eq('position', 'MCP');
+    .ilike('position', '%MCP%');
 
   if (mcpError) {
     throw mcpError;

@@ -211,17 +211,17 @@ export function ProductModal({
                   <Flex gap={10} align="center">
                     <Badge variant="light" color="gray" size="lg" w="fit-content">
                       <Text fw={700} td="line-through">
-                        ${selectedItem.pre_price?.toFixed(2)}
+                        €{selectedItem.pre_price?.toFixed(2)}
                       </Text>
                     </Badge>
                     <Text c="red">-{selectedItem.discount_perc}%</Text>
                     <Badge color="green" size="lg" variant="filled" w="fit-content">
-                      ${selectedItem.price.toFixed(2)}
+                      €{selectedItem.price.toFixed(2)}
                     </Badge>
                   </Flex>
                 ) : (
                   <Badge color="gray" size="lg" variant="filled" w="fit-content">
-                    ${selectedItem.price.toFixed(2)}
+                    €{selectedItem.price.toFixed(2)}
                   </Badge>
                 )}
 

@@ -77,7 +77,7 @@ export function PackTable({ packs, onViewPackAction, onToggleStatusAction }: Pac
                     Price
                   </Text>
                   <Text size="sm" c="dimmed">
-                    ${pack.price.toFixed(2)}
+                    €{pack.price.toFixed(2)}
                   </Text>
                 </Group>
 
@@ -171,7 +171,7 @@ export function PackTable({ packs, onViewPackAction, onToggleStatusAction }: Pac
               >
                 <Table.Td>{pack.pack_code}</Table.Td>
                 <Table.Td>{pack.name}</Table.Td>
-                <Table.Td>${pack.price.toFixed(2)}</Table.Td>
+                <Table.Td>€{pack.price.toFixed(2)}</Table.Td>
                 <Table.Td>
                   <Badge>{pack.pack_items?.length ?? 0} items</Badge>
                 </Table.Td>

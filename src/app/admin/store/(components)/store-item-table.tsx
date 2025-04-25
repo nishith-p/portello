@@ -75,7 +75,7 @@ export function StoreItemTable({
                     Price
                   </Text>
                   <Text size="sm" c="dimmed">
-                    ${item.price.toFixed(2)}
+                    €{item.price.toFixed(2)}
                   </Text>
                 </Group>
 
@@ -160,7 +160,7 @@ export function StoreItemTable({
               >
                 <Table.Td>{item.item_code}</Table.Td>
                 <Table.Td>{item.name}</Table.Td>
-                <Table.Td>${item.price.toFixed(2)}</Table.Td>
+                <Table.Td>€{item.price.toFixed(2)}</Table.Td>
                 <Table.Td>
                   <Badge color={item.active ? 'green' : 'red'} variant="filled">
                     {item.active ? 'Active' : 'Inactive'}

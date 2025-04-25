@@ -57,16 +57,16 @@ export function PackCard({ pack, onViewPackAction }: PackCardProps) {
           <>
             <Flex gap={8} align="center" mb={4}>
               <Text td="line-through" c="gray">
-                ${pack.pre_price?.toFixed(2)}
+                €{pack.pre_price?.toFixed(2)}
               </Text>
               <Text fw={700} size="xl" c="blue">
-                ${pack.price.toFixed(2)}
+                €{pack.price.toFixed(2)}
               </Text>
             </Flex>
           </>
         ) : (
           <Text fw={700} size="xl" c="gray" mb={4}>
-            ${pack.price.toFixed(2)}
+            €{pack.price.toFixed(2)}
           </Text>
         )}
 
