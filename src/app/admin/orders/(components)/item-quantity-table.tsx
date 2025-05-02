@@ -1,8 +1,31 @@
 // components/store/orders/(components)/item-quantity-table.tsx
-import { Paper, Table, Text, Title } from '@mantine/core';
+import { Group, Paper, Table, Text, Title } from '@mantine/core';
+import { IconArrowUp, IconArrowDown, IconArrowsVertical } from '@tabler/icons-react';
+import { useState } from 'react';
 import { ItemWithQuantity, PackWithQuantity } from '@/lib/store/types';
 
 export function ItemsTable({ items }: { items: ItemWithQuantity[] }) {
+  const [sortBy, setSortBy] = useState<'quantity' | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+  const toggleSort = (column: 'quantity') => {
+    if (sortBy === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(column);
+      setSortDirection('asc');
+    }
+  };
+
+  const sortedItems = [...items].sort((a, b) => {
+    if (!sortBy) return 0;
+    if (sortDirection === 'asc') {
+      return a.quantity - b.quantity;
+    } else {
+      return b.quantity - a.quantity;
+    }
+  });
+
   return (
     <Paper withBorder p="md" mb="md">
       <Title order={3} mb="sm">Items</Title>
@@ -11,12 +34,24 @@ export function ItemsTable({ items }: { items: ItemWithQuantity[] }) {
           <Table.Tr>
             <Table.Th>Item Code</Table.Th>
             <Table.Th>Name</Table.Th>
-            <Table.Th>Quantity Ordered</Table.Th>
+            <Table.Th 
+              style={{ cursor: 'pointer' }}
+              onClick={() => toggleSort('quantity')}
+            >
+              <Group gap="xs">
+                Quantity Ordered
+                {sortBy === 'quantity' ? (
+                  sortDirection === 'asc' ? <IconArrowUp size={14} /> : <IconArrowDown size={14} />
+                ) : (
+                  <IconArrowsVertical size={14} opacity={0.5} />
+                )}
+              </Group>
+            </Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {items.length > 0 ? (
-            items.map((item) => (
+          {sortedItems.length > 0 ? (
+            sortedItems.map((item) => (
               <Table.Tr key={item.item_code}>
                 <Table.Td>{item.item_code}</Table.Td>
                 <Table.Td>{item.name}</Table.Td>
@@ -37,6 +72,27 @@ export function ItemsTable({ items }: { items: ItemWithQuantity[] }) {
 }
 
 export function PacksTable({ packs }: { packs: PackWithQuantity[] }) {
+  const [sortBy, setSortBy] = useState<'quantity' | null>(null);
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+  const toggleSort = (column: 'quantity') => {
+    if (sortBy === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(column);
+      setSortDirection('asc');
+    }
+  };
+
+  const sortedPacks = [...packs].sort((a, b) => {
+    if (!sortBy) return 0;
+    if (sortDirection === 'asc') {
+      return a.quantity - b.quantity;
+    } else {
+      return b.quantity - a.quantity;
+    }
+  });
+
   return (
     <Paper withBorder p="md">
       <Title order={3} mb="sm">Packs</Title>
@@ -45,12 +101,24 @@ export function PacksTable({ packs }: { packs: PackWithQuantity[] }) {
           <Table.Tr>
             <Table.Th>Pack Code</Table.Th>
             <Table.Th>Name</Table.Th>
-            <Table.Th>Quantity Ordered</Table.Th>
+            <Table.Th 
+              style={{ cursor: 'pointer' }}
+              onClick={() => toggleSort('quantity')}
+            >
+              <Group gap="xs">
+                Quantity Ordered
+                {sortBy === 'quantity' ? (
+                  sortDirection === 'asc' ? <IconArrowUp size={14} /> : <IconArrowDown size={14} />
+                ) : (
+                  <IconArrowsVertical size={14} opacity={0.5} />
+                )}
+              </Group>
+            </Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {packs.length > 0 ? (
-            packs.map((pack) => (
+          {sortedPacks.length > 0 ? (
+            sortedPacks.map((pack) => (
               <Table.Tr key={pack.pack_code}>
                 <Table.Td>{pack.pack_code}</Table.Td>
                 <Table.Td>{pack.name}</Table.Td>
