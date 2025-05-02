@@ -294,3 +294,29 @@ export interface StorePackListResponse {
   packs: StorePack[];
   total: number;
 }
+
+/**
+ * Response for a list of item quantities
+ */
+export interface ItemWithQuantity {
+  item_code: string;
+  name: string;
+  quantity: number;
+  active: boolean;
+}
+
+export interface PackWithQuantity {
+  pack_code: string;
+  name: string;
+  quantity: number;
+  active: boolean;
+}
+
+/**
+ * Parameters for searching item quantities
+ */
+export interface ItemQuantitySearchParams {
+  search?: string;
+  limit: number;
+  offset: number;
+}

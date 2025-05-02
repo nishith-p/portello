@@ -211,3 +211,28 @@ export function useOrderHooks() {
     useUpdateOrderStatus,
   };
 }
+
+/**
+ * Hook for item quantity-related operations
+ */
+export function useItemQuantityHooks() {
+  const queryClient = useQueryClient();
+  
+  const useItemQuantities = () => {
+    return useQuery({
+      queryKey: ['itemQuantities'],
+      queryFn: async () => {
+        const response = await fetch('/api/store/orders/items');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || 'Failed to fetch item quantities');
+        }
+        return response.json();
+      },
+    });
+  };
+
+  return {
+    useItemQuantities
+  };
+}
