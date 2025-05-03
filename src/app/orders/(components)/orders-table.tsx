@@ -1,7 +1,8 @@
+// components/OrdersTable.tsx
 'use client';
 
 import { IconPackage } from '@tabler/icons-react';
-import { Badge, Card, Divider, Group, Paper, Stack, Table, Text } from '@mantine/core';
+import { Badge, Button, Card, Divider, Group, Paper, Stack, Table, Text } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { Order, OrderStatus } from '@/lib/store/types';
 import { formatCurrency, formatDate } from '@/lib/utils';
@@ -9,6 +10,7 @@ import { formatCurrency, formatDate } from '@/lib/utils';
 interface OrdersTableProps {
   orders: Order[];
   onOrderClickAction: (order: Order) => void;
+  onPayNow: (order: Order) => void;
 }
 
 const statusColorMap: Record<OrderStatus, string> = {
@@ -25,7 +27,7 @@ const getStatusColor = (status: OrderStatus): string => {
   return statusColorMap[status] || 'gray';
 };
 
-export const OrdersTable = ({ orders, onOrderClickAction }: OrdersTableProps) => {
+export const OrdersTable = ({ orders, onOrderClickAction, onPayNow }: OrdersTableProps) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   if (isMobile) {
@@ -45,59 +47,45 @@ export const OrdersTable = ({ orders, onOrderClickAction }: OrdersTableProps) =>
               padding="md"
               radius="md"
               withBorder
-              onClick={() => onOrderClickAction(order)}
               style={{ cursor: 'pointer' }}
             >
               <Stack gap="xs">
                 <Group justify="space-between">
-                  <Text fw={500} size="sm">
-                    Order ID
-                  </Text>
-                  <Text size="sm" c="dimmed">
-                    {order.id.substring(0, 8)}...
-                  </Text>
+                  <Text fw={500} size="sm">Order ID</Text>
+                  <Text size="sm" c="dimmed">{order.id.substring(0, 8)}...</Text>
                 </Group>
 
                 <Group justify="space-between">
-                  <Text fw={500} size="sm">
-                    Date
-                  </Text>
-                  <Text size="sm" c="dimmed">
-                    {formatDate(order.created_at)}
-                  </Text>
+                  <Text fw={500} size="sm">Date</Text>
+                  <Text size="sm" c="dimmed">{formatDate(order.created_at)}</Text>
                 </Group>
 
                 <Group justify="space-between">
-                  <Text fw={500} size="sm">
-                    Status
-                  </Text>
+                  <Text fw={500} size="sm">Status</Text>
                   <Badge color={getStatusColor(order.status)} variant="light">
                     {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                   </Badge>
                 </Group>
 
                 <Group justify="space-between">
-                  <Text fw={500} size="sm">
-                    Items
-                  </Text>
+                  <Text fw={500} size="sm">Items</Text>
                   <Group gap="xs">
                     <IconPackage size={16} />
-                    <Text size="sm" c="dimmed">
-                      {(order.items || []).length}
-                    </Text>
+                    <Text size="sm" c="dimmed">{(order.items || []).length}</Text>
                   </Group>
                 </Group>
 
                 <Divider />
 
                 <Group justify="space-between">
-                  <Text fw={500} size="sm">
-                    Total
-                  </Text>
-                  <Text size="sm" fw={600}>
-                    {formatCurrency(order.total_amount)}
-                  </Text>
+                  <Text fw={500} size="sm">Total</Text>
+                  {/* Force EUR */}
+                  <Text size="sm" fw={600}>{formatCurrency(order.total_amount)}</Text>
                 </Group>
+
+                <Button fullWidth onClick={() => onPayNow(order)}>
+                  Pay Now
+                </Button>
               </Stack>
             </Card>
           ))
@@ -124,12 +112,14 @@ export const OrdersTable = ({ orders, onOrderClickAction }: OrdersTableProps) =>
           <Table.Th>Status</Table.Th>
           <Table.Th>Items</Table.Th>
           <Table.Th>Total</Table.Th>
+          <Table.Th>Action</Table.Th>
         </Table.Tr>
       </Table.Thead>
+
       <Table.Tbody>
         {orders.length === 0 ? (
           <Table.Tr>
-            <Table.Td colSpan={5}>
+            <Table.Td colSpan={6}>
               <Text ta="center" c="dimmed" py="md">
                 No orders found
               </Text>
@@ -137,15 +127,9 @@ export const OrdersTable = ({ orders, onOrderClickAction }: OrdersTableProps) =>
           </Table.Tr>
         ) : (
           orders.map((order) => (
-            <Table.Tr
-              key={order.id}
-              onClick={() => onOrderClickAction(order)}
-              style={{ cursor: 'pointer' }}
-            >
+            <Table.Tr key={order.id} style={{ cursor: 'pointer' }}>
               <Table.Td>
-                <Text size="sm" fw={500}>
-                  {order.id.substring(0, 8)}...
-                </Text>
+                <Text size="sm" fw={500}>{order.id.substring(0, 8)}...</Text>
               </Table.Td>
               <Table.Td>
                 <Text size="sm">{formatDate(order.created_at)}</Text>
@@ -162,9 +146,12 @@ export const OrdersTable = ({ orders, onOrderClickAction }: OrdersTableProps) =>
                 </Group>
               </Table.Td>
               <Table.Td>
-                <Text size="sm" fw={500}>
-                  {formatCurrency(order.total_amount)}
-                </Text>
+                <Text size="sm" fw={500}>{formatCurrency(order.total_amount)}</Text>
+              </Table.Td>
+              <Table.Td>
+                <Button size="xs" onClick={() => onPayNow(order)}>
+                  Pay Now
+                </Button>
               </Table.Td>
             </Table.Tr>
           ))

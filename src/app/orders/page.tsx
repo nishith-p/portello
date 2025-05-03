@@ -4,10 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { IconAlertCircle, IconShoppingBag } from '@tabler/icons-react';
 import { Alert, Button, Center, Container, Loader, Paper, Stack, Text, Title } from '@mantine/core';
-import { OrderDetailsModal } from '@/app/orders/(components)';
+import { OrderDetailsModal, OrdersTable  } from '@/app/orders/(components)';
 import { useOrderHooks } from '@/lib/store/orders/hooks';
 import { Order } from '@/lib/store/types';
-import { OrdersTable } from '@/app/orders/(components)';
 
 export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -29,6 +28,33 @@ export default function OrdersPage() {
   const handleGoToStore = (): void => {
     router.push('/store');
   };
+
+  const handlePayNow = async (order: Order) => {
+    const res = await fetch(`/api/payhere/create-checkout`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId: order.id, amount: order.total_amount }),
+    });
+    if (!res.ok) {
+      console.error('failed to create checkout session');
+      return;
+    }
+    const formData = await res.json();
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = formData.actionUrl;
+    Object.entries(formData.fields).forEach(([k, v]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = k;
+      input.value = v as string;
+      form.appendChild(input);
+    });
+    document.body.appendChild(form);
+    form.submit();
+  };
+
 
   if (isLoading) {
     return (
@@ -89,7 +115,7 @@ export default function OrdersPage() {
         </Text>
 
         <Paper p="md" radius="md" withBorder>
-          <OrdersTable orders={orders} onOrderClickAction={handleOrderClick} />
+          <OrdersTable orders={orders} onOrderClickAction={handleOrderClick} onPayNow={handlePayNow} />
         </Paper>
       </Stack>
 
