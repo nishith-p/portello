@@ -49,6 +49,13 @@ export async function POST(req: Request) {
       order_id: orderId,
       items: `Order ${orderId}`,
       currency,
+      first_name: "Lahiru",
+      last_name: "Jayathilake",
+      email: "lahiruthpala@gmail.com",
+      phone : "0718696971",
+      address: "63/1, Dolekanaththa Junction, Nampamunuwa",
+      city: "Piliyandala",
+      country: "Sri Lanka",
       amount: formattedAmount,
       hash,
     };

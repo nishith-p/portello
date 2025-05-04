@@ -18,6 +18,21 @@ export async function getOrderById(orderId: string) {
   return data;
 }
 
+export async function getUserInfoFromOderID(orderId: string) {
+  const { data, error } = await supabaseServer
+    .from('orders')
+    .select('user_id')
+    .eq('id', orderId)
+    .single();
+  if (error) {
+    if (error.code === 'PGRST116') {
+      throw new NotFoundError(`Order with ID ${orderId} not found`);
+    }
+    throw error;
+  }
+  return data;
+}
+
 export async function updateOrderStatus(
   orderId: string,
   newStatus: OrderStatus,
