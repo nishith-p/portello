@@ -26,7 +26,7 @@ export default function handler(
   }
 
   try {
-    // Fetch credentials from env
+    // Fetch credentials from .env
     const merchantId = process.env.PAYHERE_MERCHANT_ID;
     const merchantSecret = process.env.PAYHERE_MERCHANT_SECRET;
     const returnUrl = process.env.NEXT_PUBLIC_RETURN_URL;

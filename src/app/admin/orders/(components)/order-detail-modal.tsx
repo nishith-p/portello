@@ -33,6 +33,11 @@ const statusColorMap: StatusColorMap = {
   shipped: 'cyan',
   delivered: 'green',
   cancelled: 'red',
+  'payment pending':   'orange',
+  'payment cancelled': 'red',
+  'payment failed':    'red',
+  'charged back':      'purple',
+  failed:             'red',
 };
 
 // Helper to truncate long IDs with tooltips
