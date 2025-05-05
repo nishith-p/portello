@@ -35,9 +35,10 @@ const getStatusColor = (status: OrderStatus): string => {
 
 export const OrdersTable = ({ orders, onOrderClickAction, onPayNow }: OrdersTableProps) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
+
   const router = useRouter();
   const handlePayNow = (order: Order) => {
-    router.push(`/payment/${order.id}`)
+    router.push(`/orders/${order.id}`)
   }
 
   if (isMobile) {

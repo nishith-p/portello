@@ -299,13 +299,3 @@ export interface StorePackListResponse {
   packs: StorePack[];
   total: number;
 }
-
-export interface Order {
-  id: string
-  created_at: string
-  status: OrderStatus
-  items?: OrderItem[]
-  total_amount: number
-  customer_id?: string
-}
-
