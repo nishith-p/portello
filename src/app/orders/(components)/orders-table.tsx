@@ -1,11 +1,12 @@
 // components/OrdersTable.tsx
-'use client';
+'use client'
 
 import { IconPackage } from '@tabler/icons-react';
 import { Badge, Button, Card, Divider, Group, Paper, Stack, Table, Text } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { Order, OrderStatus } from '@/lib/store/types';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 interface OrdersTableProps {
   orders: Order[];
@@ -34,6 +35,10 @@ const getStatusColor = (status: OrderStatus): string => {
 
 export const OrdersTable = ({ orders, onOrderClickAction, onPayNow }: OrdersTableProps) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const router = useRouter();
+  const handlePayNow = (order: Order) => {
+    router.push(`/payment/${order.id}`)
+  }
 
   if (isMobile) {
     return (
@@ -88,7 +93,7 @@ export const OrdersTable = ({ orders, onOrderClickAction, onPayNow }: OrdersTabl
                   <Text size="sm" fw={600}>{formatCurrency(order.total_amount)}</Text>
                 </Group>
 
-                <Button fullWidth onClick={() => onPayNow(order)}>
+                <Button fullWidth onClick={() => handlePayNow(order)}>
                   Pay Now
                 </Button>
               </Stack>
@@ -154,7 +159,7 @@ export const OrdersTable = ({ orders, onOrderClickAction, onPayNow }: OrdersTabl
                 <Text size="sm" fw={500}>{formatCurrency(order.total_amount)}</Text>
               </Table.Td>
               <Table.Td>
-                <Button size="xs" onClick={() => onPayNow(order)}>
+                <Button size="xs" onClick={() => handlePayNow(order)}>
                   Pay Now
                 </Button>
               </Table.Td>
