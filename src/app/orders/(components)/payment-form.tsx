@@ -1,7 +1,6 @@
 'use client';
 
-import type React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   IconArrowRight,
   IconBuilding,
@@ -22,7 +21,6 @@ import {
   Divider,
   Group,
   Paper,
-  rem,
   SimpleGrid,
   Stack,
   Text,
@@ -34,46 +32,34 @@ import { useForm } from '@mantine/form';
 import { useOrderHooks } from '@/lib/store/orders/hooks';
 
 interface Customer {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  country: string;
+  first_name: string;
+  last_name: string;
+  aiesec_email: string;
 }
 
 interface PaymentFormProps {
-  actionUrl: string;
-  merchantId: string;
   orderId: string;
   amount: string;
   currency: string;
-  customer?: Customer; // Make customer optional since users will input their info
-  hash: string;
+  customer?: Customer;
 }
 
-export function PaymentForm({
-  actionUrl,
-  merchantId,
-  orderId,
-  amount,
-  currency,
-  customer,
-  hash,
-}: PaymentFormProps) {
+export function PaymentForm({ orderId, currency, customer}: PaymentFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { useOrder } = useOrderHooks();
+  console.log(customer)
+  const { data: order, isLoading, error } = useOrder(orderId);
 
   // Initialize form with customer data if available
   const form = useForm({
     initialValues: {
-      firstName: customer?.firstName || '',
-      lastName: customer?.lastName || '',
-      email: customer?.email || '',
-      phone: customer?.phone || '',
-      address: customer?.address || '',
-      city: customer?.city || '',
-      country: customer?.country || '',
+      firstName: customer?.first_name || '',
+      lastName: customer?.last_name || '',
+      email: customer?.aiesec_email || '',
+      phone: '',
+      address: '',
+      city: '',
+      country: '',
     },
     validate: {
       firstName: (value) => (value.trim().length < 2 ? 'First name is required' : null),
@@ -86,20 +72,47 @@ export function PaymentForm({
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    const isValid = form.validate().hasErrors === false;
-
-    if (!isValid) {
-      e.preventDefault();
-      return;
-    }
-
+  const handlePayNow = form.onSubmit(async (values) => {
     setIsSubmitting(true);
-    // The form will be submitted naturally
-  };
+    try {
+      const res = await fetch('/api/payhere/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId,
+          customer: {
+            first_name: values.firstName,
+            last_name:  values.lastName,
+            email:      values.email,
+            phone:      values.phone,
+            address:    values.address,
+            city:       values.city,
+            country:    values.country,
+          },
+        }),
+      });
 
-  const { useOrder } = useOrderHooks();
-  const { data: order, isLoading, error } = useOrder(orderId);
+      if (!res.ok) throw new Error('Failed to create checkout session');
+      const { actionUrl, fields } = await res.json();
+
+      const formEl = document.createElement('form');
+      formEl.method = 'POST';
+      formEl.action = actionUrl;
+      Object.entries(fields).forEach(([key, val]) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = String(val);
+        formEl.appendChild(input);
+      });
+      document.body.appendChild(formEl);
+      formEl.submit();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  });
 
   return (
     <Container size="lg" px="xs">
@@ -202,18 +215,7 @@ export function PaymentForm({
 
               <Divider my="sm" />
 
-              <form method="post" action={actionUrl} onSubmit={handleSubmit}>
-                {/* Required fields */}
-                <input type="hidden" name="merchant_id" value={merchantId} />
-                <input type="hidden" name="return_url" value={process.env.NEXT_PUBLIC_RETURN_URL} />
-                <input type="hidden" name="cancel_url" value={process.env.NEXT_PUBLIC_CANCEL_URL} />
-                <input type="hidden" name="notify_url" value={process.env.PAYHERE_NOTIFY_URL} />
-                <input type="hidden" name="order_id" value={orderId} />
-                <input type="hidden" name="items" value={`Order ${orderId}`} />
-                <input type="hidden" name="currency" value={currency} />
-                <input type="hidden" name="amount" value={amount} />
-                <input type="hidden" name="hash" value={hash} />
-
+              <form method="post" onSubmit={handlePayNow}>
                 {/* Customer details as visible inputs */}
                 <Stack gap="md">
                   <SimpleGrid cols={2}>

@@ -1,44 +1,21 @@
 import { PaymentForm } from "../(components)/payment-form"
+import { getOrderById } from '@/lib/payhere/paymentRepository';
+type Params = Promise<{ orderId: string }>;
 
-// This would typically come from your database or API
-async function getOrderDetails(orderId: string) {
-  // Mock data for demonstration
-  return {
-    id: orderId,
-    amount: "1000.00",
-    currency: "LKR",
-    customer: {
-      firstName: "Saman",
-      lastName: "Perera",
-      email: "samanp@gmail.com",
-      phone: "0771234567",
-      address: "No.1, Galle Road",
-      city: "Colombo",
-      country: "Sri Lanka",
-    },
-  }
-}
+type OrderDetails = Awaited<ReturnType<typeof getOrderById>>;
 
-export default async function OrderPage({ params }: { params: { orderId: string } }) {
-  const { orderId } = params
-  const orderDetails = await getOrderDetails(orderId)
-
-  // These would typically come from your environment variables or configuration
-  const merchantId = process.env.PAYHERE_MERCHANT_ID || "123"
-  const actionUrl = process.env.PAYHERE_ACTION_URL || "https://sandbox.payhere.lk/pay/checkout"
-  const hash = "your_calculated_hash_here" // This should be calculated server-side
-
+export default async function OrderPage({params,}: {params: Params; }) {
+  const { orderId } = await params
+  const orderDetails:OrderDetails = await getOrderById(orderId)
+    console.log(orderDetails)
   return (
     <div className="container mx-auto py-10">
       <div className="max-w-2xl mx-auto">
         <PaymentForm
-          actionUrl={actionUrl}
-          merchantId={merchantId}
           orderId={orderId}
-          amount={orderDetails.amount}
-          currency={orderDetails.currency}
-          customer={orderDetails.customer}
-          hash={hash}
+          amount={orderDetails.total_amount}
+          currency="EUR"
+          customer={orderDetails.users?.[0]}
         />
       </div>
     </div>

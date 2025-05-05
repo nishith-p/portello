@@ -1,13 +1,18 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { getOrderById } from '@/lib/payhere/paymentRepository';
+
+type OrderDetails = Awaited<ReturnType<typeof getOrderById>>;
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { orderId, amount } = body;
+  const { orderId, customer } = body;
 
-  if (!orderId || amount == null) {
-    return NextResponse.json({ error: 'Missing orderId or amount' }, { status: 400 });
+  if (!orderId) {
+    return NextResponse.json({ error: 'Missing orderId' }, { status: 400 });
   }
+
+  const orderDetails:OrderDetails = await getOrderById(orderId)
 
   try {
     const merchantId = process.env.PAYHERE_MERCHANT_ID;
@@ -21,7 +26,7 @@ export async function POST(req: Request) {
       throw new Error('Missing PayHere environment configuration');
     }
 
-    const formattedAmount = parseFloat(amount.toString()).toFixed(2);
+    const formattedAmount = parseFloat(orderDetails.total_amount.toString()).toFixed(2);
     const currency = 'EUR';
 
     const hashedSecret = crypto
@@ -49,13 +54,13 @@ export async function POST(req: Request) {
       order_id: orderId,
       items: `Order ${orderId}`,
       currency,
-      first_name: "Lahiru",
-      last_name: "Jayathilake",
-      email: "lahiruthpala@gmail.com",
-      phone : "0718696971",
-      address: "63/1, Dolekanaththa Junction, Nampamunuwa",
-      city: "Piliyandala",
-      country: "Sri Lanka",
+      first_name: customer.first_name,
+      last_name: customer.last_name,
+      email: customer.email,
+      phone : customer.phone,
+      address: customer.address,
+      city: customer.city,
+      country: customer.country,
       amount: formattedAmount,
       hash,
     };

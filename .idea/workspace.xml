@@ -4,27 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="moved portal dir to root">
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="edit payment module">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/admin/orders/(components)/order-detail-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/orders/(components)/order-detail-modal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-detail-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-detail-modal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-form/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-form/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/(components)/store-item-table.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/admin/store/packs/(components)/pack-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/packs/(components)/pack-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/admin/store/packs/(components)/pack-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/packs/(components)/pack-modal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/admin/store/packs/(components)/pack-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/store/packs/(components)/pack-table.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/orders/(utils)/order-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/orders/(utils)/order-utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/store/(components)/pack-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/(components)/pack-card.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/store/(components)/pack-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/(components)/pack-modal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/store/(components)/product-card.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/(components)/product-card.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/store/(components)/product-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/store/(components)/product-modal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/users/stats/db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/users/stats/db.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/utils.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -42,10 +35,13 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/nishith-p/portello&quot;,
-    &quot;accountId&quot;: &quot;ae6f3ba3-81c9-4e5d-9b2a-f500080ef556&quot;
+    &quot;url&quot;: &quot;git@github.com:nishith-p/portello.git&quot;,
+    &quot;accountId&quot;: &quot;c5f329a1-bfe7-45af-8464-c7ded30f75e4&quot;
   }
 }</component>
+  <component name="GoLibraries">
+    <option name="indexEntireGoPath" value="true" />
+  </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -61,8 +57,12 @@
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/nishith/Desktop/Final/portello",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "git-widget-placeholder": "#2 on lahiru/paymentGateway",
+    "go.import.settings.migrated": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/lahiru/Desktop/Disk/Projects/AIESEC/New Folder/IC_TEST",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.stylelint": "true",
     "node.js.detected.package.tslint": "true",
@@ -70,9 +70,9 @@
     "node.js.selected.package.stylelint": "/Users/nishith/Desktop/Clean Project/portello/node_modules/stylelint",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "/Users/nishith/Desktop/MERGER/portello/node_modules/prettier",
+    "prettierjs.PrettierConfiguration.Package": "/home/lahiru/Desktop/Disk/Projects/AIESEC/portello/node_modules/prettier",
     "settings.editor.selected.configurable": "reference.settingsdialog.project.grazie",
-    "ts.external.directory.path": "/Users/nishith/Desktop/Final/portello/node_modules/typescript/lib",
+    "ts.external.directory.path": "/home/lahiru/Desktop/Disk/Projects/AIESEC/portello/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -93,7 +93,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.25659.40" />
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.17890.1" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.17890.1" />
       </set>
     </attachedChunks>
   </component>
@@ -110,6 +111,9 @@
       <workItem from="1745336227173" duration="10050000" />
       <workItem from="1745444134551" duration="1808000" />
       <workItem from="1745587546126" duration="2472000" />
+      <workItem from="1746207520889" duration="3650000" />
+      <workItem from="1746253113951" duration="25177000" />
+      <workItem from="1746384619974" duration="1633000" />
     </task>
     <task id="LOCAL-00001" summary="Layout fixes, working orders.">
       <option name="closed" value="true" />
@@ -279,7 +283,31 @@
       <option name="project" value="LOCAL" />
       <updated>1745505981894</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Add payment module">
+      <option name="closed" value="true" />
+      <created>1746275506812</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1746275506812</updated>
+    </task>
+    <task id="LOCAL-00023" summary="edit payment module">
+      <option name="closed" value="true" />
+      <created>1746368836955</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1746368836955</updated>
+    </task>
+    <task id="LOCAL-00024" summary="edit payment module">
+      <option name="closed" value="true" />
+      <created>1746386007792</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1746386007792</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -311,6 +339,12 @@
     <MESSAGE value=".env example fix" />
     <MESSAGE value="workspace file, default config" />
     <MESSAGE value="moved portal dir to root" />
-    <option name="LAST_COMMIT_MESSAGE" value="moved portal dir to root" />
+    <MESSAGE value="Add payment module" />
+    <MESSAGE value="edit payment module" />
+    <option name="LAST_COMMIT_MESSAGE" value="edit payment module" />
+  </component>
+  <component name="VgoProject">
+    <integration-enabled>false</integration-enabled>
+    <settings-migrated>true</settings-migrated>
   </component>
 </project>

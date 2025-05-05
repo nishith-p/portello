@@ -6,7 +6,16 @@ import { PaymentRecordInput } from './paymentService';
 export async function getOrderById(orderId: string) {
   const { data, error } = await supabaseServer
     .from('orders')
-    .select('id')
+    .select(`
+      id,
+      user_id,
+      total_amount,
+      users:user_id (
+        first_name,
+        last_name,
+        aiesec_email
+      )
+    `)
     .eq('id', orderId)
     .single();
   if (error) {

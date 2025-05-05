@@ -29,33 +29,6 @@ export default function OrdersPage() {
     router.push('/store');
   };
 
-  const handlePayNow = async (order: Order) => {
-    const res = await fetch(`/api/payhere/create-checkout`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orderId: order.id, amount: order.total_amount }),
-    });
-    if (!res.ok) {
-      console.error('failed to create checkout session');
-      return;
-    }
-    const formData = await res.json();
-
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = formData.actionUrl;
-    Object.entries(formData.fields).forEach(([k, v]) => {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = k;
-      input.value = v as string;
-      form.appendChild(input);
-    });
-    document.body.appendChild(form);
-    form.submit();
-  };
-
-
   if (isLoading) {
     return (
       <Container fluid p="md">
@@ -115,7 +88,7 @@ export default function OrdersPage() {
         </Text>
 
         <Paper p="md" radius="md" withBorder>
-          <OrdersTable orders={orders} onOrderClickAction={handleOrderClick} onPayNow={handlePayNow} />
+          <OrdersTable orders={orders} onOrderClickAction={handleOrderClick}/>
         </Paper>
       </Stack>
 

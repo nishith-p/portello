@@ -252,9 +252,11 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
             </Group>
           </Card>
 
-          <Button size="md" mt="md" onClick={() => handlePayNow(order)}>
-            Pay Now
-          </Button>
+          {order.status !== 'paid' && (
+              <Button size="md" mt="md" onClick={() => handlePayNow(order)}>
+                Pay Now
+              </Button>
+          )}
         </Card>
       </Stack>
     </Modal>
