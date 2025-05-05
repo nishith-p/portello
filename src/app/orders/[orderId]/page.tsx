@@ -30,7 +30,6 @@ export default async function OrderPage({ params }: { params: { orderId: string 
 
   return (
     <div className="container mx-auto py-10">
-      <h1 className="text-3xl font-bold mb-8 text-center">Complete Your Payment</h1>
       <div className="max-w-2xl mx-auto">
         <PaymentForm
           actionUrl={actionUrl}

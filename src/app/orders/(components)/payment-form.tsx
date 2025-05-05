@@ -120,7 +120,7 @@ export function PaymentForm({
           </Group>
         </Card.Section>
 
-        <Group gap="lg" style={{ marginTop: '20px' }}>
+        <Group mt="lg">
           <SimpleGrid cols={2}>
             {/* Order Summary Section */}
             <Paper withBorder p="md" radius="md">

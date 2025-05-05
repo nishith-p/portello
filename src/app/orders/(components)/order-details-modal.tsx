@@ -5,6 +5,7 @@ import Image from 'next/image';
 import {
   Badge,
   Box,
+  Button,
   Card,
   Divider,
   Flex,
@@ -18,6 +19,7 @@ import {
 import { useMediaQuery } from '@mantine/hooks';
 import { Order, OrderItem, OrderStatus } from '@/lib/store/types';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 interface OrderDetailsModalProps {
   opened: boolean;
@@ -33,11 +35,11 @@ const statusColorMap: Record<OrderStatus, string> = {
   shipped: 'cyan',
   delivered: 'green',
   cancelled: 'red',
-  'payment pending':   'orange',
+  'payment pending': 'orange',
   'payment cancelled': 'red',
-  'payment failed':    'red',
-  'charged back':      'purple',
-  failed:             'red',
+  'payment failed': 'red',
+  'charged back': 'purple',
+  failed: 'red',
 };
 
 export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetailsModalProps) {
@@ -47,6 +49,11 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
   }
 
   const orderItems: OrderItem[] = order.items || [];
+
+  const router = useRouter();
+  const handlePayNow = (order: Order) => {
+    router.push(`/orders/${order.id}`)
+  }
 
   return (
     <Modal
@@ -148,12 +155,12 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
                             margin: isMobile ? '0 auto 8px' : '0 auto',
                           }}
                         >
-                          <Image
+                          {/* <Image
                             src={item.image}
                             alt={item.name || 'Product image'}
                             fill
                             style={{ objectFit: 'cover', borderRadius: 4 }}
-                          />
+                          /> */}
                         </Box>
                       ) : (
                         <Box
@@ -244,6 +251,10 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
               </Text>
             </Group>
           </Card>
+
+          <Button size="md" mt="md" onClick={() => handlePayNow(order)}>
+            Pay Now
+          </Button>
         </Card>
       </Stack>
     </Modal>
