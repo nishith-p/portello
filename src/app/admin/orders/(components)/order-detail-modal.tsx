@@ -244,12 +244,12 @@ export function OrderDetailModal({
                         <Box
                           style={{ width: 60, height: 60, position: 'relative', margin: '0 auto' }}
                         >
-                          <Image
+                          {/* <Image
                             src={item.image}
                             alt={item.name || 'Product image'}
                             fill
                             style={{ objectFit: 'cover', borderRadius: 4 }}
-                          />
+                          /> */}
                         </Box>
                       ) : (
                         <Box

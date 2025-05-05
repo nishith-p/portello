@@ -219,6 +219,74 @@ export async function getOrder(orderId: string): Promise<Order> {
 }
 
 /**
+ * Get a specific order for a specific user, including user names
+ */
+export async function getUserOrderById(userId: string | undefined, orderId: string): Promise<Order> {
+  const { data, error } = await supabaseServer
+    .from('orders')
+    .select(
+      `
+      id,
+      user_id,
+      status,
+      total_amount,
+      created_at,
+      updated_at,
+      updated_by,
+      last_status_change,
+      order_items(
+        id,
+        order_id,
+        item_code,
+        quantity,
+        price,
+        size,
+        color,
+        color_hex,
+        name,
+        image,
+        created_at,
+        is_pack,
+        parent_pack_id,
+        pre_price,
+        discount_perc
+      ),
+      users:user_id (
+        first_name,
+        last_name
+      )
+    `
+    )
+    .eq('id', orderId)
+    .eq('user_id', userId)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      throw new NotFoundError(`Order with ID ${orderId} for user ${userId} not found`);
+    }
+    throw error;
+  }
+
+  const typedData = data as unknown as OrderDatabaseResponse;
+
+  const userName = typedData.users
+    ? `${typedData.users.first_name || ''} ${typedData.users.last_name || ''}`.trim()
+    : typedData.user_id;
+
+  const { users, order_items, ...orderData } = typedData;
+
+  const processedItems = processOrderItems(order_items);
+
+  return {
+    ...orderData,
+    user_id: userName,
+    items: processedItems,
+  };
+}
+
+
+/**
  * Process order items to organize packs and their items
  */
 function processOrderItems(items: OrderItemExtended[]): OrderItem[] {

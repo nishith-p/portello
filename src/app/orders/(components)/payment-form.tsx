@@ -4,16 +4,11 @@ import type React from 'react';
 import { useState } from 'react';
 import {
   IconArrowRight,
-  IconBrandMastercard,
-  IconBrandPaypal,
-  IconBrandVisa,
   IconBuilding,
-  IconCircleCheck,
   IconCreditCard,
   IconMail,
   IconMapPin,
   IconPhone,
-  IconShieldLock,
   IconShoppingCart,
   IconUser,
   IconWorld,
@@ -25,11 +20,9 @@ import {
   Card,
   Container,
   Divider,
-  Flex,
   Group,
   Paper,
   rem,
-  Select,
   SimpleGrid,
   Stack,
   Text,
@@ -38,6 +31,7 @@ import {
   Transition,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { useOrderHooks } from '@/lib/store/orders/hooks';
 
 interface Customer {
   firstName: string;
@@ -104,13 +98,16 @@ export function PaymentForm({
     // The form will be submitted naturally
   };
 
+  const { useOrder } = useOrderHooks();
+  const { data: order, isLoading, error } = useOrder(orderId);
+
   return (
     <Container size="lg" px="xs">
       <Card shadow="md" radius="md" withBorder p="xl">
         <Card.Section bg="blue.0" p="md" withBorder>
           <Group gap="xs">
             <ThemeIcon size="lg" radius="md" variant="light" color="blue">
-              <IconCreditCard size={rem(20)} />
+              <IconCreditCard size={24} />
             </ThemeIcon>
             <Box>
               <Text fw={700} size="lg">
@@ -129,52 +126,74 @@ export function PaymentForm({
             <Paper withBorder p="md" radius="md">
               <Group mb="xs" justify="apart">
                 <Group gap="xs">
-                  <ThemeIcon size="md" radius="xl" variant="light" color="gray">
-                    <IconShoppingCart size={rem(16)} />
+                  <ThemeIcon size="md" radius="xl" variant="light" color="blue">
+                    <IconShoppingCart size={18} />
                   </ThemeIcon>
                   <Text fw={600} size="sm">
                     Order Summary
                   </Text>
                 </Group>
                 <Badge color="blue" variant="light">
-                  Pending
+                  {order?.status || 'Pending'}
                 </Badge>
               </Group>
 
               <Divider my="sm" />
 
-              <Stack gap="xs">
-                <Group justify="apart">
-                  <Text c="dimmed" size="sm">
-                    Order ID:
-                  </Text>
-                  <Text fw={500}>{orderId}</Text>
-                </Group>
-                <Group justify="apart">
-                  <Text c="dimmed" size="sm">
-                    Items:
-                  </Text>
-                  <Text fw={500}>{`Order ${orderId}`}</Text>
-                </Group>
+              {isLoading ? (
+                <Text size="sm" c="dimmed">
+                  Loading...
+                </Text>
+              ) : error ? (
+                <Text size="sm" c="red">
+                  {error.message}
+                </Text>
+              ) : order ? (
+                <Stack gap="xs">
+                  <Group justify="apart">
+                    <Text c="dimmed" size="sm">
+                      Order ID:
+                    </Text>
+                    <Text fw={500}>{orderId}</Text>
+                  </Group>
 
-                <Divider my="sm" variant="dashed" />
+                  <Group align="start" justify="apart">
+                    <Text c="dimmed" size="sm">
+                      Items:
+                    </Text>
+                    <Stack gap="xs">
+                      {order.items?.map((item) => (
+                        <Group key={item.id} justify="space-between">
+                          <Text size="sm">
+                            {item.name} (x{item.quantity})
+                          </Text>
+                          <Text size="sm">
+                            {currency} {(item.price * item.quantity).toFixed(2)}
+                          </Text>
+                        </Group>
+                      ))}
+                    </Stack>
+                  </Group>
 
-                <Group justify="apart">
-                  <Text fw={700} size="md">
-                    Total:
-                  </Text>
-                  <Text fw={700} size="md" color="blue">
-                    {currency} {amount}
-                  </Text>
-                </Group>
-              </Stack>
+                  <Divider my="sm" variant="dashed" />
+
+                  <Group justify="apart">
+                    <Text fw={700} size="md">
+                      Total:
+                    </Text>
+                    <Text fw={700} size="md" color="blue">
+                      {currency} {order.total_amount.toFixed(2)}
+                    </Text>
+                  </Group>
+                </Stack>
+              ) : null}
             </Paper>
 
             {/* Customer Information Form Section */}
             <Paper withBorder p="md" radius="md">
               <Group mb="xs">
                 <ThemeIcon size="md" radius="xl" variant="light" color="blue">
-                  <IconUser size={rem(16)} />
+                  <IconUser size={18} />
                 </ThemeIcon>
                 <Text fw={600} size="sm">
                   Your Information
