@@ -1,118 +1,119 @@
+// app/(public)/ysf/checkout/page.tsx
 'use client';
-
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Container, Text, Title } from '@mantine/core';
+import { Container, Title, Text, Alert, Loader, Center } from '@mantine/core';
+import { IconAlertCircle } from '@tabler/icons-react';
 import { YsfPaymentForm } from '../(components)/ysf-payment-form';
-
-const conferencePlans = [
-  {
-    packageId: 'scl-eb',
-    title: 'School Students & School Leavers',
-    price: 1500,
-    originalPrice: 2000,
-    currency: 'Rs.',
-    features: [
-      { text: 'Full YSF Access' },
-      { text: 'Lunch Included' },
-      { text: 'Transportation is available for an additional fee of Rs. 500' },
-    ],
-    badge: 'Early Bird! *',
-    badgeColor: 'red',
-    buttonText: 'SELECT',
-  },
-  {
-    packageId: 'uni-eb',
-    title: 'Undergraduates',
-    price: 2000,
-    originalPrice: 2500,
-    currency: 'Rs.',
-    features: [
-      { text: 'Full YSF Access' },
-      { text: 'Lunch Included' },
-      { text: 'Transportation is available for an additional fee of Rs. 500' },
-    ],
-    badge: 'Early Bird! *',
-    badgeColor: 'red',
-    buttonText: 'SELECT',
-  },
-  {
-    packageId: 'corp-eb',
-    title: 'Corporates/Open',
-    price: 4000,
-    originalPrice: 4500,
-    currency: 'Rs.',
-    features: [
-      { text: 'Full YSF Access' },
-      { text: 'Lunch Included' },
-      { text: 'Transportation Included' },
-    ],
-    badge: 'Early Bird! *',
-    badgeColor: 'red',
-    buttonText: 'SELECT',
-    highlighted: true,
-  },
-  {
-    packageId: 'scl-b-eb',
-    title: 'School Students & School Leavers',
-    price: 1300,
-    originalPrice: 1800,
-    currency: 'Rs.',
-    features: [{ text: 'For 10+ participants' }, { text: 'From same school' }],
-    badge: 'Bulk Offer! *',
-    badgeColor: 'green',
-    buttonText: 'SELECT',
-  },
-  {
-    packageId: 'uni-b-eb',
-    title: 'Undergraduates',
-    price: 1800,
-    originalPrice: 2300,
-    currency: 'Rs.',
-    features: [{ text: 'For 10+ participants' }, { text: 'From same university' }],
-    badge: 'Bulk Offer! *',
-    badgeColor: 'green',
-    buttonText: 'SELECT',
-  },
-  {
-    packageId: 'corp-b-eb',
-    title: 'Corporates/Open',
-    price: 3800,
-    originalPrice: 4300,
-    currency: 'Rs.',
-    features: [{ text: 'For 10+ participants' }, { text: 'From same company' }],
-    badge: 'Bulk Offer! *',
-    badgeColor: 'green',
-    buttonText: 'SELECT',
-  },
-];
+import { conferencePlans } from '@/lib/ysf/data';
+import { PricingPlan } from '@/lib/ysf/types';
+import { useCheckout } from '@/lib/ysf/hooks';
 
 export default function YsfCheckoutPage() {
   const searchParams = useSearchParams();
-  const packageId = searchParams.get('packageId');
-  const quantity = Number(searchParams.get('quantity')) || 1;
+  const [selectedPackage, setSelectedPackage] = useState<PricingPlan | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { isProcessing, error: checkoutError } = useCheckout();
 
-  const selectedPackage = conferencePlans.find((p) => p.packageId === packageId);
+  useEffect(() => {
+    // Get package ID and quantity from URL parameters
+    const packageId = searchParams.get('packageId');
+    const quantity = Number(searchParams.get('quantity')) || 1;
+    
+    if (!packageId) {
+      setError('No package selected.');
+      setLoading(false);
+      return;
+    }
+    
+    // Find the selected package
+    const foundPackage = conferencePlans.find((p) => p.packageId === packageId);
+    
+    if (!foundPackage) {
+      setError('Invalid package selected.');
+      setLoading(false);
+      return;
+    }
+    
+    // Check if it's a bulk package and if the quantity is valid
+    const isBulk = foundPackage.packageId.includes('-b-');
+    if (isBulk && quantity < 10) {
+      setError('Bulk packages require at least 10 participants.');
+      setLoading(false);
+      return;
+    }
+    
+    setSelectedPackage(foundPackage);
+    setLoading(false);
+  }, [searchParams]);
 
-  if (!selectedPackage) {
+  if (loading) {
     return (
-      <Container>
-        <Title order={3}>Invalid Package</Title>
-        <Text>The package you selected does not exist.</Text>
+      <Container mt={60}>
+        <Center>
+          <Loader size="md" />
+          <Text ml="md">Loading checkout information...</Text>
+        </Center>
       </Container>
     );
   }
+
+  if (isProcessing) {
+    return (
+      <Container mt={60}>
+        <Center>
+          <Loader size="md" />
+          <Text ml="md">Processing payment...</Text>
+        </Center>
+      </Container>
+    );
+  }
+
+  if (error || !selectedPackage) {
+    return (
+      <Container mt={60}>
+        <Alert 
+          icon={<IconAlertCircle size={16} />} 
+          title="Checkout Error" 
+          color="red"
+        >
+          {error || 'An unknown error occurred.'}
+        </Alert>
+      </Container>
+    );
+  }
+
+  if (checkoutError) {
+    return (
+      <Container mt={60}>
+        <Alert 
+          icon={<IconAlertCircle size={16} />} 
+          title="Payment Processing Error" 
+          color="red"
+        >
+          {checkoutError}
+        </Alert>
+      </Container>
+    );
+  }
+
+  const quantity = Number(searchParams.get('quantity')) || 1;
+  const total = selectedPackage.price * quantity;
+  const orderId = `YSF-${selectedPackage.packageId}-${Date.now()}`;
 
   return (
     <Container mt={60}>
       <Title order={2}>Checkout - {selectedPackage.title}</Title>
       <Text mb="md">
-        You selected the <strong>{selectedPackage.title}</strong> package for Rs.{' '}
-        {selectedPackage.price}.
+        You selected the <strong>{selectedPackage.title}</strong> package 
+        {quantity > 1 && ` (${quantity} participants)`} for a total of{' '}
+        <strong>Rs. {total.toFixed(2)}</strong>.
       </Text>
 
       <YsfPaymentForm
-        orderId={`${selectedPackage.packageId}-${Date.now()}`}
-        orderTitle={selectedPackage.title}
+        orderId={orderId}
+        packageId={selectedPackage.packageId}
         amount={selectedPackage.price}
         quantity={quantity}
       />

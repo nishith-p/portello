@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   IconArrowRight,
   IconBuilding,
@@ -10,6 +10,7 @@ import {
   IconShoppingCart,
   IconUser,
   IconWorld,
+  IconAlertCircle
 } from '@tabler/icons-react';
 import {
   Badge,
@@ -26,34 +27,35 @@ import {
   TextInput,
   ThemeIcon,
   Transition,
+  Alert
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { ENTITIES } from '@/app/(portal)/admin/delegates/(components)/constants';
-
-interface Customer {
-  first_name: string;
-  last_name: string;
-  aiesec_email: string;
-}
+import { useCheckout } from '@/lib/ysf/hooks';
+import { CustomerInfo } from '@/lib/ysf/types';
 
 interface PaymentFormProps {
   orderId: string;
-  orderTitle: string;
+  packageId: string;
   amount: number;
-  customer?: Customer;
   quantity: number;
+  customer?: {
+    first_name?: string;
+    last_name?: string;
+    aiesec_email?: string;
+  };
 }
 
 export function YsfPaymentForm({
   orderId,
-  orderTitle,
+  packageId,
   amount,
-  customer,
   quantity,
+  customer,
 }: PaymentFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { processPayment, isProcessing, error } = useCheckout();
 
-  const form = useForm({
+  const form = useForm<CustomerInfo>({
     initialValues: {
       firstName: customer?.first_name || '',
       lastName: customer?.last_name || '',
@@ -70,60 +72,32 @@ export function YsfPaymentForm({
       phone: (value) => (value.trim().length < 6 ? 'Valid phone number is required' : null),
       address: (value) => (value.trim().length < 3 ? 'Address is required' : null),
       city: (value) => (value.trim().length < 2 ? 'City is required' : null),
-      country: (value) => (value.trim().length < 2 ? 'Country is required' : null),
+      country: (value) => (value.length < 2 ? 'Country is required' : null),
     },
   });
 
   const handlePayNow = form.onSubmit(async (values) => {
-    setIsSubmitting(true);
-    try {
-      const res = await fetch('/api/payhere/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId,
-          customer: {
-            first_name: values.firstName,
-            last_name: values.lastName,
-            email: values.email,
-            phone: values.phone,
-            address: values.address,
-            city: values.city,
-            country: values.country,
-          },
-        }),
-      });
+    // Format the data for the API call
+    const customerData = {
+      first_name: values.firstName,
+      last_name: values.lastName,
+      email: values.email,
+      phone: values.phone,
+      address: values.address,
+      city: values.city,
+      country: values.country,
+    };
 
-      if (!res.ok) {
-        throw new Error('Failed to create checkout session');
-      }
-
-      const { actionUrl, fields } = await res.json();
-      const formEl = document.createElement('form');
-
-      formEl.method = 'POST';
-      formEl.action = actionUrl;
-
-      Object.entries(fields).forEach(([key, val]) => {
-        const input = document.createElement('input');
-
-        input.type = 'hidden';
-        input.name = key;
-        input.value = String(val);
-
-        formEl.appendChild(input);
-      });
-
-      document.body.appendChild(formEl);
-
-      formEl.submit();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Process the payment using our custom hook
+    await processPayment({
+      orderId,
+      packageId,
+      customer: values,
+      quantity,
+      total_amount: 0
+    });
   });
-
+  
   return (
     <Grid>
       {/* Customer Information Form Section */}
@@ -139,6 +113,17 @@ export function YsfPaymentForm({
           </Group>
 
           <Divider my="sm" />
+          
+          {error && (
+            <Alert 
+              icon={<IconAlertCircle size={16} />} 
+              title="Payment Error" 
+              color="red" 
+              mb="md"
+            >
+              {error}
+            </Alert>
+          )}
 
           <form method="post" onSubmit={handlePayNow}>
             <Stack gap="md">
@@ -216,11 +201,11 @@ export function YsfPaymentForm({
                   size="lg"
                   radius="md"
                   color="#7552CC"
-                  loading={isSubmitting}
+                  loading={isProcessing}
                   mt="md"
-                  rightSection={!isSubmitting && <IconArrowRight size={24} />}
+                  rightSection={!isProcessing && <IconArrowRight size={24} />}
                 >
-                  {isSubmitting ? 'Processing..' : 'Pay Securely'}
+                  {isProcessing ? 'Processing...' : 'Pay Securely'}
                 </Button>
               )}
             </Transition>
@@ -241,44 +226,45 @@ export function YsfPaymentForm({
               </Text>
             </Group>
             <Badge color="#7552CC" variant="light">
-              'Pending'
+              Pending
             </Badge>
           </Group>
 
           <Divider my="sm" />
-            <Stack gap="xs">
-              <Group justify="apart">
-                <Text c="dimmed" size="sm">
-                  Order ID:
-                </Text>
-                <Text fw={500}>{orderId}</Text>
-              </Group>
+          
+          <Stack gap="xs">
+            <Group justify="apart">
+              <Text c="dimmed" size="sm">
+                Order ID:
+              </Text>
+              <Text fw={500}>{orderId}</Text>
+            </Group>
 
-              <Group align="start" justify="apart">
-                <Text c="dimmed" size="sm">
-                  Items:
-                </Text>
-                <Stack gap="xs">
-                  <Group justify="space-between">
-                    <Text size="sm">
-                      {orderTitle} (x{quantity})
-                    </Text>
-                    <Text size="sm">Rs. {(amount).toFixed(2)}</Text>
-                  </Group>
-                </Stack>
-              </Group>
+            <Group align="start" justify="apart">
+              <Text c="dimmed" size="sm">
+                Items:
+              </Text>
+              <Stack gap="xs">
+                <Group justify="space-between">
+                  <Text size="sm">
+                    {packageId} (x{quantity})
+                  </Text>
+                  <Text size="sm">Rs. {amount.toFixed(2)}</Text>
+                </Group>
+              </Stack>
+            </Group>
 
-              <Divider my="sm" variant="dashed" />
+            <Divider my="sm" variant="dashed" />
 
-              <Group justify="apart">
-                <Text fw={700} size="md">
-                  Total:
-                </Text>
-                <Text fw={700} size="md" c="#7552CC">
+            <Group justify="apart">
+              <Text fw={700} size="md">
+                Total:
+              </Text>
+              <Text fw={700} size="md" c="#7552CC">
                 Rs. {(amount * quantity).toFixed(2)}
-                </Text>
-              </Group>
-            </Stack>
+              </Text>
+            </Group>
+          </Stack>
         </Paper>
       </GridCol>
     </Grid>

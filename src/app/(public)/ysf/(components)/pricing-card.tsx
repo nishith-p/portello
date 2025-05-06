@@ -2,23 +2,11 @@
 
 import { Badge, Button, Card, Group, Stack, Text } from '@mantine/core';
 import styles from './pricing-card.module.css';
+import { PricingFeature, PricingPlan } from '@/lib/ysf/types';
 
-export interface PricingFeature {
-  text: string;
-}
-
-export interface PricingCardProps {
-  title: string;
-  price: number;
-  currency?: string;
-  features: PricingFeature[];
-  buttonText?: string;
-  highlighted?: boolean;
-  badge?: string;
-  badgeColor?: string;
-  originalPrice?: number;
+type PricingCardProps = PricingPlan & {
   onClick?: () => void;
-}
+};
 
 export function PricingCard({
   title,

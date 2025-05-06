@@ -1,13 +1,7 @@
 import { Container, Title, Text } from "@mantine/core";
-import { PricingCard, type PricingCardProps } from "./pricing-card";
+import { PricingCard } from "./pricing-card";
 import styles from "./pricing-grid.module.css";
-
-export interface PricingGridProps {
-  title?: string;
-  description?: string;
-  plans: PricingCardProps[];
-  onSelect?: (plan: PricingCardProps) => void;
-}
+import { PricingGridProps, PricingPlan } from "@/lib/ysf/types";
 
 export function PricingGrid({ title, description, plans, onSelect }: PricingGridProps) {
   return (
