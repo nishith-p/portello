@@ -4,14 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="edit payment module">
+    <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="moved api back to root">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/contact/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/contact/constants.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/contact/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/contact/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/orders/(components)/order-details-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/orders/(components)/order-details-modal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/orders/(components)/payment-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/orders/(components)/payment-form.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/orders/[orderId]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/orders/[orderId]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/orders/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/orders/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(portal)/(components)/layout-shell.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(portal)/(components)/layout-shell.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(portal)/(components)/portal-sidebar/portal-sidebar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(portal)/(components)/portal-sidebar/portal-sidebar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(portal)/orders/(components)/order-details-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(portal)/orders/(components)/order-details-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(portal)/orders/(components)/orders-table.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(portal)/orders/(components)/orders-table.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(public)/ysf/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(public)/ysf/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,7 +27,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="dev-main" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -41,8 +40,8 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;git@github.com:nishith-p/portello.git&quot;,
-    &quot;accountId&quot;: &quot;c5f329a1-bfe7-45af-8464-c7ded30f75e4&quot;
+    &quot;url&quot;: &quot;https://github.com/nishith-p/portello&quot;,
+    &quot;accountId&quot;: &quot;ae6f3ba3-81c9-4e5d-9b2a-f500080ef556&quot;
   }
 }</component>
   <component name="GoLibraries">
@@ -59,29 +58,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "git-widget-placeholder": "#2 on lahiru/paymentGateway",
-    "go.import.settings.migrated": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/lahiru/Desktop/Disk/Projects/AIESEC/New Folder/IC_TEST",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.stylelint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.stylelint": "/Users/nishith/Desktop/Clean Project/portello/node_modules/stylelint",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "/Users/nishith/Desktop/Final/portello/node_modules/prettier",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.grazie",
-    "ts.external.directory.path": "/Users/nishith/Desktop/Final/portello/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev-uifix&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/lahiru/Desktop/Disk/Projects/AIESEC/New Folder/IC_TEST&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.stylelint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.stylelint&quot;: &quot;/Users/nishith/Desktop/Clean Project/portello/node_modules/stylelint&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/nishith/Desktop/Final/portello/node_modules/prettier&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.grazie&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/nishith/Desktop/Final/portello/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
@@ -90,17 +89,16 @@
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/app" />
+      <recent name="$PROJECT_DIR$/src/app/(public)" />
+      <recent name="$PROJECT_DIR$/src/app/(portal)" />
       <recent name="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)" />
       <recent name="$PROJECT_DIR$/src/app/portal/admin/delegates/(components)/delegate-profile" />
-      <recent name="$PROJECT_DIR$/src/app/portal/contact" />
-      <recent name="$PROJECT_DIR$/src/app/portal/contact/(components)" />
     </key>
   </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.17890.1" />
-        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.17890.1" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-WS-243.25659.40" />
       </set>
     </attachedChunks>
   </component>
@@ -120,6 +118,8 @@
       <workItem from="1746207520889" duration="3650000" />
       <workItem from="1746253113951" duration="25177000" />
       <workItem from="1746384619974" duration="1633000" />
+      <workItem from="1746547002799" duration="3564000" />
+      <workItem from="1746557333146" duration="1037000" />
     </task>
     <task id="LOCAL-00001" summary="Layout fixes, working orders.">
       <option name="closed" value="true" />
@@ -313,7 +313,39 @@
       <option name="project" value="LOCAL" />
       <updated>1746386007792</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="payment page layout fix, constants">
+      <option name="closed" value="true" />
+      <created>1746545675502</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1746545675502</updated>
+    </task>
+    <task id="LOCAL-00026" summary="qty page, portal public route fix">
+      <option name="closed" value="true" />
+      <created>1746550039195</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1746550039195</updated>
+    </task>
+    <task id="LOCAL-00027" summary="qty page, portal public route fix">
+      <option name="closed" value="true" />
+      <created>1746550147766</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1746550147766</updated>
+    </task>
+    <task id="LOCAL-00028" summary="moved api back to root">
+      <option name="closed" value="true" />
+      <created>1746550392305</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1746550392305</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -323,8 +355,6 @@
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Layout fixes, working orders." />
-    <MESSAGE value="Better file struct" />
     <MESSAGE value="Working store management" />
     <MESSAGE value="Working order management (admin)" />
     <MESSAGE value="Working orders (user)" />
@@ -347,7 +377,10 @@
     <MESSAGE value="moved portal dir to root" />
     <MESSAGE value="Add payment module" />
     <MESSAGE value="edit payment module" />
-    <option name="LAST_COMMIT_MESSAGE" value="edit payment module" />
+    <MESSAGE value="payment page layout fix, constants" />
+    <MESSAGE value="qty page, portal public route fix" />
+    <MESSAGE value="moved api back to root" />
+    <option name="LAST_COMMIT_MESSAGE" value="moved api back to root" />
   </component>
   <component name="VgoProject">
     <integration-enabled>false</integration-enabled>
