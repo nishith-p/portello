@@ -1,7 +1,19 @@
 'use client';
 
+import React from 'react';
+import { useRouter } from 'next/navigation';
 import { IconPackage } from '@tabler/icons-react';
-import { Badge, Card, Divider, Group, Paper, Stack, Table, Text } from '@mantine/core';
+import {
+  Badge,
+  Button,
+  Card,
+  Divider,
+  Group,
+  Paper,
+  Stack,
+  Table,
+  Text,
+} from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { Order, OrderStatus } from '@/lib/store/types';
 import { formatCurrency, formatDate } from '@/lib/utils';
@@ -19,14 +31,23 @@ const statusColorMap: Record<OrderStatus, string> = {
   shipped: 'cyan',
   delivered: 'green',
   cancelled: 'red',
+  'payment pending': 'orange',
+  'payment cancelled': 'red',
+  'payment failed': 'red',
+  'charged back': 'purple',
+  failed: 'red',
 };
 
-const getStatusColor = (status: OrderStatus): string => {
-  return statusColorMap[status] || 'gray';
-};
+const getStatusColor = (status: OrderStatus): string => statusColorMap[status] || 'gray';
 
 export const OrdersTable = ({ orders, onOrderClickAction }: OrdersTableProps) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const router = useRouter();
+
+  // Build a query string with encoded order data
+  const handleNavigate = (order: Order) => {
+    router.push(`/order/${order.id}`);
+  };
 
   if (isMobile) {
     return (
@@ -38,15 +59,13 @@ export const OrdersTable = ({ orders, onOrderClickAction }: OrdersTableProps) =>
             </Text>
           </Paper>
         ) : (
-          orders.map((order) => (
+          orders.map(order => (
             <Card
               key={order.id}
               shadow="sm"
               padding="md"
               radius="md"
               withBorder
-              onClick={() => onOrderClickAction(order)}
-              style={{ cursor: 'pointer' }}
             >
               <Stack gap="xs">
                 <Group justify="space-between">
@@ -98,6 +117,10 @@ export const OrdersTable = ({ orders, onOrderClickAction }: OrdersTableProps) =>
                     {formatCurrency(order.total_amount)}
                   </Text>
                 </Group>
+
+                <Button fullWidth mt="sm" onClick={() => handleNavigate(order)}>
+                  View Order
+                </Button>
               </Stack>
             </Card>
           ))
@@ -124,24 +147,22 @@ export const OrdersTable = ({ orders, onOrderClickAction }: OrdersTableProps) =>
           <Table.Th>Status</Table.Th>
           <Table.Th>Items</Table.Th>
           <Table.Th>Total</Table.Th>
+          <Table.Th>Action</Table.Th>
         </Table.Tr>
       </Table.Thead>
+
       <Table.Tbody>
         {orders.length === 0 ? (
           <Table.Tr>
-            <Table.Td colSpan={5}>
+            <Table.Td colSpan={6}>
               <Text ta="center" c="dimmed" py="md">
                 No orders found
               </Text>
             </Table.Td>
           </Table.Tr>
         ) : (
-          orders.map((order) => (
-            <Table.Tr
-              key={order.id}
-              onClick={() => onOrderClickAction(order)}
-              style={{ cursor: 'pointer' }}
-            >
+          orders.map(order => (
+            <Table.Tr key={order.id} onClick={() => onOrderClickAction(order)} style={{ cursor: 'pointer' }}>
               <Table.Td>
                 <Text size="sm" fw={500}>
                   {order.id.substring(0, 8)}...
@@ -165,6 +186,11 @@ export const OrdersTable = ({ orders, onOrderClickAction }: OrdersTableProps) =>
                 <Text size="sm" fw={500}>
                   {formatCurrency(order.total_amount)}
                 </Text>
+              </Table.Td>
+              <Table.Td>
+                <Button size="xs">
+                  View
+                </Button>
               </Table.Td>
             </Table.Tr>
           ))

@@ -4,10 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { IconAlertCircle, IconShoppingBag } from '@tabler/icons-react';
 import { Alert, Button, Center, Container, Loader, Paper, Stack, Text, Title } from '@mantine/core';
-import { OrderDetailsModal } from '@/app/orders/(components)';
+import { OrderDetailsModal, OrdersTable  } from '@/app/orders/(components)';
 import { useOrderHooks } from '@/lib/store/orders/hooks';
 import { Order } from '@/lib/store/types';
-import { OrdersTable } from '@/app/orders/(components)';
 
 export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -89,7 +88,7 @@ export default function OrdersPage() {
         </Text>
 
         <Paper p="md" radius="md" withBorder>
-          <OrdersTable orders={orders} onOrderClickAction={handleOrderClick} />
+          <OrdersTable orders={orders} onOrderClickAction={handleOrderClick}/>
         </Paper>
       </Stack>
 

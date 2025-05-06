@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isAdmin, withAuth } from '@/lib/auth/utils';
 import { RouteContext } from '@/lib/common-types';
 import { AuthorizationError, errorResponse, ValidationError } from '@/lib/core/errors';
-import { getOrder, getOrderAudit, updateOrderStatus } from '@/lib/store/orders/db';
+import { getOrder, getOrderAudit, getUserOrderById, updateOrderStatus } from '@/lib/store/orders/db';
 import { validateOrderStatus } from '@/lib/store/orders/validators';
 import { OrderStatus } from '@/lib/store/types';
 
@@ -24,13 +24,11 @@ export async function GET(
           throw new ValidationError('Order ID is required');
         }
 
-        const order = await getOrder(id);
-
-        // Check if user is the order owner or admin
         const userIsAdmin = await isAdmin();
-        if (!userIsAdmin && order.user_id !== user?.id) {
-          throw new AuthorizationError('You can only view your own orders');
-        }
+
+        const order = userIsAdmin
+          ? await getOrder(id) // full unrestricted access
+          : await getUserOrderById(user?.id, id); // only fetch if user owns it
 
         return NextResponse.json(order);
       } catch (error) {
@@ -42,6 +40,7 @@ export async function GET(
     }
   );
 }
+
 
 /**
  * PUT /api/orders/[id]
