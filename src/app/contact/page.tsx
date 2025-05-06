@@ -18,7 +18,7 @@ const ContactPage = () => {
 
         <ContactTable title="Delegates Experience Team" members={dxTeam} />
 
-        <ContactTable title="Core Committee Team" members={coreTeam} />
+        <ContactTable title="Congress Committee Core Team" members={coreTeam} />
       </Stack>
     </Container>
   );

@@ -84,7 +84,7 @@ export default function OrdersPage() {
         </Title>
 
         <Text c="dimmed" fz={{ base: 'sm', sm: 'md' }}>
-          Show the Order ID to the DX Team to pay and collect your order.
+          Great news! You can now pay for your orders securely online.
         </Text>
 
         <Paper p="md" radius="md" withBorder>

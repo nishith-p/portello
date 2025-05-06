@@ -31,7 +31,7 @@ export const dxTeam: TeamMember[] = [
     position: 'DX Team Leader',
     email: 'sasith.kawshalya@aiesec.net',
     phone: '+94 74 342 0040',
-    telegram: '',
+    telegram: 'sasith_kawshalya_1',
   },
   {
     id: '5',
@@ -71,7 +71,7 @@ export const coreTeam: TeamMember[] = [
   {
     id: '1',
     name: 'Bhagya Ranasinghe',
-    position: 'Core Committee President',
+    position: 'Congress Committee President',
     email: 'bhagya.ranasinghe@aiesec.net',
     phone: '+94 71 876 5432',
     telegram: 'bhagya_ranasinghe',
@@ -106,7 +106,7 @@ export const coreTeam: TeamMember[] = [
     position: 'CCVP Human Resources',
     email: 'shashini.dilsara@aiesec.net',
     phone: '+94 71 554 1323',
-    telegram: '',
+    telegram: 'shashinid99',
   },
   {
     id: '6',
@@ -114,7 +114,7 @@ export const coreTeam: TeamMember[] = [
     position: 'CCVP Logistics',
     email: 'ashan.subodha@aiesec.net',
     phone: '+94 71 490 2057',
-    telegram: '',
+    telegram: 'ashaneo1',
   },
   {
     id: '7',

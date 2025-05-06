@@ -44,16 +44,17 @@ const statusColorMap: Record<OrderStatus, string> = {
 
 export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetailsModalProps) {
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const router = useRouter();
+
+  const handlePayNow = (orderData: Order) => {
+    router.push(`/orders/${orderData.id}`);
+  };
+
   if (!order) {
     return <></>;
   }
 
   const orderItems: OrderItem[] = order.items || [];
-
-  const router = useRouter();
-  const handlePayNow = (order: Order) => {
-    router.push(`/orders/${order.id}`);
-  };
 
   return (
     <Modal

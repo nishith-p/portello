@@ -6,6 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="5a2abfc2-6c28-4606-9f9a-55416e3d2e0b" name="Changes" comment="edit payment module">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/contact/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/contact/constants.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/contact/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/contact/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/orders/(components)/order-details-modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/orders/(components)/order-details-modal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/orders/(components)/payment-form.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/orders/(components)/payment-form.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/orders/[orderId]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/orders/[orderId]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/orders/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/orders/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,9 +76,9 @@
     "node.js.selected.package.stylelint": "/Users/nishith/Desktop/Clean Project/portello/node_modules/stylelint",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "prettierjs.PrettierConfiguration.Package": "/home/lahiru/Desktop/Disk/Projects/AIESEC/portello/node_modules/prettier",
+    "prettierjs.PrettierConfiguration.Package": "/Users/nishith/Desktop/Final/portello/node_modules/prettier",
     "settings.editor.selected.configurable": "reference.settingsdialog.project.grazie",
-    "ts.external.directory.path": "/home/lahiru/Desktop/Disk/Projects/AIESEC/portello/node_modules/typescript/lib",
+    "ts.external.directory.path": "/Users/nishith/Desktop/Final/portello/node_modules/typescript/lib",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
