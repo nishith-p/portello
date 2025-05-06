@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import React, { memo } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
@@ -78,10 +78,26 @@ const navigationData: NavigationItem[] = [
   },
 ];
 
-export const PortalSidebar = memo(() => {
+interface PortalSidebarProps {
+  onNavigate?: () => void;
+}
+
+export const PortalSidebar = memo(({ onNavigate }: PortalSidebarProps) => {
   const pathname = usePathname();
   const { permissions } = useKindeBrowserClient();
   const isAdmin = permissions?.permissions?.includes('dx:admin');
+
+  // For Mobile
+  const handleNavClick = (event: React.MouseEvent<HTMLAnchorElement>, hasDisabledMessage: boolean) => {
+    if (hasDisabledMessage) {
+      event.preventDefault();
+      return;
+    }
+
+    if (onNavigate) {
+      onNavigate();
+    }
+  };
 
   return (
     <Box className={classes.navbar}>
@@ -117,6 +133,7 @@ export const PortalSidebar = memo(() => {
                       component={Link}
                       href={child.link}
                       pl="36px"
+                      onClick={(e) => handleNavClick(e, false)}
                     />
                   ))}
                 </NavLink>
@@ -134,7 +151,7 @@ export const PortalSidebar = memo(() => {
                 href={item.disabledMessage ? '#' : item.link}
                 leftSection={<item.icon className={classes.linkIcon} stroke={1.5} />}
                 disabled={!!item.disabledMessage}
-                onClick={item.disabledMessage ? (e) => e.preventDefault() : undefined}
+                onClick={(e) => handleNavClick(e, !!item.disabledMessage)}
               />
             );
 

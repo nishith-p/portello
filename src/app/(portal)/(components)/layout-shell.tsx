@@ -8,7 +8,7 @@ import { PortalHeader } from './portal-header/portal-header';
 import { PortalSidebar } from './portal-sidebar/portal-sidebar';
 
 export const LayoutShell = ({ children }: { children: React.ReactNode }) => {
-  const [opened, { toggle }] = useDisclosure();
+  const [opened, { toggle, close }] = useDisclosure();
 
   return (
     <AppShell
@@ -25,7 +25,7 @@ export const LayoutShell = ({ children }: { children: React.ReactNode }) => {
       </AppShell.Header>
 
       <AppShell.Navbar>
-        <PortalSidebar />
+        <PortalSidebar onNavigate={close} />
       </AppShell.Navbar>
 
       <AppShell.Main bg="var(--mantine-color-gray-0)">{children}</AppShell.Main>

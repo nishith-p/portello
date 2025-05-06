@@ -14,7 +14,7 @@ const YSFPage = () => {
           Bla bla bla
         </Text>
 
-        <div>Content Here!</div>
+        <div>You are not supposed to find this yet!</div>
       </Stack>
     </Container>
   );
