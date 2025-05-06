@@ -33,11 +33,11 @@ const statusColorMap: StatusColorMap = {
   shipped: 'cyan',
   delivered: 'green',
   cancelled: 'red',
-  'payment pending':   'orange',
+  'payment pending': 'orange',
   'payment cancelled': 'red',
-  'payment failed':    'red',
-  'charged back':      'purple',
-  failed:             'red',
+  'payment failed': 'red',
+  'charged back': 'purple',
+  failed: 'red',
 };
 
 // Helper to truncate long IDs with tooltips
@@ -242,14 +242,21 @@ export function OrderDetailModal({
                     <Grid.Col span={{ base: 3, sm: 2 }}>
                       {item.image ? (
                         <Box
-                          style={{ width: 60, height: 60, position: 'relative', margin: '0 auto' }}
+                          style={{
+                            width: 60,
+                            height: 60,
+                            position: 'relative',
+                            margin: '0 auto',
+                            borderRadius: '50%',
+                            overflow: 'hidden'
+                          }}
                         >
-                          {/* <Image
+                          <Image
                             src={item.image}
                             alt={item.name || 'Product image'}
                             fill
                             style={{ objectFit: 'cover', borderRadius: 4 }}
-                          /> */}
+                          />
                         </Box>
                       ) : (
                         <Box

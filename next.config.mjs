@@ -13,6 +13,6 @@ export default withBundleAnalyzer({
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },
   images: {
-    domains: ['images.unsplash.com', 'store.ferrari.com', 'assets.adidas.com', 'supabase.co'],
+    domains: ['images.unsplash.com', 'store.ferrari.com', 'assets.adidas.com', 'supabase.co', 'ugfvgfyujpvclouvgfow.supabase.co'],
   },
 });
