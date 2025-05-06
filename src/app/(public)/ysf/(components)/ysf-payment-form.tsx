@@ -130,7 +130,7 @@ export function YsfPaymentForm({
       <GridCol span={{ base: 12, md: 6 }} order={{ base: 2, md: 1 }}>
         <Paper withBorder p="md" radius="md">
           <Group mb="xs">
-            <ThemeIcon size="md" radius="xl" variant="light" color="blue">
+            <ThemeIcon size="md" radius="xl" variant="light" color="#7552CC">
               <IconUser size={18} />
             </ThemeIcon>
             <Text fw={600} size="sm">
@@ -215,7 +215,7 @@ export function YsfPaymentForm({
                   fullWidth
                   size="lg"
                   radius="md"
-                  color="blue"
+                  color="#7552CC"
                   loading={isSubmitting}
                   mt="md"
                   rightSection={!isSubmitting && <IconArrowRight size={24} />}
@@ -233,14 +233,14 @@ export function YsfPaymentForm({
         <Paper withBorder p="md" radius="md">
           <Group mb="xs" justify="apart">
             <Group gap="xs">
-              <ThemeIcon size="md" radius="xl" variant="light" color="blue">
+              <ThemeIcon size="md" radius="xl" variant="light" color="#7552CC">
                 <IconShoppingCart size={18} />
               </ThemeIcon>
               <Text fw={600} size="sm">
                 Order Summary
               </Text>
             </Group>
-            <Badge color="blue" variant="light">
+            <Badge color="#7552CC" variant="light">
               'Pending'
             </Badge>
           </Group>
@@ -274,7 +274,7 @@ export function YsfPaymentForm({
                 <Text fw={700} size="md">
                   Total:
                 </Text>
-                <Text fw={700} size="md" c="blue">
+                <Text fw={700} size="md" c="#7552CC">
                 Rs. {(amount * quantity).toFixed(2)}
                 </Text>
               </Group>

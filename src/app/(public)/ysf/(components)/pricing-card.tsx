@@ -16,7 +16,7 @@ export interface PricingCardProps {
   highlighted?: boolean;
   badge?: string;
   badgeColor?: string;
-  originalPrice?: string;
+  originalPrice?: number;
   onClick?: () => void;
 }
 
@@ -89,7 +89,7 @@ export function PricingCard({
       <Button
         className={styles.button}
         fullWidth
-        color={highlighted ? 'violet' : 'violet'}
+        color={highlighted ? '#7552CC' : '#7552CC'}
         variant={highlighted ? 'white' : 'filled'}
         onClick={onClick}
       >

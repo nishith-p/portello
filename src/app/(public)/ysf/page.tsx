@@ -121,7 +121,7 @@ export default function YsfPage() {
     <Container size="lg">
       <Stack>
         <PricingGrid
-          title="YSF Packages"
+          title="Youth Speak Forum Packages"
           description="Select the plan that best fits you. If you have friends to attend we have bulk offers too."
           plans={conferencePlans}
           onSelect={handleSelect}
@@ -142,7 +142,7 @@ export default function YsfPage() {
           onChange={handleChange}
           min={10}
         />
-        <Button mt="md" fullWidth onClick={handleBulkConfirm}>
+        <Button mt="md" fullWidth onClick={handleBulkConfirm} color='#7552CC'>
           Proceed to Checkout
         </Button>
       </Modal>
