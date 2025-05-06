@@ -128,7 +128,7 @@ export function PaymentForm({ orderId, currency, customer}: PaymentFormProps) {
                 Payment Details
               </Text>
               <Text c="dimmed" size="sm">
-                Complete your order #{orderId} payment securely
+                Complete your order payment securely
               </Text>
             </Box>
           </Group>
