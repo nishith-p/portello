@@ -2,8 +2,8 @@ import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 
 import React, { ReactNode } from 'react';
+import LayoutWrapper from './layout-wrapper';
 import { AppProvider } from './provider';
-import { LayoutShell } from './(components)';
 
 export const metadata = {
   title: {
@@ -17,7 +17,9 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <AppProvider><LayoutShell>{children}</LayoutShell></AppProvider>
+        <AppProvider>
+          <LayoutWrapper>{children}</LayoutWrapper>
+        </AppProvider>
       </body>
     </html>
   );
