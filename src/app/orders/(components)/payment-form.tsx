@@ -275,7 +275,7 @@ export function PaymentForm({ orderId, currency, customer}: PaymentFormProps) {
                       {...form.getInputProps('city')}
                     />
                     <TextInput
-                      label="Country"
+                      label="Countries & Territories"
                       placeholder="Select your country"
                       leftSection={<IconWorld size={16} />}
                       required
