@@ -19,6 +19,7 @@ import {
   Card,
   Container,
   Divider,
+  Flex,
   Group,
   Paper,
   SimpleGrid,
@@ -117,7 +118,7 @@ export function PaymentForm({ orderId, currency, customer}: PaymentFormProps) {
   return (
     <Container size="lg" px="xs">
       <Card shadow="md" radius="md" withBorder p="xl">
-        <Card.Section bg="blue.0" p="md" withBorder>
+        <Card.Section bg="blue.0" p="md">
           <Group gap="xs">
             <ThemeIcon size="lg" radius="md" variant="light" color="blue">
               <IconCreditCard size={24} />
@@ -133,8 +134,8 @@ export function PaymentForm({ orderId, currency, customer}: PaymentFormProps) {
           </Group>
         </Card.Section>
 
-        <Group mt="lg">
-          <SimpleGrid cols={2}>
+        <Flex mt="lg" justify="center">
+          <SimpleGrid cols={{sm: 1, md: 2}}>
             {/* Order Summary Section */}
             <Paper withBorder p="md" radius="md">
               <Group mb="xs" justify="apart">
@@ -218,7 +219,7 @@ export function PaymentForm({ orderId, currency, customer}: PaymentFormProps) {
               <form method="post" onSubmit={handlePayNow}>
                 {/* Customer details as visible inputs */}
                 <Stack gap="md">
-                  <SimpleGrid cols={2}>
+                  <SimpleGrid cols={{sm: 1, md: 2}}>
                     <TextInput
                       label="First Name"
                       placeholder="Enter your first name"
@@ -264,7 +265,7 @@ export function PaymentForm({ orderId, currency, customer}: PaymentFormProps) {
                     {...form.getInputProps('address')}
                   />
 
-                  <SimpleGrid cols={2}>
+                  <SimpleGrid cols={{sm: 1, md: 2}}>
                     <TextInput
                       label="City"
                       placeholder="Enter your city"
@@ -309,7 +310,7 @@ export function PaymentForm({ orderId, currency, customer}: PaymentFormProps) {
               </form>
             </Paper>
           </SimpleGrid>
-        </Group>
+        </Flex>
       </Card>
     </Container>
   );
