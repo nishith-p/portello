@@ -1,0 +1,46 @@
+.wrapper {
+  padding: 3rem 1.5rem;
+}
+
+.title {
+  font-family: "Greycliff CF", sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.description {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  margin-bottom: 2.25rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+/* Mobile (1 column, smaller text and padding) */
+@media (max-width: 1024px) {
+  .wrapper {
+    padding: 2rem 1rem;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: 1.75rem;
+  }
+
+  .description {
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    padding: 0 0.5rem;
+  }
+}

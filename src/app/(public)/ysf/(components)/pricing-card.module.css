@@ -1,0 +1,87 @@
+.card {
+  background-color: white;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  height: 100%;
+}
+
+.card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.highlighted {
+  background-color: #a78bfa;
+  color: white;
+}
+
+.title {
+  font-family: "Greycliff CF", sans-serif;
+  font-weight: 700;
+  color: black;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.highlightedTitle {
+  color: white;
+}
+
+.price {
+  font-size: 2.625rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.highlightedPrice {
+  color: white;
+}
+
+.feature {
+  border-top: 1px solid #e9ecef;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  text-align: center;
+}
+
+.highlightedFeature {
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.button {
+  margin-top: 1.5rem;
+}
+
+.badge {
+  margin: auto;
+}
+
+.dimmedText {
+  color: #868e96;
+}
+
+.highlightedDimmedText {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.strikethrough {
+  text-decoration: line-through;
+  margin-right: 8px;
+}
+
+.strikeLightGray {
+  color: #f1f3f5;
+}
+
+.strikeDarkGray {
+  color: #868e96;
+}
+
+@media (max-width: 1024px) {
+  .card {
+    max-width: 100%;
+  }
+}
