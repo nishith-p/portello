@@ -257,8 +257,8 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
           </Card>
 
           {order.status !== 'paid' && (
-            <Button size="md" mt="md" onClick={() => handlePayNow(order)}>
-              Pay Now
+            <Button color="green" size="md" mt="md" onClick={() => handlePayNow(order)}>
+              Checkout
             </Button>
           )}
         </Card>

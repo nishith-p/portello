@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import { IconPackage } from '@tabler/icons-react';
 import {
   Badge,
@@ -42,12 +41,6 @@ const getStatusColor = (status: OrderStatus): string => statusColorMap[status] |
 
 export const OrdersTable = ({ orders, onOrderClickAction }: OrdersTableProps) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const router = useRouter();
-
-  // Build a query string with encoded order data
-  const handleNavigate = (order: Order) => {
-    router.push(`/order/${order.id}`);
-  };
 
   if (isMobile) {
     return (
@@ -118,7 +111,7 @@ export const OrdersTable = ({ orders, onOrderClickAction }: OrdersTableProps) =>
                   </Text>
                 </Group>
 
-                <Button fullWidth mt="sm" onClick={() => handleNavigate(order)}>
+                <Button fullWidth mt="sm" onClick={() => onOrderClickAction(order)}>
                   View Order
                 </Button>
               </Stack>
