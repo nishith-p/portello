@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import {
   Badge,
   Box,
@@ -19,7 +20,6 @@ import {
 import { useMediaQuery } from '@mantine/hooks';
 import { Order, OrderItem, OrderStatus } from '@/lib/store/types';
 import { formatCurrency, formatDate } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
 
 interface OrderDetailsModalProps {
   opened: boolean;
@@ -52,8 +52,8 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
 
   const router = useRouter();
   const handlePayNow = (order: Order) => {
-    router.push(`/orders/${order.id}`)
-  }
+    router.push(`/orders/${order.id}`);
+  };
 
   return (
     <Modal
@@ -153,14 +153,17 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
                             height: 60,
                             position: 'relative',
                             margin: isMobile ? '0 auto 8px' : '0 auto',
+                            borderRadius: '50%',
+                            overflow: 'hidden'
                           }}
                         >
-                          {/* <Image
+                          <Image
                             src={item.image}
                             alt={item.name || 'Product image'}
                             fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
                             style={{ objectFit: 'cover', borderRadius: 4 }}
-                          /> */}
+                          />
                         </Box>
                       ) : (
                         <Box
@@ -253,9 +256,9 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
           </Card>
 
           {order.status !== 'paid' && (
-              <Button size="md" mt="md" onClick={() => handlePayNow(order)}>
-                Pay Now
-              </Button>
+            <Button size="md" mt="md" onClick={() => handlePayNow(order)}>
+              Pay Now
+            </Button>
           )}
         </Card>
       </Stack>
