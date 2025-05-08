@@ -36,6 +36,7 @@ export async function getStorePackById(id: string): Promise<StorePack | null> {
     .select(
       `
       *,
+      is_optional,
       item:item_id(*)
     `
     )
@@ -303,6 +304,7 @@ export async function createStorePack(packData: StorePackWithItemsInput): Promis
     pack_id: newPack.id,
     item_id: item.item_id,
     quantity: item.quantity,
+    is_optional: item.is_optional || false,
   }));
 
   const { data: newPackItems, error: itemsError } = await supabaseServer
@@ -358,6 +360,46 @@ export async function updateStorePack(
 
   // Get the updated pack with its items
   return (await getStorePackById(id)) as unknown as Promise<StorePack>;
+}
+
+/**
+ * Update the items in a pack
+ */
+export async function updatePackItems(
+  packId: string,
+  items: Array<{ item_id: string; quantity: number; is_optional: boolean }>
+): Promise<any> {
+  // First, delete all existing items for this pack
+  const { error: deleteError } = await supabaseServer
+    .from('store_pack_items')
+    .delete()
+    .eq('pack_id', packId);
+
+  if (deleteError) {
+    throw deleteError;
+  }
+
+  // Then insert the new items
+  const packItemsToInsert = items.map((item) => ({
+    pack_id: packId,
+    item_id: item.item_id,
+    quantity: item.quantity,
+    is_optional: item.is_optional
+  }));
+
+  const { data: newPackItems, error: insertError } = await supabaseServer
+    .from('store_pack_items')
+    .insert(packItemsToInsert)
+    .select(`
+      *,
+      item:item_id(*)
+    `);
+
+  if (insertError) {
+    throw insertError;
+  }
+
+  return newPackItems;
 }
 
 /**
@@ -431,6 +473,7 @@ export async function updateStorePackItems(
     pack_id: id,
     item_id: item.item_id,
     quantity: item.quantity,
+    is_optional: item.is_optional
   }));
 
   const { error: insertError } = await supabaseServer

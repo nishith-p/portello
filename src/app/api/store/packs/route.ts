@@ -55,6 +55,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           pack_items: body.pack_items.map((item: any) => ({
             item_id: item.item_id,
             quantity: item.quantity,
+            is_optional: item.is_optional || false,
           })),
           pre_price: body.pre_price || undefined,
           discount_perc: body.discount_perc || undefined,

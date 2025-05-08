@@ -22,6 +22,8 @@ import {
   Text,
   Textarea,
   TextInput,
+  Tabs,
+  Badge,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -45,11 +47,12 @@ export function PackForm({
 }: PackFormProps) {
   const router = useRouter();
   const [isEditing] = useState<boolean>(!!initialValues.id);
-  const [selectedItems, setSelectedItems] = useState<Array<{ item: StoreItem; quantity: number }>>(
+  const [selectedItems, setSelectedItems] = useState<Array<{ item: StoreItem; quantity: number; is_optional: boolean }>>(
     []
   );
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isSearchModalOpen, setIsSearchModalOpen] = useState<boolean>(false);
+  const [searchForOptional, setSearchForOptional] = useState<boolean>(false);
 
   const { data: searchResults, isLoading: isSearching } = useStoreItemSearch({
     search: searchQuery,
@@ -80,6 +83,7 @@ export function PackForm({
       const items = initialValues.pack_items.map((pi) => ({
         item: pi.item as StoreItem,
         quantity: pi.quantity,
+        is_optional: pi.is_optional || false,
       }));
       setSelectedItems(items);
     }
@@ -94,7 +98,11 @@ export function PackForm({
       });
       return;
     }
-    setSelectedItems([...selectedItems, { item, quantity: 1 }]);
+    setSelectedItems([...selectedItems, { 
+      item, 
+      quantity: 1, 
+      is_optional: searchForOptional 
+    }]);
     setIsSearchModalOpen(false);
     setSearchQuery('');
   };
@@ -105,6 +113,12 @@ export function PackForm({
 
   const handleQuantityChange = (itemId: string, quantity: number) => {
     setSelectedItems(selectedItems.map((si) => (si.item.id === itemId ? { ...si, quantity } : si)));
+  };
+
+  const toggleOptionalStatus = (itemId: string) => {
+    setSelectedItems(selectedItems.map((si) => 
+      si.item.id === itemId ? { ...si, is_optional: !si.is_optional } : si
+    ));
   };
 
   const [imageUrl, setImageUrl] = useState<string>('');
@@ -123,6 +137,14 @@ export function PackForm({
     );
   };
 
+  const openSearchModal = (forOptional: boolean) => {
+    setSearchForOptional(forOptional);
+    setIsSearchModalOpen(true);
+  };
+
+  const regularItems = selectedItems.filter(item => !item.is_optional);
+  const optionalItems = selectedItems.filter(item => item.is_optional);
+
   const handleSubmit = async (values: typeof form.values) => {
     if (selectedItems.length === 0) {
       notifications.show({
@@ -139,6 +161,7 @@ export function PackForm({
         pack_items: selectedItems.map((si) => ({
           item_id: si.item.id,
           quantity: si.quantity,
+          is_optional: si.is_optional,
           item: si.item,
         })),
       };
@@ -271,68 +294,170 @@ export function PackForm({
 
             <Divider label="Pack Items" labelPosition="center" />
 
-            <Box>
-              <Group justify="space-between" mb="md">
-                <Text size="sm" fw={500}>
-                  Items in this Pack
-                </Text>
-                <Button
-                  size="xs"
-                  leftSection={<IconSearch size={14} />}
-                  onClick={() => setIsSearchModalOpen(true)}
+            <Tabs defaultValue="regular">
+              <Tabs.List mb="sm">
+                <Tabs.Tab 
+                  value="regular" 
+                  leftSection={<Badge size="xs" color="blue">{regularItems.length}</Badge>}
                 >
-                  Add Items
-                </Button>
-              </Group>
-              {selectedItems.length === 0 ? (
-                <Alert icon={<IconAlertCircle size={16} />} color="orange">
-                  No items added to this pack yet. Please add at least one item.
-                </Alert>
-              ) : (
-                <ScrollArea>
-                  <Table withTableBorder highlightOnHover>
-                    <Table.Thead>
-                      <Table.Tr>
-                        <Table.Th>Item Code</Table.Th>
-                        <Table.Th>Name</Table.Th>
-                        <Table.Th>Base Price</Table.Th>
-                        <Table.Th>Quantity</Table.Th>
-                        <Table.Th style={{ width: 100 }}>Actions</Table.Th>
-                      </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody>
-                      {selectedItems.map((selectedItem) => (
-                        <Table.Tr key={selectedItem.item.id}>
-                          <Table.Td>{selectedItem.item.item_code}</Table.Td>
-                          <Table.Td>{selectedItem.item.name}</Table.Td>
-                          <Table.Td>€{selectedItem.item.price.toFixed(2)}</Table.Td>
-                          <Table.Td>
-                            <NumberInput
-                              min={1}
-                              max={10}
-                              value={selectedItem.quantity}
-                              onChange={(value) =>
-                                handleQuantityChange(selectedItem.item.id, Number(value) || 1)
-                              }
-                              style={{ width: 80 }}
-                              size="xs"
-                            />
-                          </Table.Td>
-                          <Table.Td>
-                            <ActionIcon
-                              color="red"
-                              onClick={() => handleRemoveItem(selectedItem.item.id)}
-                            >
-                              <IconTrash size={16} />
-                            </ActionIcon>
-                          </Table.Td>
-                        </Table.Tr>
-                      ))}
-                    </Table.Tbody>
-                  </Table>
-                </ScrollArea>
-              )}
-            </Box>
+                  Regular Items
+                </Tabs.Tab>
+                <Tabs.Tab 
+                  value="optional" 
+                  leftSection={<Badge size="xs" color="green">{optionalItems.length}</Badge>}
+                >
+                  Optional Items
+                </Tabs.Tab>
+              </Tabs.List>
+
+              <Tabs.Panel value="regular">
+                <Box>
+                  <Group justify="space-between" mb="md">
+                    <Text size="sm" fw={500}>
+                      Regular Items (User will receive all)
+                    </Text>
+                    <Button
+                      size="xs"
+                      leftSection={<IconSearch size={14} />}
+                      onClick={() => openSearchModal(false)}
+                    >
+                      Add Regular Items
+                    </Button>
+                  </Group>
+                  {regularItems.length === 0 ? (
+                    <Alert icon={<IconAlertCircle size={16} />} color="orange">
+                      No regular items added to this pack yet. Please add at least one item.
+                    </Alert>
+                  ) : (
+                    <ScrollArea>
+                      <Table withTableBorder highlightOnHover>
+                        <Table.Thead>
+                          <Table.Tr>
+                            <Table.Th>Item Code</Table.Th>
+                            <Table.Th>Name</Table.Th>
+                            <Table.Th>Base Price</Table.Th>
+                            <Table.Th>Quantity</Table.Th>
+                            <Table.Th>Actions</Table.Th>
+                          </Table.Tr>
+                        </Table.Thead>
+                        <Table.Tbody>
+                          {regularItems.map((selectedItem) => (
+                            <Table.Tr key={selectedItem.item.id}>
+                              <Table.Td>{selectedItem.item.item_code}</Table.Td>
+                              <Table.Td>{selectedItem.item.name}</Table.Td>
+                              <Table.Td>€{selectedItem.item.price.toFixed(2)}</Table.Td>
+                              <Table.Td>
+                                <NumberInput
+                                  min={1}
+                                  max={10}
+                                  value={selectedItem.quantity}
+                                  onChange={(value) =>
+                                    handleQuantityChange(selectedItem.item.id, Number(value) || 1)
+                                  }
+                                  style={{ width: 80 }}
+                                  size="xs"
+                                />
+                              </Table.Td>
+                              <Table.Td>
+                                <Group gap="xs">
+                                  <Button 
+                                    size="xs" 
+                                    variant="light" 
+                                    onClick={() => toggleOptionalStatus(selectedItem.item.id)}
+                                  >
+                                    Make Optional
+                                  </Button>
+                                  <ActionIcon
+                                    color="red"
+                                    onClick={() => handleRemoveItem(selectedItem.item.id)}
+                                  >
+                                    <IconTrash size={16} />
+                                  </ActionIcon>
+                                </Group>
+                              </Table.Td>
+                            </Table.Tr>
+                          ))}
+                        </Table.Tbody>
+                      </Table>
+                    </ScrollArea>
+                  )}
+                </Box>
+              </Tabs.Panel>
+
+              <Tabs.Panel value="optional">
+                <Box>
+                  <Group justify="space-between" mb="md">
+                    <Text size="sm" fw={500}>
+                      Optional Items (User will choose one)
+                    </Text>
+                    <Button
+                      size="xs"
+                      leftSection={<IconSearch size={14} />}
+                      onClick={() => openSearchModal(true)}
+                    >
+                      Add Optional Items
+                    </Button>
+                  </Group>
+                  {optionalItems.length === 0 ? (
+                    <Alert icon={<IconAlertCircle size={16} />} color="blue">
+                      No optional items added. Optional items let the user choose one item from a set of options.
+                    </Alert>
+                  ) : (
+                    <ScrollArea>
+                      <Table withTableBorder highlightOnHover>
+                        <Table.Thead>
+                          <Table.Tr>
+                            <Table.Th>Item Code</Table.Th>
+                            <Table.Th>Name</Table.Th>
+                            <Table.Th>Base Price</Table.Th>
+                            <Table.Th>Quantity</Table.Th>
+                            <Table.Th>Actions</Table.Th>
+                          </Table.Tr>
+                        </Table.Thead>
+                        <Table.Tbody>
+                          {optionalItems.map((selectedItem) => (
+                            <Table.Tr key={selectedItem.item.id}>
+                              <Table.Td>{selectedItem.item.item_code}</Table.Td>
+                              <Table.Td>{selectedItem.item.name}</Table.Td>
+                              <Table.Td>€{selectedItem.item.price.toFixed(2)}</Table.Td>
+                              <Table.Td>
+                                <NumberInput
+                                  min={1}
+                                  max={10}
+                                  value={selectedItem.quantity}
+                                  onChange={(value) =>
+                                    handleQuantityChange(selectedItem.item.id, Number(value) || 1)
+                                  }
+                                  style={{ width: 80 }}
+                                  size="xs"
+                                />
+                              </Table.Td>
+                              <Table.Td>
+                                <Group gap="xs">
+                                  <Button 
+                                    size="xs" 
+                                    variant="light" 
+                                    onClick={() => toggleOptionalStatus(selectedItem.item.id)}
+                                  >
+                                    Make Regular
+                                  </Button>
+                                  <ActionIcon
+                                    color="red"
+                                    onClick={() => handleRemoveItem(selectedItem.item.id)}
+                                  >
+                                    <IconTrash size={16} />
+                                  </ActionIcon>
+                                </Group>
+                              </Table.Td>
+                            </Table.Tr>
+                          ))}
+                        </Table.Tbody>
+                      </Table>
+                    </ScrollArea>
+                  )}
+                </Box>
+              </Tabs.Panel>
+            </Tabs>
 
             <Group justify="flex-end" mt="xl">
               <Button variant="outline" component={Link} href="/admin/store/packs">
@@ -352,7 +477,7 @@ export function PackForm({
           setIsSearchModalOpen(false);
           setSearchQuery('');
         }}
-        title="Add Items to Pack"
+        title={`Add ${searchForOptional ? 'Optional' : 'Regular'} Items to Pack`}
         size="lg"
       >
         <Stack>

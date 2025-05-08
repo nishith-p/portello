@@ -154,6 +154,8 @@ export interface CreateOrderPackItem {
   image?: string | null;
   is_pack: true;
   pack_items: CreateOrderItemInput[]; // Use the base input type for pack items
+  optional_items?: CreateOrderItemInput[]; // Optional items the user can choose from
+  selected_optional_item?: CreateOrderItemInput | null; // The selected optional item
 }
 
 /**
@@ -202,6 +204,7 @@ export interface CartPackItemDetail {
   image?: string;
   pre_price?: number;
   discount_perc?: number;
+  is_optional?: boolean;
 }
 
 /**
@@ -216,6 +219,8 @@ export interface CartPackItem {
   quantity: number;
   image?: string;
   pack_items: CartPackItemDetail[];
+  optional_items?: CartPackItemDetail[];
+  selected_optional_item?: (CartPackItemDetail & { price?: number }) | null;
   pre_price?: number;
   discount_perc?: number;
 }
@@ -251,6 +256,7 @@ export interface StorePackItem {
   item?: StoreItem;
   pre_price?: number;
   discount_perc?: number;
+  is_optional: boolean;
 }
 
 /**
@@ -273,6 +279,7 @@ export interface StorePackInput {
 export interface StorePackItemInput {
   item_id: string;
   quantity: number;
+  is_optional?: boolean;
 }
 
 /**

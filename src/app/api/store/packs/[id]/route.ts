@@ -4,6 +4,7 @@ import { RouteContext } from '@/lib/common-types';
 import { BadRequestError, errorResponse, NotFoundError } from '@/lib/core/errors';
 import {
   getStorePackById,
+  updatePackItems,
   updateStorePack,
   updateStorePackItems,
   updateStorePackStatus,
@@ -91,10 +92,11 @@ export async function PUT(
 
         // If pack items are included, update them as well
         if (Array.isArray(body.pack_items)) {
-          const packItems: StorePackItemInput[] = body.pack_items.map((item: any) => ({
+          const packItems: StorePackItemInput[] = await updatePackItems(id, body.pack_items.map((item: any) => ({
             item_id: item.item_id,
             quantity: item.quantity,
-          }));
+            is_optional: item.is_optional || false
+          })));
 
           updatedPack = await updateStorePackItems(id, packItems);
         }

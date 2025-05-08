@@ -1,6 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import {
+  AwaitedReactNode,
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+  useEffect,
+  useState,
+} from 'react';
 import { IconPackages, IconShoppingCart } from '@tabler/icons-react';
 import {
   Accordion,
@@ -22,9 +31,14 @@ import {
   Text,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { createCartPackItem, updateCartPackItemDetail } from '@/components/cart-drawer/utils';
+import {
+  createCartPackItem,
+  removeSelectedOptionalItem,
+  selectOptionalItem,
+  updateCartPackItemDetail,
+} from '@/components/cart-drawer/utils';
 import { useCart } from '@/context/cart';
-import { StorePack } from '@/lib/store/types';
+import { CartPackItem, CartPackItemDetail, StorePack } from '@/lib/store/types';
 import classes from './pack-modal.module.css';
 
 interface PackModalProps {
@@ -39,6 +53,14 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
   const [cartPackItem, setCartPackItem] = useState<any>(null);
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
+
+  // Separate regular and optional items
+  const regularItems = selectedPack?.pack_items?.filter((item) => !item.is_optional) || [];
+  const optionalItems = selectedPack?.pack_items?.filter((item) => item.is_optional) || [];
+
+  // Calculate totals
+  const totalRegularItems = regularItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalOptionalItems = optionalItems.reduce((sum, item) => sum + item.quantity, 0);
 
   // Reset selections when a new pack is selected
   useEffect(() => {
@@ -105,16 +127,29 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
       return true;
     }
 
-    // Check each item in the pack to ensure all required selections are made
+    // Check if there are optional items but none is selected
+    const hasOptionalItems = selectedPack.pack_items?.some((item) => item.is_optional);
+    const noOptionalSelected = hasOptionalItems && !cartPackItem.selected_optional_item;
+
+    if (noOptionalSelected) {
+      return true;
+    }
+
+    // Check required selections for regular items
     for (let i = 0; i < cartPackItem.pack_items.length; i++) {
       const packItemDetail = cartPackItem.pack_items[i];
       const originalItem = selectedPack.pack_items?.find(
         (pi) => pi.item && pi.item.id === packItemDetail.item_id
       )?.item;
 
-      if (!originalItem) {
-        continue;
-      }
+      if (!originalItem) continue;
+
+      // Skip validation for optional items
+      const isOptional = selectedPack.pack_items?.find(
+        (pi) => pi.item_id === packItemDetail.item_id
+      )?.is_optional;
+
+      if (isOptional) continue;
 
       // If item has sizes but none selected
       if (originalItem.sizes && originalItem.sizes.length > 0 && !packItemDetail.size) {
@@ -128,6 +163,17 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
     }
 
     return false;
+  };
+
+  // Add a helper function to show validation messages
+  const showValidationMessage = () => {
+    if (!cartPackItem?.selected_optional_item && optionalItems.length > 0) {
+      notifications.show({
+        title: 'Selection Required',
+        message: 'Please select one option from the optional items',
+        color: 'yellow',
+      });
+    }
   };
 
   // Add the pack to cart
@@ -316,7 +362,8 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
                     </Text>
 
                     <Stack gap="xs">
-                      {selectedPack.pack_items?.map((packItem) => (
+                      {/* Regular Items */}
+                      {regularItems.map((packItem) => (
                         <Group key={packItem.id} justify="space-between">
                           <Group gap="xs">
                             <Badge size="sm" variant="filled" radius="sm">
@@ -329,6 +376,29 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
                           </Text>
                         </Group>
                       ))}
+
+                      {/* Optional Items - only show if they exist */}
+                      {optionalItems.length > 0 && (
+                        <>
+                          <Divider my="sm" label="Optional Items" labelPosition="center" />
+                          {optionalItems.map((packItem) => (
+                            <Group key={packItem.id} justify="space-between">
+                              <Group gap="xs">
+                                <Badge size="sm" variant="outline" color="green" radius="sm">
+                                  {packItem.quantity}×
+                                </Badge>
+                                <Text>{packItem.item?.name || 'Unknown Item'}</Text>
+                              </Group>
+                              <Text size="sm" fw={500} c="dimmed">
+                                €{packItem.item?.price.toFixed(2)}
+                              </Text>
+                            </Group>
+                          ))}
+                          <Text size="sm" c="dimmed" mt="xs">
+                            * Choose one from the optional items below
+                          </Text>
+                        </>
+                      )}
                     </Stack>
 
                     <Divider my="md" />
@@ -345,18 +415,19 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
 
                   {/* Item Customization Section */}
                   <Accordion variant="separated">
-                    {cartPackItem.pack_items.map((packItem: any, index: number) => {
-                      // Find the original store item to get available options
+                    {/* Regular Items */}
+                    {cartPackItem.pack_items.map((packItem: CartPackItemDetail, index: number) => {
                       const originalItem = selectedPack.pack_items?.find(
                         (pi) => pi.item && pi.item.id === packItem.item_id
                       )?.item;
 
-                      if (!originalItem) {
-                        return null;
-                      }
+                      if (!originalItem) return null;
 
                       return (
-                        <Accordion.Item key={packItem.item_id} value={packItem.item_id}>
+                        <Accordion.Item
+                          key={`regular-${packItem.item_id}`}
+                          value={`regular-${packItem.item_id}`}
+                        >
                           <Accordion.Control>
                             <Group>
                               <Text fw={600}>{packItem.name}</Text>
@@ -422,6 +493,173 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
                         </Accordion.Item>
                       );
                     })}
+
+                    {/* Optional Items Section */}
+                    {cartPackItem.optional_items.length > 0 && (
+                      <Accordion.Item key="optional-items" value="optional-items">
+                        <Accordion.Control>
+                          <Group>
+                            <Text fw={600}>Optional Items</Text>
+                            <Badge color="teal" variant="light">
+                              Choose 1
+                            </Badge>
+                          </Group>
+                        </Accordion.Control>
+                        <Accordion.Panel>
+                          <Stack gap="md">
+                            <Text size="sm" c="dimmed">
+                              Select one option from the following items:
+                            </Text>
+
+                            {cartPackItem.optional_items.map(
+                              (optionalItem: CartPackItemDetail, index: number) => {
+                                const originalItem = selectedPack.pack_items?.find(
+                                  (pi) => pi.item && pi.item.id === optionalItem.item_id
+                                )?.item;
+
+                                if (!originalItem) return null;
+
+                                const isSelected =
+                                  cartPackItem.selected_optional_item?.item_id ===
+                                  optionalItem.item_id;
+                                const itemIndex = cartPackItem.pack_items.length + index; // Adjust index for handler functions
+
+                                return (
+                                  <Paper
+                                    key={optionalItem.item_id}
+                                    withBorder
+                                    p="md"
+                                    radius="md"
+                                    style={{
+                                      borderColor: isSelected
+                                        ? 'var(--mantine-color-teal-6)'
+                                        : undefined,
+                                      backgroundColor: isSelected
+                                        ? 'var(--mantine-color-teal-0)'
+                                        : undefined,
+                                    }}
+                                  >
+                                    <Group justify="space-between" mb="sm">
+                                      <Text fw={600}>{optionalItem.name}</Text>
+                                      <Badge
+                                        color={isSelected ? 'teal' : 'gray'}
+                                        variant={isSelected ? 'filled' : 'light'}
+                                      >
+                                        {optionalItem.quantity}x
+                                      </Badge>
+                                    </Group>
+
+                                    <Stack gap="md">
+                                      {/* Size Selection */}
+                                      {originalItem.sizes && originalItem.sizes.length > 0 && (
+                                        <Box>
+                                          <Text fw={500} size="sm" mb="xs">
+                                            Size
+                                          </Text>
+                                          {originalItem.sizes.length === 1 ? (
+                                            <Text>{originalItem.sizes[0]}</Text>
+                                          ) : (
+                                            <Select
+                                              placeholder="Select a size"
+                                              data={originalItem.sizes.map((size: string) => ({
+                                                value: size,
+                                                label: size,
+                                              }))}
+                                              value={optionalItem.size || null}
+                                              onChange={(value) =>
+                                                handleSizeChange(itemIndex, value || '')
+                                              }
+                                              radius="md"
+                                              disabled={!isSelected}
+                                            />
+                                          )}
+                                        </Box>
+                                      )}
+
+                                      {/* Color Selection */}
+                                      {originalItem.colors && originalItem.colors.length > 0 && (
+                                        <Box>
+                                          <Text fw={500} size="sm" mb="xs">
+                                            Color
+                                          </Text>
+                                          <Flex gap="md" wrap="wrap">
+                                            {originalItem.colors.map(
+                                              (color: { name: string; hex: string }) => (
+                                                <Stack key={color.hex} align="center" gap="xs">
+                                                  <ColorSwatch
+                                                    color={color.hex}
+                                                    size={28}
+                                                    radius="xl"
+                                                    className={
+                                                      optionalItem.colorHex === color.hex
+                                                        ? classes.colorSwatchActive
+                                                        : classes.colorSwatch
+                                                    }
+                                                    onClick={() =>
+                                                      isSelected &&
+                                                      handleColorChange(itemIndex, color)
+                                                    }
+                                                    style={{
+                                                      opacity: isSelected ? 1 : 0.6,
+                                                      cursor: isSelected ? 'pointer' : 'default',
+                                                    }}
+                                                  />
+                                                  <Text size="xs">{color.name}</Text>
+                                                </Stack>
+                                              )
+                                            )}
+                                          </Flex>
+                                        </Box>
+                                      )}
+
+                                      <Button
+                                        fullWidth
+                                        variant={isSelected ? 'filled' : 'outline'}
+                                        color="teal"
+                                        onClick={() => {
+                                          if (isSelected) {
+                                            // Update the cart pack item to remove the selection
+                                            // You'll need to implement this function
+                                            setCartPackItem(
+                                              removeSelectedOptionalItem(cartPackItem)
+                                            );
+                                          } else {
+                                            // First update any size/color selections
+                                            const updatedItem = {
+                                              ...optionalItem,
+                                              // Include any default selections if none are made
+                                              size:
+                                                optionalItem.size ||
+                                                originalItem.sizes?.[0] ||
+                                                undefined,
+                                              color:
+                                                optionalItem.color ||
+                                                originalItem.colors?.[0]?.name ||
+                                                undefined,
+                                              colorHex:
+                                                optionalItem.colorHex ||
+                                                originalItem.colors?.[0]?.hex ||
+                                                undefined,
+                                            };
+
+                                            // Then select this optional item
+                                            setCartPackItem(
+                                              selectOptionalItem(cartPackItem, index)
+                                            );
+                                          }
+                                        }}
+                                      >
+                                        {isSelected ? 'Selected ✓' : 'Select This Option'}
+                                      </Button>
+                                    </Stack>
+                                  </Paper>
+                                );
+                              }
+                            )}
+                          </Stack>
+                        </Accordion.Panel>
+                      </Accordion.Item>
+                    )}
                   </Accordion>
                 </Box>
 
@@ -439,11 +677,17 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
                   <Button
                     size="lg"
                     leftSection={<IconShoppingCart size={20} />}
-                    onClick={handleAddToCart}
+                    onClick={() => {
+                      if (isAddToCartDisabled()) {
+                        showValidationMessage();
+                      } else {
+                        handleAddToCart();
+                      }
+                    }}
                     radius="md"
                     color="blue"
                     fullWidth
-                    disabled={isAddToCartDisabled() || isAddingToCart}
+                    disabled={isAddingToCart}
                     loading={isAddingToCart}
                   >
                     Add to Cart
