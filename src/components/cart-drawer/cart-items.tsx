@@ -78,7 +78,7 @@ export function CartPackItemComponent({ item, index }: CartPackItemProps) {
                   wrap="nowrap"
                   gap="xs"
                 >
-                  <Text size="xs" lineClamp={1} style={{ flex: 1 }}>
+                  <Text size="xs" component='div' lineClamp={1} style={{ flex: 1 }}>
                     {packItem.quantity}x {packItem.name}
                     {packItem.is_optional && (
                       <Badge size="xs" color="green" ml="xs">

@@ -205,6 +205,7 @@ export interface CartPackItemDetail {
   pre_price?: number;
   discount_perc?: number;
   is_optional?: boolean;
+  price?: number;
 }
 
 /**
@@ -331,4 +332,20 @@ export interface ItemQuantitySearchParams {
   search?: string;
   limit: number;
   offset: number;
+}
+
+export interface OptionalItem {
+  item_code: unknown;
+  quantity?: unknown;
+  price?: unknown;
+  size?: unknown;
+  color?: unknown;
+  color_hex?: unknown;
+  colorHex?: unknown;
+  name?: unknown;
+  image?: unknown;
+}
+
+export function isOptionalItem(obj: unknown): obj is OptionalItem {
+  return typeof obj === 'object' && obj !== null && 'item_code' in obj;
 }

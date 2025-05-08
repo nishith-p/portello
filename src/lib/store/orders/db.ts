@@ -388,7 +388,7 @@ export async function createOrder(orderInput: CreateOrderInputExtended): Promise
 
     // Now handle pack items
     for (const packItem of packItems) {
-      // Insert the pack item first
+      // Insert the pack item
       const { data: insertedPack, error: packError } = await supabaseServer
         .from('order_items')
         .insert({
@@ -405,39 +405,40 @@ export async function createOrder(orderInput: CreateOrderInputExtended): Promise
         })
         .select()
         .single();
-
-      if (packError) {
-        await supabaseServer.from('orders').delete().eq('id', newOrder.id);
-        throw packError;
-      }
-
-      // Now insert each pack item's children
-      if (packItem.pack_items && packItem.pack_items.length > 0) {
-        const packChildrenToInsert = packItem.pack_items.map((childItem: CreateOrderItemInput) => ({
-          order_id: newOrder.id,
-          parent_pack_id: insertedPack.id,
-          item_code: childItem.item_code,
-          quantity: childItem.quantity,
-          price: childItem.price || 0,
-          size: childItem.size || null,
-          color: childItem.color || null,
-          color_hex: childItem.color_hex || null,
-          name: childItem.name || null,
-          image: childItem.image || null,
-          pre_price: 0,
-          discount_perc: 0,
-          is_pack: false,
-          pack_code: null, // Explicitly set pack_code to null for child items
-        }));
-
-        const { error: childrenError } = await supabaseServer
+  
+      if (packError) throw packError;
+  
+      // Combine regular items + selected optional (if any)
+      const itemsToInsert = [
+        ...packItem.pack_items,
+        ...(packItem.selected_optional_item ? [packItem.selected_optional_item] : [])
+      ];
+      
+      console.log(itemsToInsert);
+  
+      // Insert all items (regular + selected optional treated the same)
+      if (itemsToInsert.length > 0) {
+        const { error } = await supabaseServer
           .from('order_items')
-          .insert(packChildrenToInsert);
-
-        if (childrenError) {
-          await supabaseServer.from('orders').delete().eq('id', newOrder.id);
-          throw childrenError;
-        }
+          .insert(itemsToInsert.map(item => ({
+            order_id: newOrder.id,
+            parent_pack_id: insertedPack.id,
+            item_code: item.item_code,
+            quantity: item.quantity,
+            price: item.price || 0,
+            size: item.size || null,
+            color: item.color || null,
+            color_hex: item.color_hex || null,
+            name: item.name || null,
+            image: item.image || null,
+            pre_price: item.pre_price || 0,
+            discount_perc: item.discount_perc || 0,
+            is_pack: false,
+            pack_code: null,
+            // No is_optional field needed
+          })));
+  
+        if (error) throw error;
       }
     }
 

@@ -181,21 +181,37 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
     if (isAddToCartDisabled() || !cartPackItem || !selectedPack) {
       return;
     }
-
+  
     setIsAddingToCart(true);
-
+  
     try {
-      // Add the pack to cart
-      addToCart(cartPackItem);
-
-      // Show success notification
+      // Create a new cart pack item with all selections
+      const cartItem: CartPackItem = {
+        ...cartPackItem,
+        pack_items: cartPackItem.pack_items.map((item: CartPackItemDetail) => ({
+          ...item,
+          // Ensure size/color from selections are included
+          size: item.size || undefined,
+          color: item.color || undefined,
+          colorHex: item.colorHex || undefined
+        })),
+        // Include selected optional item with its selections
+        selected_optional_item: cartPackItem.selected_optional_item ? {
+          ...cartPackItem.selected_optional_item,
+          size: cartPackItem.selected_optional_item.size || undefined,
+          color: cartPackItem.selected_optional_item.color || undefined,
+          colorHex: cartPackItem.selected_optional_item.colorHex || undefined
+        } : undefined
+      };
+  
+      addToCart(cartItem);
+      
       notifications.show({
         title: 'Added to Cart',
         message: `${selectedPack.name} has been added to your cart`,
         color: 'green',
       });
-
-      // Close the modal
+  
       onCloseAction();
     } catch (error) {
       notifications.show({

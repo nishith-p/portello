@@ -55,6 +55,8 @@ export const CartDrawer = () => {
     }
 
     setIsPlacingOrder(true);
+    
+    console.log(cartItems);
 
     try {
       await placeOrderMutation.mutateAsync({
