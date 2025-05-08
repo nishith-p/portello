@@ -413,8 +413,6 @@ export async function createOrder(orderInput: CreateOrderInputExtended): Promise
         ...packItem.pack_items,
         ...(packItem.selected_optional_item ? [packItem.selected_optional_item] : [])
       ];
-      
-      console.log(itemsToInsert);
   
       // Insert all items (regular + selected optional treated the same)
       if (itemsToInsert.length > 0) {

@@ -58,10 +58,6 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
   const regularItems = selectedPack?.pack_items?.filter((item) => !item.is_optional) || [];
   const optionalItems = selectedPack?.pack_items?.filter((item) => item.is_optional) || [];
 
-  // Calculate totals
-  const totalRegularItems = regularItems.reduce((sum, item) => sum + item.quantity, 0);
-  const totalOptionalItems = optionalItems.reduce((sum, item) => sum + item.quantity, 0);
-
   // Reset selections when a new pack is selected
   useEffect(() => {
     if (selectedPack) {
@@ -97,28 +93,62 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
     }
   };
 
-  // Handle size selection for a pack item
-  const handleSizeChange = (itemIndex: number, size: string) => {
+  // Updated handleSizeChange function
+  const handleSizeChange = (itemIndex: number, size: string, isOptional = false) => {
     if (!cartPackItem) {
       return;
     }
 
-    const updatedItem = updateCartPackItemDetail(cartPackItem, itemIndex, { size });
-    setCartPackItem(updatedItem);
+    if (isOptional) {
+      // Handle optional item size change
+      if (cartPackItem.selected_optional_item) {
+        const updatedItem = {
+          ...cartPackItem,
+          selected_optional_item: {
+            ...cartPackItem.selected_optional_item,
+            size,
+          },
+        };
+        setCartPackItem(updatedItem);
+      }
+    } else {
+      // Handle regular item size change
+      const updatedItem = updateCartPackItemDetail(cartPackItem, itemIndex, { size });
+      setCartPackItem(updatedItem);
+    }
   };
 
-  // Handle color selection for a pack item
-  const handleColorChange = (itemIndex: number, colorInfo: { name: string; hex: string }) => {
+  // Updated handleColorChange function
+  const handleColorChange = (
+    itemIndex: number,
+    colorInfo: { name: string; hex: string },
+    isOptional = false
+  ) => {
     if (!cartPackItem) {
       return;
     }
 
-    const updatedItem = updateCartPackItemDetail(cartPackItem, itemIndex, {
-      color: colorInfo.name,
-      colorHex: colorInfo.hex,
-    });
-
-    setCartPackItem(updatedItem);
+    if (isOptional) {
+      // Handle optional item color change
+      if (cartPackItem.selected_optional_item) {
+        const updatedItem = {
+          ...cartPackItem,
+          selected_optional_item: {
+            ...cartPackItem.selected_optional_item,
+            color: colorInfo.name,
+            colorHex: colorInfo.hex,
+          },
+        };
+        setCartPackItem(updatedItem);
+      }
+    } else {
+      // Handle regular item color change
+      const updatedItem = updateCartPackItemDetail(cartPackItem, itemIndex, {
+        color: colorInfo.name,
+        colorHex: colorInfo.hex,
+      });
+      setCartPackItem(updatedItem);
+    }
   };
 
   // Check if all required selections have been made
@@ -181,9 +211,9 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
     if (isAddToCartDisabled() || !cartPackItem || !selectedPack) {
       return;
     }
-  
+
     setIsAddingToCart(true);
-  
+
     try {
       // Create a new cart pack item with all selections
       const cartItem: CartPackItem = {
@@ -193,25 +223,27 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
           // Ensure size/color from selections are included
           size: item.size || undefined,
           color: item.color || undefined,
-          colorHex: item.colorHex || undefined
+          colorHex: item.colorHex || undefined,
         })),
         // Include selected optional item with its selections
-        selected_optional_item: cartPackItem.selected_optional_item ? {
-          ...cartPackItem.selected_optional_item,
-          size: cartPackItem.selected_optional_item.size || undefined,
-          color: cartPackItem.selected_optional_item.color || undefined,
-          colorHex: cartPackItem.selected_optional_item.colorHex || undefined
-        } : undefined
+        selected_optional_item: cartPackItem.selected_optional_item
+          ? {
+              ...cartPackItem.selected_optional_item,
+              size: cartPackItem.selected_optional_item.size || undefined,
+              color: cartPackItem.selected_optional_item.color || undefined,
+              colorHex: cartPackItem.selected_optional_item.colorHex || undefined,
+            }
+          : undefined,
       };
-  
+
       addToCart(cartItem);
-      
+
       notifications.show({
         title: 'Added to Cart',
         message: `${selectedPack.name} has been added to your cart`,
         color: 'green',
       });
-  
+
       onCloseAction();
     } catch (error) {
       notifications.show({
@@ -575,16 +607,29 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
                                           {originalItem.sizes.length === 1 ? (
                                             <Text>{originalItem.sizes[0]}</Text>
                                           ) : (
+                                            // In the optional items section, update the Select component:
                                             <Select
                                               placeholder="Select a size"
                                               data={originalItem.sizes.map((size: string) => ({
                                                 value: size,
                                                 label: size,
                                               }))}
-                                              value={optionalItem.size || null}
-                                              onChange={(value) =>
-                                                handleSizeChange(itemIndex, value || '')
+                                              value={
+                                                cartPackItem.selected_optional_item?.size || null
                                               }
+                                              onChange={(value) => {
+                                                if (isSelected) {
+                                                  const updatedItem = {
+                                                    ...cartPackItem,
+                                                    selected_optional_item: {
+                                                      ...cartPackItem.selected_optional_item,
+                                                      size: value || '',
+                                                    },
+                                                  };
+                                                  setCartPackItem(updatedItem);
+                                                }
+                                              }}
+                                              required
                                               radius="md"
                                               disabled={!isSelected}
                                             />
@@ -613,7 +658,7 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
                                                     }
                                                     onClick={() =>
                                                       isSelected &&
-                                                      handleColorChange(itemIndex, color)
+                                                      handleColorChange(index, color, true)
                                                     }
                                                     style={{
                                                       opacity: isSelected ? 1 : 0.6,

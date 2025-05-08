@@ -18,11 +18,6 @@ export function CartPackItemComponent({ item, index }: CartPackItemProps) {
 
   const itemId = `pack_item_${index}`;
 
-  // Combine regular pack items with the selected optional item (if any)
-  const allPackItems = item.selected_optional_item
-    ? [...item.pack_items, item.selected_optional_item]
-    : [...item.pack_items];
-
   return (
     <Box
       p="sm"
@@ -66,19 +61,19 @@ export function CartPackItemComponent({ item, index }: CartPackItemProps) {
           </Text>
 
           <Text size="sm" style={{ cursor: 'pointer' }} onClick={toggleDetails} c="blue" mb="xs">
-            {detailsOpened ? 'Hide details' : `Show details (${allPackItems.length} items)`}
+            {detailsOpened ? 'Hide details' : `Show details (${item.pack_items.length} items)`}
           </Text>
 
           <Collapse in={detailsOpened}>
             <Stack gap="xs" mt="xs" mb="md" pl="xs">
-              {allPackItems.map((packItem, idx) => (
+              {item.pack_items.map((packItem) => (
                 <Group
-                  key={`${item.id}_detail_${idx}`}
+                  key={`${item.id}_detail_${packItem.item_id}`}
                   justify="space-between"
                   wrap="nowrap"
                   gap="xs"
                 >
-                  <Text size="xs" component='div' lineClamp={1} style={{ flex: 1 }}>
+                  <Text size="xs" component="div" lineClamp={1} style={{ flex: 1 }}>
                     {packItem.quantity}x {packItem.name}
                     {packItem.is_optional && (
                       <Badge size="xs" color="green" ml="xs">

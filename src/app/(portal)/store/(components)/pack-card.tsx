@@ -85,13 +85,6 @@ export function PackCard({ pack, onViewPackAction }: PackCardProps) {
         <Text size="sm" c="dimmed" mb={4}>
           {pack.pack_code} • {totalItems} item{totalItems !== 1 ? 's' : ''}
         </Text>
-
-        {/* Optional items badge */}
-        {totalOptionalItems > 0 && (
-          <Badge color="green" variant="light" size="sm">
-            Customizable
-          </Badge>
-        )}
       </Box>
     </Card>
   );
