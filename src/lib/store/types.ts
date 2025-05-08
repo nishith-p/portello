@@ -303,8 +303,19 @@ export interface ItemWithQuantity {
   name: string;
   quantity: number;
   active: boolean;
+  variations?: ItemSizeColorQuantity[]; 
 }
 
+export interface ItemSizeColorQuantity {
+  size?: string;
+  color?: string;
+  color_hex?: string;
+  quantity: number;
+}
+
+/**
+ * Response for a list of item quantities
+ */
 export interface PackWithQuantity {
   pack_code: string;
   name: string;

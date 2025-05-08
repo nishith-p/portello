@@ -5,6 +5,7 @@ import {
   CreateOrderItemInput,
   CreateOrderPackItem,
   ItemQuantitySearchParams,
+  ItemSizeColorQuantity,
   ItemWithQuantity,
   Order,
   OrderAuditInfo,
@@ -437,18 +438,18 @@ export async function getOrderAudit(orderId: string): Promise<OrderAuditInfo> {
 /**
  * Fetch aggregated item quantities from the database
  */
+// lib/store/orders/db.ts
 export async function getItemQuantities(): Promise<{
   items: ItemWithQuantity[];
   packs: PackWithQuantity[];
 }> {
   try {
-    // Fetch all active items and packs
     const [activeItems, activePacks, orderedItems] = await Promise.all([
       getActiveStoreItems(),
       getActiveStorePacks(),
       supabaseServer
         .from('order_items')
-        .select('item_code, quantity, name, is_pack')
+        .select('item_code, quantity, name, is_pack, size, color, color_hex')
         .order('item_code'),
     ]);
 
@@ -459,6 +460,7 @@ export async function getItemQuantities(): Promise<{
     const packQuantityMap = new Map<string, number>();
     const itemNameMap = new Map<string, string>();
     const packNameMap = new Map<string, string>();
+    const itemVariationsMap = new Map<string, ItemSizeColorQuantity[]>();
 
     orderedItems.data?.forEach((item) => {
       if (item.is_pack) {
@@ -473,18 +475,50 @@ export async function getItemQuantities(): Promise<{
           (itemQuantityMap.get(item.item_code) || 0) + item.quantity
         );
         itemNameMap.set(item.item_code, item.name);
+        
+        // Track variations
+        if (item.size || item.color) {
+          const variations = itemVariationsMap.get(item.item_code) || [];
+          const existingVariation = variations.find(v => 
+            v.size === item.size && v.color === item.color
+          );
+          
+          if (existingVariation) {
+            existingVariation.quantity += item.quantity;
+          } else {
+            variations.push({
+              size: item.size || undefined,
+              color: item.color || undefined,
+              color_hex: item.color_hex || undefined,
+              quantity: item.quantity
+            });
+          }
+          itemVariationsMap.set(item.item_code, variations);
+        }
       }
     });
 
     // Combine with active items
-    const itemsWithQuantities: ItemWithQuantity[] = activeItems.map((item) => ({
-      item_code: item.item_code,
-      name: item.name,
-      quantity: itemQuantityMap.get(item.item_code) || 0,
-      active: item.active,
-    }));
+    const itemsWithQuantities: ItemWithQuantity[] = activeItems.map((item) => {
+      const baseItem: ItemWithQuantity = {
+        item_code: item.item_code,
+        name: item.name,
+        quantity: itemQuantityMap.get(item.item_code) || 0,
+        active: item.active,
+      };
 
-    // Combine with active packs
+      // Add variations if they exist
+      const variations = itemVariationsMap.get(item.item_code);
+      if (variations && variations.length > 0) {
+        return {
+          ...baseItem,
+          variations: variations
+        };
+      }
+      return baseItem;
+    });
+
+    // Combine with active packs (unchanged)
     const packsWithQuantities: PackWithQuantity[] = activePacks.map((pack) => ({
       pack_code: pack.pack_code,
       name: pack.name,

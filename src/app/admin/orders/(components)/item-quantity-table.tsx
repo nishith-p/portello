@@ -1,12 +1,14 @@
 // components/store/orders/(components)/item-quantity-table.tsx
-import { Group, Paper, Table, Text, Title } from '@mantine/core';
-import { IconArrowUp, IconArrowDown, IconArrowsVertical } from '@tabler/icons-react';
 import { useState } from 'react';
+import { IconArrowDown, IconArrowsVertical, IconArrowUp } from '@tabler/icons-react';
+import { Group, Paper, Table, Text, Title } from '@mantine/core';
 import { ItemWithQuantity, PackWithQuantity } from '@/lib/store/types';
+import { ItemVariationsModal } from './item-variation-modal';
 
 export function ItemsTable({ items }: { items: ItemWithQuantity[] }) {
   const [sortBy, setSortBy] = useState<'quantity' | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [selectedItem, setSelectedItem] = useState<ItemWithQuantity | null>(null);
 
   const toggleSort = (column: 'quantity') => {
     if (sortBy === column) {
@@ -28,20 +30,31 @@ export function ItemsTable({ items }: { items: ItemWithQuantity[] }) {
 
   return (
     <Paper withBorder p="md" mb="md">
-      <Title order={3} mb="sm">Items</Title>
+      <Title order={3} mb="sm">
+        Items
+      </Title>
+
+      {/* Single modal instance outside the table */}
+      <ItemVariationsModal
+        item={selectedItem}
+        opened={!!selectedItem}
+        onClose={() => setSelectedItem(null)}
+      />
+
       <Table striped highlightOnHover withTableBorder>
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Item Code</Table.Th>
             <Table.Th>Name</Table.Th>
-            <Table.Th 
-              style={{ cursor: 'pointer' }}
-              onClick={() => toggleSort('quantity')}
-            >
+            <Table.Th style={{ cursor: 'pointer' }} onClick={() => toggleSort('quantity')}>
               <Group gap="xs">
                 Quantity Ordered
                 {sortBy === 'quantity' ? (
-                  sortDirection === 'asc' ? <IconArrowUp size={14} /> : <IconArrowDown size={14} />
+                  sortDirection === 'asc' ? (
+                    <IconArrowUp size={14} />
+                  ) : (
+                    <IconArrowDown size={14} />
+                  )
                 ) : (
                   <IconArrowsVertical size={14} opacity={0.5} />
                 )}
@@ -52,7 +65,11 @@ export function ItemsTable({ items }: { items: ItemWithQuantity[] }) {
         <Table.Tbody>
           {sortedItems.length > 0 ? (
             sortedItems.map((item) => (
-              <Table.Tr key={item.item_code}>
+              <Table.Tr
+                key={item.item_code}
+                style={{ cursor: 'pointer' }}
+                onClick={() => setSelectedItem(item)}
+              >
                 <Table.Td>{item.item_code}</Table.Td>
                 <Table.Td>{item.name}</Table.Td>
                 <Table.Td>{item.quantity}</Table.Td>
@@ -61,7 +78,9 @@ export function ItemsTable({ items }: { items: ItemWithQuantity[] }) {
           ) : (
             <Table.Tr>
               <Table.Td colSpan={3}>
-                <Text ta="center" c="dimmed">No items found</Text>
+                <Text ta="center" c="dimmed">
+                  No items found
+                </Text>
               </Table.Td>
             </Table.Tr>
           )}
@@ -71,6 +90,7 @@ export function ItemsTable({ items }: { items: ItemWithQuantity[] }) {
   );
 }
 
+// PacksTable remains unchanged
 export function PacksTable({ packs }: { packs: PackWithQuantity[] }) {
   const [sortBy, setSortBy] = useState<'quantity' | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
@@ -95,20 +115,23 @@ export function PacksTable({ packs }: { packs: PackWithQuantity[] }) {
 
   return (
     <Paper withBorder p="md">
-      <Title order={3} mb="sm">Packs</Title>
+      <Title order={3} mb="sm">
+        Packs
+      </Title>
       <Table striped highlightOnHover withTableBorder>
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Pack Code</Table.Th>
             <Table.Th>Name</Table.Th>
-            <Table.Th 
-              style={{ cursor: 'pointer' }}
-              onClick={() => toggleSort('quantity')}
-            >
+            <Table.Th style={{ cursor: 'pointer' }} onClick={() => toggleSort('quantity')}>
               <Group gap="xs">
                 Quantity Ordered
                 {sortBy === 'quantity' ? (
-                  sortDirection === 'asc' ? <IconArrowUp size={14} /> : <IconArrowDown size={14} />
+                  sortDirection === 'asc' ? (
+                    <IconArrowUp size={14} />
+                  ) : (
+                    <IconArrowDown size={14} />
+                  )
                 ) : (
                   <IconArrowsVertical size={14} opacity={0.5} />
                 )}
@@ -128,7 +151,9 @@ export function PacksTable({ packs }: { packs: PackWithQuantity[] }) {
           ) : (
             <Table.Tr>
               <Table.Td colSpan={3}>
-                <Text ta="center" c="dimmed">No packs found</Text>
+                <Text ta="center" c="dimmed">
+                  No packs found
+                </Text>
               </Table.Td>
             </Table.Tr>
           )}
