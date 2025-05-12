@@ -13,20 +13,23 @@ export function ItemVariationsModal({
   if (!item) {
     return null;
   }
+
   if (!item.variations || item.variations.length === 0) {
     return (
-      <Modal opened={opened} onClose={onClose} size='lg' withCloseButton={false} centered >
-        <Text c="dimmed">
-          No variations available.
-        </Text>
+      <Modal opened={opened} onClose={onClose} size="lg" withCloseButton={false} centered>
+        <Text c="dimmed">No variations available.</Text>
       </Modal>
     );
   }
 
-  // Group variations by color
+  const getColorKey = (variation: ItemSizeColorQuantity): string => {
+    return variation.color || 'No Color';
+  };
+
   const colorGroups = new Map<string, ItemSizeColorQuantity[]>();
+
   item.variations.forEach((variation) => {
-    const colorKey = variation.color || 'No Color';
+    const colorKey = getColorKey(variation);
     const group = colorGroups.get(colorKey) || [];
     group.push(variation);
     colorGroups.set(colorKey, group);
@@ -42,24 +45,31 @@ export function ItemVariationsModal({
     return a.localeCompare(b);
   });
 
+  const sizeOrder = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+
   return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      size="lg"
-      withCloseButton={false}
-      centered
-    >
+    <Modal opened={opened} onClose={onClose} size="lg" withCloseButton={false} centered>
       <Stack gap="sm">
         {sortedColors.map((color) => {
           const variations = colorGroups.get(color) || [];
           const hasSizes = variations.some((v) => v.size);
+          const sizeGroups: Record<string, number> = {};
 
-          const sortedVariations = [...variations].sort((a, b) => {
-            const sizeOrder = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
-            const aIndex = a.size ? sizeOrder.indexOf(a.size) : -1;
-            const bIndex = b.size ? sizeOrder.indexOf(b.size) : -1;
-            return aIndex - bIndex;
+          if (hasSizes) {
+            variations.forEach((v) => {
+              const sizeKey = v.size || 'Default';
+              sizeGroups[sizeKey] = (sizeGroups[sizeKey] || 0) + v.quantity;
+            });
+          }
+
+          const sortedSizes = Object.keys(sizeGroups).sort((a, b) => {
+            if (a === 'Default') {
+              return -1;
+            }
+            if (b === 'Default') {
+              return 1;
+            }
+            return sizeOrder.indexOf(a) - sizeOrder.indexOf(b);
           });
 
           return (
@@ -84,7 +94,6 @@ export function ItemVariationsModal({
                   </Group>
                 )}
               </Text>
-
               <Table>
                 <Table.Thead>
                   <Table.Tr>
@@ -94,10 +103,10 @@ export function ItemVariationsModal({
                 </Table.Thead>
                 <Table.Tbody>
                   {hasSizes ? (
-                    sortedVariations.map((variation, idx) => (
-                      <Table.Tr key={`${color}-${idx}`}>
-                        <Table.Td>{variation.size || 'Default'}</Table.Td>
-                        <Table.Td>{variation.quantity}</Table.Td>
+                    sortedSizes.map((size) => (
+                      <Table.Tr key={`${color}-${size}`}>
+                        <Table.Td>{size}</Table.Td>
+                        <Table.Td>{sizeGroups[size]}</Table.Td>
                       </Table.Tr>
                     ))
                   ) : (
