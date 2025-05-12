@@ -256,3 +256,81 @@ export function useRequestAccountDeletion() {
     },
   });
 }
+
+/**
+ * Hook to fetch user's payment status
+ */
+export function useUserPaymentStatus() {
+  return useQuery<string | null>({
+    queryKey: ['userPaymentStatus'],
+    queryFn: async () => {
+      const response = await fetch('/api/users/me/payment-status');
+      if (!response.ok) {
+        throw new Error('Failed to fetch payment status');
+      }
+      const data = await response.json();
+      return data.payment || null;
+    }
+  });
+}
+
+/**
+ * Hook to fetch delegate payment details
+ */
+export function useDelegatePaymentDetails(userId: string) {
+  return useQuery({
+    queryKey: ['delegatePaymentDetails', userId],
+    queryFn: async () => {
+      const response = await fetch(`/api/payments/latest?user_id=${userId}&type=delegate`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch delegate payment details');
+      }
+      const data = await response.json();
+      return data || null; // Explicitly return null if no data
+    },
+    enabled: !!userId // Only run if userId exists
+  });
+}
+
+/**
+ * Hook to initiate delegate payment
+ */
+export function useInitiateDelegatePayment() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (customerData: {
+      first_name: string;
+      last_name: string;
+      email: string;
+      phone: string;
+      address: string;
+      city: string;
+      country: string;
+      position: string;
+    }) => {
+      const response = await fetch('/api/payhere/create-delegate-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ customer: customerData }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to initiate delegate payment');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['userPaymentStatus'] });
+      queryClient.invalidateQueries({ queryKey: ['delegatePaymentDetails'] });
+    },
+    onError: (error) => {
+      notifications.show({
+        title: 'Payment Error',
+        message: error.message || 'Failed to initiate payment',
+        color: 'red',
+      });
+    }
+  });
+}

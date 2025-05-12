@@ -144,3 +144,43 @@ export async function updateUserDeleteRequest(
 
   return data as User;
 }
+
+/**
+ * Get user's payment status
+ */
+export async function getUserPaymentStatus(kindeId: string): Promise<string | null> {
+  const { data, error } = await supabaseServer
+    .from('users')
+    .select('payment')
+    .eq('kinde_id', kindeId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching user payment status:', error);
+    return null;
+  }
+
+  return data?.payment;
+}
+
+/**
+ * Update user's payment status
+ */
+export async function updateUserPaymentStatus(
+  kindeId: string,
+  paymentId: string
+): Promise<User | null> {
+  const { data, error } = await supabaseServer
+    .from('users')
+    .update({ payment: paymentId })
+    .eq('kinde_id', kindeId)
+    .select('*')
+    .single();
+
+  if (error) {
+    console.error('Error updating user payment status:', error);
+    throw error;
+  }
+
+  return data as User;
+}

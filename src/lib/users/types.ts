@@ -43,6 +43,7 @@ export interface User {
   telegram_id: string | null;
   delete_requested: boolean | null;
   round: number | null;
+  payment: string | null; 
 }
 
 export interface UserDocuments {
