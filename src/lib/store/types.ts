@@ -69,7 +69,12 @@ export type OrderStatus =
   | 'processing'
   | 'shipped'
   | 'delivered'
-  | 'cancelled';
+  | 'cancelled'
+  | 'payment pending'
+  | 'payment cancelled'
+  | 'payment failed'
+  | 'charged back'
+  | 'failed';
 
 /**
  * Base order item properties common to all order item types
