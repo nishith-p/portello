@@ -1,4 +1,3 @@
-// components/store/orders/(components)/item-quantity-table.tsx
 import { useState } from 'react';
 import { IconArrowDown, IconArrowsVertical, IconArrowUp } from '@tabler/icons-react';
 import { Group, Paper, Table, Text, Title } from '@mantine/core';
@@ -20,12 +19,13 @@ export function ItemsTable({ items }: { items: ItemWithQuantity[] }) {
   };
 
   const sortedItems = [...items].sort((a, b) => {
-    if (!sortBy) return 0;
+    if (!sortBy) {
+      return 0;
+    }
     if (sortDirection === 'asc') {
       return a.quantity - b.quantity;
-    } else {
-      return b.quantity - a.quantity;
     }
+    return b.quantity - a.quantity;
   });
 
   return (
@@ -104,12 +104,13 @@ export function PacksTable({ packs }: { packs: PackWithQuantity[] }) {
   };
 
   const sortedPacks = [...packs].sort((a, b) => {
-    if (!sortBy) return 0;
+    if (!sortBy) {
+      return 0;
+    }
     if (sortDirection === 'asc') {
       return a.quantity - b.quantity;
-    } else {
-      return b.quantity - a.quantity;
     }
+    return b.quantity - a.quantity;
   });
 
   return (

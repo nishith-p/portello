@@ -248,7 +248,7 @@ export function OrderDetailModal({
                             position: 'relative',
                             margin: '0 auto',
                             borderRadius: '50%',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
                           }}
                         >
                           <Image

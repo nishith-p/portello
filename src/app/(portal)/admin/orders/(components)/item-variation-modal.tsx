@@ -1,4 +1,3 @@
-// components/store/orders/(components)/item-variations-modal.tsx
 import { Group, Modal, Stack, Table, Text } from '@mantine/core';
 import { ItemSizeColorQuantity, ItemWithQuantity } from '@/lib/store/types';
 
@@ -11,12 +10,14 @@ export function ItemVariationsModal({
   opened: boolean;
   onClose: () => void;
 }) {
-  if (!item) return null;
+  if (!item) {
+    return null;
+  }
   if (!item.variations || item.variations.length === 0) {
     return (
-      <Modal opened={opened} onClose={onClose} centered>
-        <Text c="dimmed" fs="italic">
-          No variations available
+      <Modal opened={opened} onClose={onClose} size='lg' withCloseButton={false} centered >
+        <Text c="dimmed">
+          No variations available.
         </Text>
       </Modal>
     );
@@ -32,8 +33,12 @@ export function ItemVariationsModal({
   });
 
   const sortedColors = Array.from(colorGroups.keys()).sort((a, b) => {
-    if (a === 'No Color') return 1;
-    if (b === 'No Color') return -1;
+    if (a === 'No Color') {
+      return 1;
+    }
+    if (b === 'No Color') {
+      return -1;
+    }
     return a.localeCompare(b);
   });
 
@@ -41,13 +46,9 @@ export function ItemVariationsModal({
     <Modal
       opened={opened}
       onClose={onClose}
-      title={
-        <Text fw={700} size="lg">
-          Item Variations
-        </Text>
-      }
-      centered
       size="lg"
+      withCloseButton={false}
+      centered
     >
       <Stack gap="sm">
         {sortedColors.map((color) => {
