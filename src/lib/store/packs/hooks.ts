@@ -185,7 +185,10 @@ export function useUpdateStorePack() {
       // Combine the data and pack items (if provided) for the API
       const requestBody: any = { ...data };
       if (packItems) {
-        requestBody.pack_items = packItems;
+        requestBody.pack_items = packItems.map(item => ({
+          ...item,
+          is_optional: item.is_optional || false
+        }));
       }
 
       const response = await fetch(`/api/store/packs/${id}`, {

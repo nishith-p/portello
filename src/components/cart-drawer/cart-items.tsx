@@ -66,15 +66,20 @@ export function CartPackItemComponent({ item, index }: CartPackItemProps) {
 
           <Collapse in={detailsOpened}>
             <Stack gap="xs" mt="xs" mb="md" pl="xs">
-              {item.pack_items.map((packItem, idx) => (
+              {item.pack_items.map((packItem) => (
                 <Group
-                  key={`${item.id}_detail_${idx}`}
+                  key={`${item.id}_detail_${packItem.item_id}`}
                   justify="space-between"
                   wrap="nowrap"
                   gap="xs"
                 >
-                  <Text size="xs" lineClamp={1} style={{ flex: 1 }}>
+                  <Text size="xs" component="div" lineClamp={1} style={{ flex: 1 }}>
                     {packItem.quantity}x {packItem.name}
+                    {packItem.is_optional && (
+                      <Badge size="xs" color="green" ml="xs">
+                        Optional
+                      </Badge>
+                    )}
                   </Text>
                   <Group gap={4} wrap="nowrap">
                     {packItem.size && (

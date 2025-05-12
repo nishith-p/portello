@@ -26,6 +26,7 @@ export default function CreatePackPage() {
           formData.pack_items?.map((item) => ({
             item_id: item.item_id,
             quantity: item.quantity,
+            is_optional: item.is_optional || false,
           })) || [],
       });
     } catch (err) {

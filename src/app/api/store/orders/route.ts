@@ -8,6 +8,7 @@ import {
   CreateOrderItemInput,
   CreateOrderPackItem,
   Order,
+  isOptionalItem
 } from '@/lib/store/types';
 
 /**
@@ -32,10 +33,6 @@ export async function GET(request: NextRequest) {
   );
 }
 
-/**
- * POST /api/store/orders
- * Create a new order
- */
 /**
  * POST /api/store/orders
  * Create a new order
@@ -137,6 +134,31 @@ export async function POST(request: NextRequest) {
                         };
                       })
                     : [],
+                    ...('selected_optional_item' in item && 
+                      isOptionalItem(item.selected_optional_item) && {
+                    selected_optional_item: {
+                      item_code: String(item.selected_optional_item.item_code),
+                      quantity: Number(item.selected_optional_item.quantity ?? 1),
+                      price: Number(item.selected_optional_item.price ?? 0),
+                      size: 'size' in item.selected_optional_item 
+                        ? String(item.selected_optional_item.size) 
+                        : null,
+                      color: 'color' in item.selected_optional_item 
+                        ? String(item.selected_optional_item.color) 
+                        : null,
+                      color_hex: 'color_hex' in item.selected_optional_item
+                        ? String(item.selected_optional_item.color_hex)
+                        : 'colorHex' in item.selected_optional_item
+                          ? String(item.selected_optional_item.colorHex)
+                          : null,
+                      name: 'name' in item.selected_optional_item 
+                        ? String(item.selected_optional_item.name) 
+                        : null,
+                      image: 'image' in item.selected_optional_item 
+                        ? String(item.selected_optional_item.image) 
+                        : null,
+                    }
+                  })
                 };
                 typedItems.push(packItem);
               }

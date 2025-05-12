@@ -104,6 +104,19 @@ export function useOrderHooks() {
                 name: packItem.name,
                 image: packItem.image,
               })),
+              // Add selected optional item if it exists
+            ...(item.selected_optional_item && {
+              selected_optional_item: {
+                item_code: item.selected_optional_item.item_code,
+                quantity: item.selected_optional_item.quantity || 1,
+                price: 0,
+                size: item.selected_optional_item.size,
+                color: item.selected_optional_item.color,
+                color_hex: item.selected_optional_item.colorHex,
+                name: item.selected_optional_item.name,
+                image: item.selected_optional_item.image,
+              }
+            })
             };
 
             orderItems.push(packItemInput);

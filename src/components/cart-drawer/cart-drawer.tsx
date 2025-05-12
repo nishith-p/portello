@@ -85,7 +85,18 @@ export const CartDrawer = () => {
 
     // If it's a pack item, use the special component and pass the index
     if (isPackItem(item)) {
-      return <CartPackItemComponent key={`pack_item_${index}`} item={item} index={index} />;
+      // Create a new pack items array that includes the selected optional item if it exists
+      const packItemsWithOptional = item.selected_optional_item
+        ? [...item.pack_items, item.selected_optional_item]
+        : item.pack_items;
+    
+      // Create a new item object with the updated pack_items
+      const updatedItem = {
+        ...item,
+        pack_items: packItemsWithOptional
+      };
+    
+      return <CartPackItemComponent key={`pack_item_${index}`} item={updatedItem} index={index} />;
     }
 
     // Otherwise, render regular item
