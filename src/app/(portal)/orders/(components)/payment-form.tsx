@@ -19,7 +19,8 @@ import {
   Grid,
   GridCol,
   Group,
-  Paper, Select,
+  Paper,
+  Select,
   SimpleGrid,
   Stack,
   Text,
@@ -28,8 +29,8 @@ import {
   Transition,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useOrderHooks } from '@/lib/store/orders/hooks';
 import { ENTITIES } from '@/app/(portal)/admin/delegates/(components)/constants';
+import { useOrderHooks } from '@/lib/store/orders/hooks';
 
 interface Customer {
   first_name: string;
@@ -41,11 +42,13 @@ interface PaymentFormProps {
   orderId: string;
   currency: string;
   customer?: Customer;
+  amount?: string;
 }
 
 export function PaymentForm({ orderId, currency, customer }: PaymentFormProps) {
-  const { useOrder } = useOrderHooks();
+  const { useOrder, usePayhereCheckout } = useOrderHooks();
   const { data: order, isLoading, error } = useOrder(orderId);
+  const payhereCheckout = usePayhereCheckout();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm({
@@ -72,40 +75,28 @@ export function PaymentForm({ orderId, currency, customer }: PaymentFormProps) {
   const handlePayNow = form.onSubmit(async (values) => {
     setIsSubmitting(true);
     try {
-      const res = await fetch('/api/payhere/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId,
-          customer: {
-            first_name: values.firstName,
-            last_name: values.lastName,
-            email: values.email,
-            phone: values.phone,
-            address: values.address,
-            city: values.city,
-            country: values.country,
-          },
-        }),
+      const { actionUrl, fields } = await payhereCheckout.mutateAsync({
+        orderId,
+        customer: {
+          first_name: values.firstName,
+          last_name: values.lastName,
+          email: values.email,
+          phone: values.phone,
+          address: values.address,
+          city: values.city,
+          country: values.country,
+        },
       });
 
-      if (!res.ok) {
-        throw new Error('Failed to create checkout session');
-      }
-
-      const { actionUrl, fields } = await res.json();
       const formEl = document.createElement('form');
-
       formEl.method = 'POST';
       formEl.action = actionUrl;
 
       Object.entries(fields).forEach(([key, val]) => {
         const input = document.createElement('input');
-
         input.type = 'hidden';
         input.name = key;
         input.value = String(val);
-
         formEl.appendChild(input);
       });
 
@@ -118,7 +109,7 @@ export function PaymentForm({ orderId, currency, customer }: PaymentFormProps) {
     }
   });
 
-  const isDelegateFeeOrder = order?.items?.some(item => item.item_code === 'DELEGATE_FEE');
+  const isDelegateFeeOrder = order?.items?.some((item) => item.item_code === 'DELEGATE_FEE');
 
   return (
     <Grid>

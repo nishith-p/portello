@@ -7,6 +7,11 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { Badge, Button, Card, Group, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { User } from '@/lib/users/types';
+import {
+  useCreateDelegateOrder,
+  useLatestPaymentRecord,
+  usePendingDelegateOrder,
+} from '@/lib/users/payments/hooks';
 
 interface DelegatePaymentFormProps {
   user: User;
@@ -17,68 +22,17 @@ export function DelegatePaymentCard({ user }: DelegatePaymentFormProps) {
   const paymentStatus = user.payment ? 'paid' : 'pending';
 
   // Check for existing pending delegate fee order
-  const { data: pendingOrder, refetch: refetchPendingOrder } = useQuery({
-    queryKey: ['pendingDelegateOrder', user.kinde_id],
-    queryFn: async () => {
-      const res = await fetch(`/api/payments/pending-delegate?user_id=${user.kinde_id}`);
-      if (!res.ok) return null;
-      return res.json();
-    },
-    staleTime: 0, // Optional: Ensures it's always considered stale
-  });
+  const {
+    data: pendingOrder,
+    refetch: refetchPendingOrder,
+  } = usePendingDelegateOrder(user.kinde_id);
+
+  const createDelegateOrder = useCreateDelegateOrder(user.kinde_id);
+  const { data: paymentRecord } = useLatestPaymentRecord(user.kinde_id, !!user.payment);
 
   useEffect(() => {
     refetchPendingOrder();
   }, []);
-
-  const createDelegateOrder = useMutation({
-    mutationFn: async () => {
-      const response = await fetch('/api/payments/delegate-order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ user_id: user.kinde_id }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        // If we have an existing order ID, redirect to it
-        if (errorData.existingOrderId) {
-          router.push(`/orders/${errorData.existingOrderId}`);
-          return;
-        }
-        throw new Error(errorData.error || 'Failed to create delegate order');
-      }
-      return response.json();
-    },
-    onSuccess: (data) => {
-      notifications.show({
-        title: 'Order Created',
-        message: 'Your delegate fee order has been created',
-        color: 'green',
-      });
-      router.push(`/orders/${data.id}`);
-    },
-    onError: (error) => {
-      notifications.show({
-        title: 'Error',
-        message: error.message || 'Failed to create delegate order',
-        color: 'red',
-      });
-      console.error('Delegate order creation error:', error);
-    },
-  });
-
-  const { data: paymentRecord } = useQuery({
-    queryKey: ['delegatePaymentRecord', user.kinde_id],
-    queryFn: async () => {
-      if (!user.payment) return null;
-      const res = await fetch(`/api/payments/latest?user_id=${user.kinde_id}`);
-      if (!res.ok) throw new Error('Failed to fetch payment record');
-      return res.json();
-    },
-  });
 
   // If user has a pending order, show View Order button
   if (pendingOrder?.id && paymentStatus !== 'paid') {
