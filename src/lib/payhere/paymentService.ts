@@ -1,6 +1,8 @@
+// lib/payhere/paymentService.ts
 import crypto from 'crypto';
 import { getOrderById, updateOrderStatus, insertPaymentRecord } from './paymentRepository';
 import { OrderStatus } from '@/lib/store/types';
+import { supabaseServer } from '@/lib/core/supabase';
 
 export interface PaymentRecordInput {
   payment_id: string;
@@ -14,9 +16,6 @@ export interface PaymentRecordInput {
   created_at?: string;
 }
 
-/**
- * Verifies MD5 signature and persists order + payment.
- */
 export async function processPayHereNotification(
   payload: Record<string, string>
 ): Promise<void> {
@@ -48,7 +47,7 @@ export async function processPayHereNotification(
   }
 
   // Ensure order exists
-  await getOrderById(order_id);
+  const order = await getOrderById(order_id);
 
   // Update status
   let newStatus: OrderStatus;
@@ -86,4 +85,19 @@ export async function processPayHereNotification(
     created_at: new Date().toISOString(),
   };
   await insertPaymentRecord(order_id, paymentInput);
+
+  // If payment is successful and order contains delegate fee, update user's payment status
+  if (status_code === '2') {
+    const { data: orderItems } = await supabaseServer
+      .from('order_items')
+      .select('item_code')
+      .eq('order_id', order_id);
+
+    if (orderItems?.some(item => item.item_code === 'DELEGATE_FEE')) {
+      await supabaseServer
+        .from('users')
+        .update({ payment: payment_id })
+        .eq('kinde_id', order.user_id);
+    }
+  }
 }

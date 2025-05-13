@@ -99,6 +99,7 @@ export interface OrderItem extends OrderItemBase {
   id: string;
   order_id: string;
   created_at?: string;
+  description?: string;
 }
 
 /**
@@ -359,4 +360,32 @@ export interface OptionalItem {
 
 export function isOptionalItem(obj: unknown): obj is OptionalItem {
   return typeof obj === 'object' && obj !== null && 'item_code' in obj;
+}
+
+export interface PlaceOrderInput {
+  items: (CartItem | CartPackItem)[];
+  total_amount: number;
+}
+
+export interface UpdateOrderStatusInput {
+  orderId: string;
+  status: OrderStatus;
+}
+
+export interface PayhereCheckoutInput {
+  orderId: string;
+  customer: {
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    country: string;
+  };
+}
+
+export interface PayhereCheckoutResponse {
+  actionUrl: string;
+  fields: Record<string, string>;
 }
