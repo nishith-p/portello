@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const amount = ['MCPc', 'MCPe'].includes(userProfile.position) ? 100 : 70;
+        const amount = ['MCPc', 'MCPe'].includes(userProfile.position) ? 100 : 1;
 
         // Create delegate fee order
         const { data: order, error } = await supabaseServer
