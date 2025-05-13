@@ -1,7 +1,7 @@
+// (portal)/orders/(components)/order-details-modal.tsx
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   Badge,
@@ -50,6 +50,8 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
     router.push(`/orders/${orderData.id}`);
   };
 
+  const isDelegateFeeOrder = order?.items?.some(item => item.item_code === 'DELEGATE_FEE');
+
   if (!order) {
     return <></>;
   }
@@ -62,7 +64,7 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
       onClose={onCloseAction}
       title={
         <Text fw={700} size="lg">
-          Order Details
+          {isDelegateFeeOrder ? 'Delegate Fee Payment' : 'Order Details'}
         </Text>
       }
       size={isMobile ? '95%' : 'lg'}
@@ -71,7 +73,7 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
       <Stack gap="md">
         <Card withBorder padding="md">
           <Text fw={600} mb="md">
-            Order Information
+            {isDelegateFeeOrder ? 'Payment Information' : 'Order Information'}
           </Text>
 
           <Stack gap="xs">
@@ -85,14 +87,13 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
                   }}
                 >
                   <Text span fw={500}>
-                    Order ID:{' '}
+                    {isDelegateFeeOrder ? 'Payment ID:' : 'Order ID:'}
                   </Text>
                   {order.id}
                 </Text>
               </Tooltip>
             </Box>
 
-            {/* Date and Status */}
             <Grid gutter="xs">
               <Grid.Col span={isMobile ? 12 : 6}>
                 <Box py={5} px="sm">
@@ -119,7 +120,6 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
               </Grid.Col>
             </Grid>
 
-            {/* Total Amount */}
             <Box py={5} px="sm" bg="gray.0" style={{ borderRadius: 4 }}>
               <Group justify="space-between">
                 <Text size="sm" fw={500}>
@@ -133,10 +133,9 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
           </Stack>
         </Card>
 
-        {/* Order Items */}
         <Card withBorder padding="md">
           <Text fw={600} mb="md">
-            Order Items ({orderItems.length})
+            {isDelegateFeeOrder ? 'Payment Details' : `Order Items (${orderItems.length})`}
           </Text>
 
           {orderItems.length === 0 ? (
@@ -146,98 +145,24 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
               {orderItems.map((item) => (
                 <Card key={item.id} withBorder>
                   <Grid gutter="md" align="center">
-                    <Grid.Col span={{ base: 12, sm: 2 }}>
-                      {item.image ? (
-                        <Box
-                          style={{
-                            width: 60,
-                            height: 60,
-                            position: 'relative',
-                            margin: isMobile ? '0 auto 8px' : '0 auto',
-                            borderRadius: '50%',
-                            overflow: 'hidden'
-                          }}
-                        >
-                          <Image
-                            src={item.image}
-                            alt={item.name || 'Product image'}
-                            fill
-                            sizes="(max-width: 768px) 100vw, 50vw"
-                            style={{ objectFit: 'cover', borderRadius: 4 }}
-                          />
-                        </Box>
-                      ) : (
-                        <Box
-                          style={{
-                            width: 60,
-                            height: 60,
-                            backgroundColor: '#f0f0f0',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: 4,
-                            margin: isMobile ? '0 auto 8px' : '0 auto',
-                          }}
-                        >
-                          <Text size="xs" c="dimmed">
-                            No image
-                          </Text>
-                        </Box>
+                    <Grid.Col span={{ base: 12, sm: 8 }}>
+                      <Text fw={500}>{item.name || `Item ${item.item_code}`}</Text>
+                      {item.item_code === 'DELEGATE_FEE' && item.description && (
+                        <Text size="sm" c="dimmed">
+                          {item.description}
+                        </Text>
                       )}
                     </Grid.Col>
-
-                    <Grid.Col span={{ base: 12, sm: 6 }}>
-                      <Text fw={500}>{item.name || `Product ${item.item_code}`}</Text>
-                      <Text size="sm" c="dimmed">
-                        Code: {item.item_code}
-                      </Text>
-                      <Group mt={5} gap="xs" wrap="wrap">
-                        {item.size && (
-                          <Badge variant="outline" size="sm">
-                            Size: {item.size}
-                          </Badge>
-                        )}
-                        {item.color && (
-                          <Badge
-                            variant="outline"
-                            size="sm"
-                            leftSection={
-                              item.color_hex && (
-                                <div
-                                  style={{
-                                    width: 10,
-                                    height: 10,
-                                    borderRadius: '50%',
-                                    backgroundColor: item.color_hex,
-                                  }}
-                                />
-                              )
-                            }
-                          >
-                            Color: {item.color}
-                          </Badge>
-                        )}
-                      </Group>
-                    </Grid.Col>
-
                     <Grid.Col span={{ base: 12, sm: 4 }}>
                       <Flex
                         justify={isMobile ? 'space-between' : 'flex-end'}
-                        align={isMobile ? 'center' : 'flex-end'}
-                        direction={isMobile ? 'row' : 'column'}
-                        wrap="wrap"
-                        gap="sm"
+                        align="center"
                       >
                         <Text>
                           {formatCurrency(item.price)} × {item.quantity}
                         </Text>
                         <Text fw={700}>{formatCurrency(item.price * item.quantity)}</Text>
                       </Flex>
-                      <Text fz={10} c="red">
-                        {item.pre_price !== 0 && item.discount_perc !== 0
-                          ? `Incl. Discount: ${item.discount_perc}%`
-                          : null}
-                      </Text>
                     </Grid.Col>
                   </Grid>
                 </Card>
@@ -249,7 +174,7 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
 
           <Card p="md" withBorder bg="gray.0">
             <Group justify="space-between">
-              <Text fw={500}>Order Total</Text>
+              <Text fw={500}>{isDelegateFeeOrder ? 'Payment Total' : 'Order Total'}</Text>
               <Text fw={700} size="lg">
                 {formatCurrency(order.total_amount)}
               </Text>
@@ -257,8 +182,14 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
           </Card>
 
           {order.status !== 'paid' && (
-            <Button color="green" size="md" mt="md" onClick={() => handlePayNow(order)}>
-              Checkout
+            <Button 
+              color="green" 
+              size="md" 
+              mt="md" 
+              fullWidth
+              onClick={() => handlePayNow(order)}
+            >
+              {isDelegateFeeOrder ? 'Pay Delegate Fee' : 'Checkout'}
             </Button>
           )}
         </Card>

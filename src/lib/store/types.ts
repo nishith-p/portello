@@ -99,6 +99,7 @@ export interface OrderItem extends OrderItemBase {
   id: string;
   order_id: string;
   created_at?: string;
+  description?: string;
 }
 
 /**

@@ -10,6 +10,7 @@ export async function getOrderById(orderId: string) {
       id,
       user_id,
       total_amount,
+      status,
       users:user_id (
         first_name,
         last_name,
@@ -18,6 +19,7 @@ export async function getOrderById(orderId: string) {
     `)
     .eq('id', orderId)
     .single();
+    
   if (error) {
     if (error.code === 'PGRST116') {
       throw new NotFoundError(`Order with ID ${orderId} not found`);
