@@ -3,9 +3,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useMutation, useQuery } from '@tanstack/react-query';
 import { Badge, Button, Card, Group, Stack, Text } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
 import { User } from '@/lib/users/types';
 import {
   useCreateDelegateOrder,
@@ -46,7 +44,7 @@ export function DelegatePaymentCard({ user }: DelegatePaymentFormProps) {
             <Badge color="yellow">PENDING</Badge>
           </Group>
           <Text>You have a pending delegate fee payment.</Text>
-          <Button onClick={() => router.push(`/orders/${pendingOrder.id}`)}>View Order</Button>
+          <Button onClick={() => router.push(`/orders/${pendingOrder.id}`)}>Complete Payment</Button>
         </Stack>
       </Card>
     );

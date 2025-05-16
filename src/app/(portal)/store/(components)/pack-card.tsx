@@ -19,13 +19,15 @@ export function PackCard({ pack, onViewPackAction }: PackCardProps) {
   };
 
   // Calculate total items in the pack
-  // const totalItems = pack.pack_items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
-  const regularItems = pack.pack_items?.filter(item => !item.is_optional) || [];
-  const optionalItems = pack.pack_items?.filter(item => item.is_optional) || [];
-  
+  const regularItems = pack.pack_items?.filter((item) => !item.is_optional) || [];
+  const optionalItems = pack.pack_items?.filter((item) => item.is_optional) || [];
+
   const totalRegularItems = regularItems.reduce((sum, item) => sum + item.quantity, 0);
   const totalOptionalItems = optionalItems.reduce((sum, item) => sum + item.quantity, 0);
-  const totalItems = totalRegularItems + 1;
+
+  const totalItems = totalRegularItems;
+  const totalItemsWithOptional = totalRegularItems + 1;
+  const hasOptionalItems = optionalItems.length > 0;
 
   return (
     <Card
@@ -83,7 +85,8 @@ export function PackCard({ pack, onViewPackAction }: PackCardProps) {
 
         {/* Pack Code and Items Count */}
         <Text size="sm" c="dimmed" mb={4}>
-          {pack.pack_code} • {totalItems} item{totalItems !== 1 ? 's' : ''}
+          {pack.pack_code} • {hasOptionalItems ? totalItemsWithOptional : totalItems} item
+          {(hasOptionalItems ? totalItemsWithOptional : totalItems) !== 1 ? 's' : ''}
         </Text>
       </Box>
     </Card>

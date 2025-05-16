@@ -275,11 +275,11 @@ export async function createStorePack(packData: StorePackWithItemsInput): Promis
       throw new NotFoundError(`Store item with ID ${packItem.item_id} not found`);
     }
 
-    if (!item.active) {
-      throw new BadRequestError(
-        `Store item ${item.name} (${item.item_code}) is not active and cannot be added to a pack`
-      );
-    }
+    // if (!item.active) {
+    //   throw new BadRequestError(
+    //     `Store item ${item.name} (${item.item_code}) is not active and cannot be added to a pack`
+    //   );
+    // }
 
     if (packItem.quantity <= 0) {
       throw new ValidationError('Item quantity must be positive', {
@@ -445,11 +445,11 @@ export async function updateStorePackItems(
       throw new NotFoundError(`Store item with ID ${packItem.item_id} not found`);
     }
 
-    if (!item.active) {
-      throw new BadRequestError(
-        `Store item ${item.name} (${item.item_code}) is not active and cannot be added to a pack`
-      );
-    }
+    // if (!item.active) {
+    //   throw new BadRequestError(
+    //     `Store item ${item.name} (${item.item_code}) is not active and cannot be added to a pack`
+    //   );
+    // }
 
     if (packItem.quantity <= 0) {
       throw new ValidationError('Item quantity must be positive', {

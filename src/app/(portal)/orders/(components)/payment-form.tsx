@@ -42,10 +42,10 @@ interface PaymentFormProps {
   orderId: string;
   currency: string;
   customer?: Customer;
-  amount?: string;
+  amount: number;
 }
 
-export function PaymentForm({ orderId, currency, customer }: PaymentFormProps) {
+export function PaymentForm({ orderId, currency, customer, amount }: PaymentFormProps) {
   const { useOrder, usePayhereCheckout } = useOrderHooks();
   const { data: order, isLoading, error } = useOrder(orderId);
   const payhereCheckout = usePayhereCheckout();
@@ -281,7 +281,7 @@ export function PaymentForm({ orderId, currency, customer }: PaymentFormProps) {
                   Total:
                 </Text>
                 <Text fw={700} size="md" c="blue">
-                  {currency} {order.total_amount.toFixed(2)}
+                  {currency} {amount.toFixed(2)}
                 </Text>
               </Group>
             </Stack>
