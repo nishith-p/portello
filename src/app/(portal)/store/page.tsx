@@ -22,6 +22,7 @@ import { useCart } from '@/context/cart';
 import { useStoreItems } from '@/lib/store/items/hooks';
 import { useStorePacks } from '@/lib/store/packs/hooks';
 import { StoreItem, StorePack } from '@/lib/store/types';
+import { DiscountBanner } from './(components)/discount-banner';
 
 export default function StorePage() {
   const [selectedItem, setSelectedItem] = useState<StoreItem | null>(null);
@@ -103,6 +104,10 @@ export default function StorePage() {
       <Title size="h2" mb="xl" c="gray.8">
         Store
       </Title>
+
+      <Container size="xl" mb="xl">
+        <DiscountBanner />
+      </Container>
 
       {hasItems || hasPacks ? (
         <>
