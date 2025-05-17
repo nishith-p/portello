@@ -105,7 +105,7 @@ export default function StorePage() {
         Store
       </Title>
 
-      <Container size="xl" mb="xl">
+      <Container fluid mb="xl" style={{ padding: 0}}>
         <DiscountBanner />
       </Container>
 

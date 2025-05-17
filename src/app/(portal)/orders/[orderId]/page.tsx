@@ -21,8 +21,8 @@ export default async function OrderPage({ params }: { params: Params }) {
           Checkout
         </Title>
         <Text c="dimmed" fz={{ base: 'sm', sm: 'md' }}>
-          Complete your order payment securely. You will be sent an email containing the receipt
-          once the payment is successful.
+          Complete your payments securely through PayHere. You will be sent an email containing the
+          receipt once the payment is successful.
         </Text>
         <PaymentForm
           orderId={orderId}
