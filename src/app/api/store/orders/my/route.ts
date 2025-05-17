@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 }
 
 // Hack fix for delegate payment related renderings
-const isDelegatePayment = (amount: number | string): boolean => {
+export const isDelegatePayment = (amount: number | string): boolean => {
   // eslint-disable-next-line eqeqeq
   return amount == 560 || amount == 630;
 }

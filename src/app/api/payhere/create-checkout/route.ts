@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { getOrderById } from '@/lib/payhere/paymentRepository';
+import { isDelegatePayment } from '@/app/api/store/orders/my/route';
 
 type OrderDetails = Awaited<ReturnType<typeof getOrderById>>;
 
@@ -26,7 +27,8 @@ export async function POST(req: Request) {
       throw new Error('Missing PayHere environment configuration');
     }
 
-    const formattedAmount = parseFloat(orderDetails.total_amount.toString()).toFixed(2);
+    const formattedAmount = applyDiscountIfApplicable(orderDetails.total_amount).toFixed(2);
+
     const currency = 'EUR';
 
     const hashedSecret = crypto
@@ -71,3 +73,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message || 'Server Error' }, { status: 500 });
   }
 }
+
+export const applyDiscountIfApplicable = (amount: number | string): number => {
+  const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+
+  // If it's not a delegate payment, apply 10% discount
+  if (!isDelegatePayment(numericAmount)) {
+    return numericAmount * 0.9;
+  }
+
+  // If it's a delegate payment, return original amount
+  return numericAmount;
+};
