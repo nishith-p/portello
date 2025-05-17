@@ -433,8 +433,7 @@ export async function createOrder(orderInput: CreateOrderInputExtended): Promise
             pre_price: item.pre_price || 0,
             discount_perc: item.discount_perc || 0,
             is_pack: false,
-            pack_code: null,
-            // No is_optional field needed
+            pack_code: null
           })));
   
         if (error) throw error;
@@ -505,7 +504,6 @@ export async function getOrderAudit(orderId: string): Promise<OrderAuditInfo> {
 /**
  * Fetch aggregated item quantities from the database
  */
-// lib/store/orders/db.ts
 export async function getItemQuantities(): Promise<{
   items: ItemWithQuantity[];
   packs: PackWithQuantity[];

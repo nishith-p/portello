@@ -1,17 +1,14 @@
-// (portal)/payments/(components)/delegate-payment-card.tsx
 'use client';
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { Badge, Button, Card, Group, Stack, Text } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import { User } from '@/lib/users/types';
+import { Badge, Button, Card, Stack, Text } from '@mantine/core';
 import {
   useCreateDelegateOrder,
   useLatestPaymentRecord,
   usePendingDelegateOrder,
 } from '@/lib/users/payments/hooks';
+import { User } from '@/lib/users/types';
 
 interface DelegatePaymentFormProps {
   user: User;
@@ -22,10 +19,9 @@ export function DelegatePaymentCard({ user }: DelegatePaymentFormProps) {
   const paymentStatus = user.payment ? 'paid' : 'pending';
 
   // Check for existing pending delegate fee order
-  const {
-    data: pendingOrder,
-    refetch: refetchPendingOrder,
-  } = usePendingDelegateOrder(user.kinde_id);
+  const { data: pendingOrder, refetch: refetchPendingOrder } = usePendingDelegateOrder(
+    user.kinde_id
+  );
 
   const createDelegateOrder = useCreateDelegateOrder(user.kinde_id);
   const { data: paymentRecord } = useLatestPaymentRecord(user.kinde_id, !!user.payment);
@@ -34,19 +30,16 @@ export function DelegatePaymentCard({ user }: DelegatePaymentFormProps) {
     refetchPendingOrder();
   }, []);
 
-  // If user has a pending order, show View Order button
   if (pendingOrder?.id && paymentStatus !== 'paid') {
     return (
       <Card withBorder p="lg">
         <Stack>
-          <Group justify="space-between">
-            <Text size="lg" fw={500}>
-              Delegate Fee Payment
-            </Text>
-            <Badge color="yellow">PENDING</Badge>
-          </Group>
+          <Badge color="yellow">PENDING</Badge>
+
           <Text>You have a pending delegate fee payment.</Text>
-          <Button onClick={() => router.push(`/orders/${pendingOrder.id}`)}>View Order</Button>
+          <Button onClick={() => router.push(`/orders/${pendingOrder.id}`)}>
+            Complete Payment
+          </Button>
         </Stack>
       </Card>
     );
@@ -55,15 +48,9 @@ export function DelegatePaymentCard({ user }: DelegatePaymentFormProps) {
   return (
     <Card withBorder p="lg">
       <Stack>
-        <Group justify="space-between">
-          <Text size="lg" fw={500}>
-            Delegate Fee Payment
-          </Text>
-          <Badge color={paymentStatus === 'paid' ? 'green' : 'yellow'}>
-            {paymentStatus.toUpperCase()}
-          </Badge>
-        </Group>
-
+        <Badge color={paymentStatus === 'paid' ? 'green' : 'yellow'}>
+          {paymentStatus.toUpperCase()}
+        </Badge>
         {paymentStatus === 'paid' ? (
           <>
             <Text c="green">Your payment has been successfully processed.</Text>

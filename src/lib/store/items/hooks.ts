@@ -88,9 +88,9 @@ export function useStoreItemSearch(searchParams: StoreItemSearchParams) {
         params.set('search', searchParams.search);
       }
 
-      if (searchParams.active !== undefined) {
-        params.set('active', searchParams.active.toString());
-      }
+      // if (searchParams.active !== undefined) {
+      //   params.set('active', searchParams.active.toString());
+      // }
 
       if (searchParams.limit) {
         params.set('limit', searchParams.limit.toString());

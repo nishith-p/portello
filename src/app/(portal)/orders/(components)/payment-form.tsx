@@ -42,10 +42,10 @@ interface PaymentFormProps {
   orderId: string;
   currency: string;
   customer?: Customer;
-  amount?: string;
+  amount: number;
 }
 
-export function PaymentForm({ orderId, currency, customer }: PaymentFormProps) {
+export function PaymentForm({ orderId, currency, customer, amount }: PaymentFormProps) {
   const { useOrder, usePayhereCheckout } = useOrderHooks();
   const { data: order, isLoading, error } = useOrder(orderId);
   const payhereCheckout = usePayhereCheckout();
@@ -224,7 +224,7 @@ export function PaymentForm({ orderId, currency, customer }: PaymentFormProps) {
                 <IconShoppingCart size={18} />
               </ThemeIcon>
               <Text fw={600} size="sm">
-                Order Summary
+                {isDelegateFeeOrder ? 'Summary' : 'Order Summary'}
               </Text>
             </Group>
             <Badge color="blue" variant="light">
@@ -246,42 +246,43 @@ export function PaymentForm({ orderId, currency, customer }: PaymentFormProps) {
             <Stack gap="xs">
               <Group justify="apart">
                 <Text c="dimmed" size="sm">
-                  Order ID:
+                  {isDelegateFeeOrder ? 'Reference ID:' : 'Order ID:'}
                 </Text>
                 <Text fw={500}>{orderId}</Text>
               </Group>
+              {isDelegateFeeOrder ? null : (
+                <Group align="start" justify="apart">
+                  <Text c="dimmed" size="sm">
+                    Items:
+                  </Text>
+                  <Stack gap="xs">
+                    {order.items?.map((item) => (
+                      <Group key={item.id} justify="space-between">
+                        <Text size="sm">
+                          {item.name} (x{item.quantity})
+                          {isDelegateFeeOrder && item.description && (
+                            <Text size="xs" c="dimmed">
+                              {item.description}
+                            </Text>
+                          )}
+                        </Text>
+                        <Text size="sm">
+                          {currency} {(item.price * item.quantity).toFixed(2)}
+                        </Text>
+                      </Group>
+                    ))}
+                  </Stack>
+                </Group>
+              )}
 
-              <Group align="start" justify="apart">
-                <Text c="dimmed" size="sm">
-                  Items:
-                </Text>
-                <Stack gap="xs">
-                  {order.items?.map((item) => (
-                    <Group key={item.id} justify="space-between">
-                      <Text size="sm">
-                        {item.name} (x{item.quantity})
-                        {isDelegateFeeOrder && item.description && (
-                          <Text size="xs" c="dimmed">
-                            {item.description}
-                          </Text>
-                        )}
-                      </Text>
-                      <Text size="sm">
-                        {currency} {(item.price * item.quantity).toFixed(2)}
-                      </Text>
-                    </Group>
-                  ))}
-                </Stack>
-              </Group>
-
-              <Divider my="sm" variant="dashed" />
+              <Divider variant="dashed" />
 
               <Group justify="apart">
                 <Text fw={700} size="md">
                   Total:
                 </Text>
                 <Text fw={700} size="md" c="blue">
-                  {currency} {order.total_amount.toFixed(2)}
+                  {currency} {amount.toFixed(2)}
                 </Text>
               </Group>
             </Stack>

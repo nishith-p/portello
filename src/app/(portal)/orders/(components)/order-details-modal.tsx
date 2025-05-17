@@ -2,6 +2,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   Badge,
@@ -50,7 +51,7 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
     router.push(`/orders/${orderData.id}`);
   };
 
-  const isDelegateFeeOrder = order?.items?.some(item => item.item_code === 'DELEGATE_FEE');
+  const isDelegateFeeOrder = order?.items?.some((item) => item.item_code === 'DELEGATE_FEE');
 
   if (!order) {
     return <></>;
@@ -145,7 +146,45 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
               {orderItems.map((item) => (
                 <Card key={item.id} withBorder>
                   <Grid gutter="md" align="center">
-                    <Grid.Col span={{ base: 12, sm: 8 }}>
+                    <Grid.Col span={{ base: 3, sm: 2 }}>
+                      {item.image ? (
+                        <Box
+                          style={{
+                            width: 60,
+                            height: 60,
+                            position: 'relative',
+                            margin: '0 auto',
+                            borderRadius: '50%',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <Image
+                            src={item.image}
+                            alt={item.name || 'Product image'}
+                            fill
+                            style={{ objectFit: 'cover', borderRadius: 4 }}
+                          />
+                        </Box>
+                      ) : (
+                        <Box
+                          style={{
+                            width: 60,
+                            height: 60,
+                            backgroundColor: '#f0f0f0',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: 4,
+                            margin: '0 auto',
+                          }}
+                        >
+                          <Text size="xs" c="dimmed">
+                            No image
+                          </Text>
+                        </Box>
+                      )}
+                    </Grid.Col>
+                    <Grid.Col span={{ base: 9, sm: 6 }}>
                       <Text fw={500}>{item.name || `Item ${item.item_code}`}</Text>
                       {item.item_code === 'DELEGATE_FEE' && item.description && (
                         <Text size="sm" c="dimmed">
@@ -154,10 +193,7 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
                       )}
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, sm: 4 }}>
-                      <Flex
-                        justify={isMobile ? 'space-between' : 'flex-end'}
-                        align="center"
-                      >
+                      <Flex justify={isMobile ? 'space-between' : 'flex-end'} align="center">
                         <Text>
                           {formatCurrency(item.price)} × {item.quantity}
                         </Text>
@@ -182,13 +218,7 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
           </Card>
 
           {order.status !== 'paid' && (
-            <Button 
-              color="green" 
-              size="md" 
-              mt="md" 
-              fullWidth
-              onClick={() => handlePayNow(order)}
-            >
+            <Button color="green" size="md" mt="md" fullWidth onClick={() => handlePayNow(order)}>
               {isDelegateFeeOrder ? 'Pay Delegate Fee' : 'Checkout'}
             </Button>
           )}
