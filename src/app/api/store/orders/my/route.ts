@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/utils';
 import { errorResponse } from '@/lib/core/errors';
 import { getUserOrders } from '@/lib/store/orders/db';
+import { isDelegatePayment } from '@/lib/store/utils';
 
 /**
  * GET /api/store/orders/my
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
         const orders = await getUserOrders(user.id);
 
         // Filter out orders where isDelegatePayment returns true
-        const filteredOrders = orders.filter(order => {
+        const filteredOrders = orders.filter((order) => {
           return !isDelegatePayment(order.total_amount);
         });
 
@@ -32,10 +33,4 @@ export async function GET(request: NextRequest) {
       requireAuth: true,
     }
   );
-}
-
-// Hack fix for delegate payment related renderings
-const isDelegatePayment = (amount: number | string): boolean => {
-  // eslint-disable-next-line eqeqeq
-  return amount == 560 || amount == 630;
 }
