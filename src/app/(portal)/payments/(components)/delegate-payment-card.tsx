@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Badge, Button, Card, Stack, Text } from '@mantine/core';
+import { Badge, Button, Card, Group, List, Stack, Text } from '@mantine/core';
 import {
   useCreateDelegateOrder,
   useLatestPaymentRecord,
@@ -66,6 +66,20 @@ export function DelegatePaymentCard({ user }: DelegatePaymentFormProps) {
         ) : (
           <>
             <Text>Complete your delegate fee payment to finish registration.</Text>
+            <List ml="xl">
+              <List.Item>
+                <Group>
+                  <Text>MCP Current / MCP Elect =</Text>
+                  <Text fw={700}>€630</Text>
+                </Group>
+              </List.Item>
+              <List.Item>
+                <Group>
+                  <Text>MCVP Current / MCVP Elect / LCP / Other =</Text>
+                  <Text fw={700}>€560</Text>
+                </Group>
+              </List.Item>
+            </List>
             <Button
               onClick={() => createDelegateOrder.mutate()}
               loading={createDelegateOrder.isPending}

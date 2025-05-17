@@ -60,6 +60,22 @@ export async function getActiveStoreItems(): Promise<StoreItem[]> {
 }
 
 /**
+ * Get all store items (for item quantities)
+ */
+export async function getStoreItems(): Promise<StoreItem[]> {
+  const { data, error } = await supabaseServer
+    .from('store_items')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
+/**
  * Search and filter store items (for admin panel)
  */
 export async function searchStoreItems(

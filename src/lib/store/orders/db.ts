@@ -14,7 +14,7 @@ import {
   OrderStatus,
   PackWithQuantity,
 } from '@/lib/store/types';
-import { getActiveStoreItems } from '../items/db';
+import { getActiveStoreItems, getStoreItems } from '../items/db';
 import { getActiveStorePacks } from '../packs/db';
 
 type OrderWithNestedItems = Omit<Order, 'items'> & {
@@ -509,8 +509,8 @@ export async function getItemQuantities(): Promise<{
   packs: PackWithQuantity[];
 }> {
   try {
-    const [activeItems, activePacks, orderedItems] = await Promise.all([
-      getActiveStoreItems(),
+    const [items, activePacks, orderedItems] = await Promise.all([
+      getStoreItems(),
       getActiveStorePacks(),
       supabaseServer
         .from('order_items')
@@ -564,7 +564,7 @@ export async function getItemQuantities(): Promise<{
     });
 
     // Combine with active items
-    const itemsWithQuantities: ItemWithQuantity[] = activeItems.map((item) => {
+    const itemsWithQuantities: ItemWithQuantity[] = items.map((item) => {
       const baseItem: ItemWithQuantity = {
         item_code: item.item_code,
         name: item.name,

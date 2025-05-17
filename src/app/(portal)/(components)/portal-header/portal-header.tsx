@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/components';
 import { IconShoppingCart } from '@tabler/icons-react';
 import { ActionIcon, Badge, Box, Burger, Button, Flex, Group, Image } from '@mantine/core';
@@ -20,10 +21,12 @@ export const PortalHeader = ({ opened, toggle }: PortalHeaderProps) => {
     <Flex justify="space-between" align="center" h="100%" px="md">
       <Flex align="center" gap="md">
         <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-        <Image
-          h={32}
-          src="https://ugfvgfyujpvclouvgfow.supabase.co/storage/v1/object/public/ic-portal/brand/IC_PORTAL_LOGO.png"
-        />
+        <Link href="https://www.ic2025.org/">
+          <Image
+            h={32}
+            src="https://ugfvgfyujpvclouvgfow.supabase.co/storage/v1/object/public/ic-portal/brand/IC_PORTAL_LOGO.png"
+          />
+        </Link>
       </Flex>
       <Group>
         <Box pos="relative" style={{ overflow: 'visible' }}>

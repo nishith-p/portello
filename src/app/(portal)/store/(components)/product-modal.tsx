@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { IconShirt, IconShoppingCart } from '@tabler/icons-react';
+import { IconRulerMeasure, IconShirt, IconShoppingCart } from '@tabler/icons-react';
 import {
+  Anchor,
   Badge,
   Box,
   Button,
@@ -19,6 +20,7 @@ import {
   Text,
 } from '@mantine/core';
 import { StoreItem } from '@/lib/store/types';
+import { SizeModal } from './size-modal';
 import classes from './product-modal.module.css';
 
 interface ProductModalProps {
@@ -38,6 +40,7 @@ export function ProductModal({
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColorHex, setSelectedColorHex] = useState<string | null>(null);
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
+  const [sizeModalOpened, setSizeModalOpened] = useState(false);
 
   // Reset selections when a create item is selected
   useEffect(() => {
@@ -146,162 +149,180 @@ export function ProductModal({
   };
 
   return (
-    <Modal
-      opened={opened}
-      onClose={onCloseAction}
-      padding={0}
-      radius="md"
-      centered
-      lockScroll
-      withCloseButton={false}
-      overlayProps={{
-        opacity: 0.55,
-        blur: 3,
-      }}
-      shadow="xl"
-      classNames={{
-        content: classes.modal,
-      }}
-      size="auto"
-    >
-      {selectedItem && (
-        <Box pos="relative">
-          {/* Custom close button in the top right corner */}
-          <CloseButton onClick={onCloseAction} className={classes.closeButton} size="lg" />
+    <>
+      <Modal
+        opened={opened}
+        onClose={onCloseAction}
+        padding={0}
+        radius="md"
+        centered
+        lockScroll
+        withCloseButton={false}
+        overlayProps={{
+          opacity: 0.55,
+          blur: 3,
+        }}
+        shadow="xl"
+        classNames={{
+          content: classes.modal,
+        }}
+        size="auto"
+      >
+        {selectedItem && (
+          <Box pos="relative">
+            {/* Custom close button in the top right corner */}
+            <CloseButton onClick={onCloseAction} className={classes.closeButton} size="lg" />
 
-          <Grid gutter={0} className={classes.modalGrid}>
-            {/* Product Images - Left Side */}
-            <Grid.Col span={{ base: 12, md: 6 }}>
-              {/* Fixed-size image container */}
-              <div className={classes.imageContainer}>
-                {hasValidImages ? (
-                  <div className={classes.imageWrapper}>
-                    <Image
-                      src={selectedItem.images[activeImageIndex]}
-                      className={classes.productImage}
-                      onError={() => handleImageError(activeImageIndex)}
-                      alt={selectedItem.name}
-                    />
-                  </div>
-                ) : (
-                  <Center h="100%" w="100%" className={classes.imagePlaceholder}>
-                    <IconShirt size={80} color="gray" />
-                  </Center>
-                )}
+            <Grid gutter={0} className={classes.modalGrid}>
+              {/* Product Images - Left Side */}
+              <Grid.Col span={{ base: 12, md: 6 }}>
+                {/* Fixed-size image container */}
+                <div className={classes.imageContainer}>
+                  {hasValidImages ? (
+                    <div className={classes.imageWrapper}>
+                      <Image
+                        src={selectedItem.images[activeImageIndex]}
+                        className={classes.productImage}
+                        onError={() => handleImageError(activeImageIndex)}
+                        alt={selectedItem.name}
+                      />
+                    </div>
+                  ) : (
+                    <Center h="100%" w="100%" className={classes.imagePlaceholder}>
+                      <IconShirt size={80} color="gray" />
+                    </Center>
+                  )}
 
-                {/* Thumbnails at the bottom of the image */}
-                {renderThumbnails()}
-              </div>
-            </Grid.Col>
+                  {/* Thumbnails at the bottom of the image */}
+                  {renderThumbnails()}
+                </div>
+              </Grid.Col>
 
-            {/* Product Details - Right Side */}
-            <Grid.Col
-              span={{ base: 12, md: 6 }}
-              p="md"
-              className={`${classes.productDetails} ${classes.productDetailsColumn}`}
-            >
-              <Stack gap="md" h="100%">
-                {/* Name at the top */}
-                <Text size="xl" fw={700} mb={0}>
-                  {selectedItem.name}
-                </Text>
+              {/* Product Details - Right Side */}
+              <Grid.Col
+                span={{ base: 12, md: 6 }}
+                p="md"
+                className={`${classes.productDetails} ${classes.productDetailsColumn}`}
+              >
+                <Stack gap="md" h="100%">
+                  {/* Name at the top */}
+                  <Text size="xl" fw={700} mb={0}>
+                    {selectedItem.name}
+                  </Text>
 
-                {/* Price just under the name */}
-                {selectedItem.pre_price !== 0 && selectedItem.discount_perc !== 0 ? (
-                  <Flex gap={10} align="center">
-                    <Badge variant="light" color="gray" size="lg" w="fit-content">
-                      <Text fw={700} td="line-through">
-                        €{selectedItem.pre_price?.toFixed(2)}
-                      </Text>
-                    </Badge>
-                    <Text c="red">-{selectedItem.discount_perc}%</Text>
-                    <Badge color="green" size="lg" variant="filled" w="fit-content">
+                  {/* Price just under the name */}
+                  {selectedItem.pre_price !== 0 && selectedItem.discount_perc !== 0 ? (
+                    <Flex gap={10} align="center">
+                      <Badge variant="light" color="gray" size="lg" w="fit-content">
+                        <Text fw={700} td="line-through">
+                          €{selectedItem.pre_price?.toFixed(2)}
+                        </Text>
+                      </Badge>
+                      <Text c="red">-{selectedItem.discount_perc}%</Text>
+                      <Badge color="green" size="lg" variant="filled" w="fit-content">
+                        €{selectedItem.price.toFixed(2)}
+                      </Badge>
+                    </Flex>
+                  ) : (
+                    <Badge color="gray" size="lg" variant="filled" w="fit-content">
                       €{selectedItem.price.toFixed(2)}
                     </Badge>
-                  </Flex>
-                ) : (
-                  <Badge color="gray" size="lg" variant="filled" w="fit-content">
-                    €{selectedItem.price.toFixed(2)}
-                  </Badge>
-                )}
+                  )}
 
-                {/* Product ID */}
-                <Text size="sm" c="dimmed">
-                  Product ID: {selectedItem.item_code}
-                </Text>
+                  {/* Product ID */}
+                  <Text size="sm" c="dimmed">
+                    Product ID: {selectedItem.item_code}
+                  </Text>
 
-                {/* Description */}
-                <Text>{selectedItem.description}</Text>
+                  {/* Description */}
+                  <Text>{selectedItem.description}</Text>
 
-                <Divider />
+                  <Divider />
 
-                {/* Size Selection */}
-                {selectedItem.sizes.length > 0 && (
-                  <Box>
-                    <Text fw={600} size="sm" mb="xs">
-                      Size
-                    </Text>
-                    {selectedItem.sizes.length === 1 ? (
-                      <Text>{selectedItem.sizes[0]}</Text>
-                    ) : (
-                      <Select
-                        placeholder="Select a size"
-                        data={selectedItem.sizes.map((size) => ({ value: size, label: size }))}
-                        value={selectedSize}
-                        onChange={setSelectedSize}
-                        required
-                        radius="md"
-                      />
-                    )}
-                  </Box>
-                )}
-
-                {/* Color Selection */}
-                {selectedItem.colors.length > 0 && (
-                  <Box>
-                    <Text fw={600} size="sm" mb="xs">
-                      Color
-                    </Text>
-                    <Flex gap="md" wrap="wrap">
-                      {selectedItem.colors.map((color) => (
-                        <Stack key={color.hex} align="center" gap="xs">
-                          <ColorSwatch
-                            color={color.hex}
-                            size={36}
-                            radius="xl"
-                            className={
-                              selectedColorHex === color.hex
-                                ? classes.colorSwatchActive
-                                : classes.colorSwatch
-                            }
-                            onClick={() => setSelectedColorHex(color.hex)}
+                  {/* Size Selection */}
+                  {selectedItem.sizes.length > 0 && (
+                    <Box>
+                      <Flex justify="space-between" align="center" mb="xs">
+                        <Text fw={600} size="sm">
+                          Size
+                        </Text>
+                      </Flex>
+                      {selectedItem.sizes.length === 1 ? (
+                        <Text>{selectedItem.sizes[0]}</Text>
+                      ) : (
+                        <>
+                          <Anchor
+                            size="sm"
+                            onClick={() => setSizeModalOpened(true)}
+                            mb="xs"
+                            style={{ display: 'flex', alignItems: 'center', gap: 4 }}
+                          >
+                            <IconRulerMeasure size={16} />
+                            Size Guide
+                          </Anchor>
+                          <Select
+                            placeholder="Select a size"
+                            data={selectedItem.sizes.map((size) => ({ value: size, label: size }))}
+                            value={selectedSize}
+                            onChange={setSelectedSize}
+                            required
+                            radius="md"
                           />
-                          <Text size="xs">{color.name}</Text>
-                        </Stack>
-                      ))}
-                    </Flex>
-                  </Box>
-                )}
+                        </>
+                      )}
+                    </Box>
+                  )}
 
-                {/* Push button to bottom */}
-                <div style={{ flexGrow: 1 }} />
+                  {/* Color Selection */}
+                  {selectedItem.colors.length > 0 && (
+                    <Box>
+                      <Text fw={600} size="sm" mb="xs">
+                        Color
+                      </Text>
+                      <Flex gap="md" wrap="wrap">
+                        {selectedItem.colors.map((color) => (
+                          <Stack key={color.hex} align="center" gap="xs">
+                            <ColorSwatch
+                              color={color.hex}
+                              size={36}
+                              radius="xl"
+                              className={
+                                selectedColorHex === color.hex
+                                  ? classes.colorSwatchActive
+                                  : classes.colorSwatch
+                              }
+                              onClick={() => setSelectedColorHex(color.hex)}
+                            />
+                            <Text size="xs">{color.name}</Text>
+                          </Stack>
+                        ))}
+                      </Flex>
+                    </Box>
+                  )}
 
-                <Button
-                  size="lg"
-                  leftSection={<IconShoppingCart size={20} />}
-                  disabled={isAddToCartDisabled()}
-                  onClick={handleAddToCart}
-                  radius="md"
-                  color="blue"
-                  fullWidth
-                >
-                  Add to Cart
-                </Button>
-              </Stack>
-            </Grid.Col>
-          </Grid>
-        </Box>
-      )}
-    </Modal>
+                  {/* Push button to bottom */}
+                  <div style={{ flexGrow: 1 }} />
+
+                  <Button
+                    size="lg"
+                    leftSection={<IconShoppingCart size={20} />}
+                    disabled={isAddToCartDisabled()}
+                    onClick={handleAddToCart}
+                    radius="md"
+                    color="blue"
+                    fullWidth
+                  >
+                    Add to Cart
+                  </Button>
+                </Stack>
+              </Grid.Col>
+            </Grid>
+          </Box>
+        )}
+      </Modal>
+
+      {/* Size Chart Modal */}
+      <SizeModal opened={sizeModalOpened} onClose={() => setSizeModalOpened(false)} />
+    </>
   );
 }

@@ -10,9 +10,10 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { IconPackages, IconShoppingCart } from '@tabler/icons-react';
+import { IconPackages, IconRulerMeasure, IconShoppingCart } from '@tabler/icons-react';
 import {
   Accordion,
+  Anchor,
   Badge,
   Box,
   Button,
@@ -39,6 +40,7 @@ import {
 } from '@/components/cart-drawer/utils';
 import { useCart } from '@/context/cart';
 import { CartPackItem, CartPackItemDetail, StorePack } from '@/lib/store/types';
+import { SizeModal } from './size-modal';
 import classes from './pack-modal.module.css';
 
 interface PackModalProps {
@@ -53,6 +55,7 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
   const [cartPackItem, setCartPackItem] = useState<any>(null);
   const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
+  const [sizeModalOpened, setSizeModalOpened] = useState(false);
 
   // Separate regular and optional items
   const regularItems = selectedPack?.pack_items?.filter((item) => !item.is_optional) || [];
@@ -309,456 +312,495 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
   const totalItems = selectedPack?.pack_items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   return (
-    <Modal
-      opened={opened}
-      onClose={onCloseAction}
-      padding={0}
-      radius="md"
-      centered
-      lockScroll
-      withCloseButton={false}
-      overlayProps={{
-        opacity: 0.55,
-        blur: 3,
-      }}
-      shadow="xl"
-      classNames={{
-        content: classes.modal,
-      }}
-      size="auto"
-    >
-      {selectedPack && cartPackItem && (
-        <Box pos="relative">
-          {/* Custom close button in the top right corner */}
-          <CloseButton onClick={onCloseAction} className={classes.closeButton} size="lg" />
+    <>
+      <Modal
+        opened={opened}
+        onClose={onCloseAction}
+        padding={0}
+        radius="md"
+        centered
+        lockScroll
+        withCloseButton={false}
+        overlayProps={{
+          opacity: 0.55,
+          blur: 3,
+        }}
+        shadow="xl"
+        classNames={{
+          content: classes.modal,
+        }}
+        size="auto"
+      >
+        {selectedPack && cartPackItem && (
+          <Box pos="relative">
+            {/* Custom close button in the top right corner */}
+            <CloseButton onClick={onCloseAction} className={classes.closeButton} size="lg" />
 
-          <Grid gutter={0} className={classes.modalGrid}>
-            {/* Pack Images - Left Side */}
-            <Grid.Col span={{ base: 12, md: 6 }}>
-              {/* Fixed-size image container */}
-              <div className={classes.imageContainer}>
-                {hasValidImages ? (
-                  <div className={classes.imageWrapper}>
-                    <Image
-                      src={selectedPack.images[activeImageIndex]}
-                      className={classes.productImage}
-                      onError={() => handleImageError(activeImageIndex)}
-                      alt={selectedPack.name}
-                    />
-                  </div>
-                ) : (
-                  <Center h="100%" w="100%" className={classes.imagePlaceholder}>
-                    <IconPackages size={80} color="gray" />
-                  </Center>
-                )}
-
-                {/* Thumbnails at the bottom of the image */}
-                {renderThumbnails()}
-              </div>
-            </Grid.Col>
-
-            {/* Pack Details - Right Side */}
-            <Grid.Col
-              span={{ base: 12, md: 6 }}
-              p="md"
-              className={`${classes.productDetails} ${classes.productDetailsColumn}`}
-            >
-              <Stack gap="md" h="100%" style={{ position: 'relative' }}>
-                <Box style={{ overflowY: 'auto', paddingRight: '8px', height: '100%' }}>
-                  {/* Pack type badge */}
-                  <Badge color="blue" size="lg" variant="filled" w="fit-content">
-                    Bundle Pack
-                  </Badge>
-
-                  {/* Name at the top */}
-                  <Text size="xl" fw={700} mb={0} mt="xs">
-                    {selectedPack.name}
-                  </Text>
-
-                  {selectedPack.pre_price !== 0 && selectedPack.discount_perc !== 0 ? (
-                    <Flex gap={10} align="center" mt="xs">
-                      <Badge variant="light" color="gray" size="lg" w="fit-content">
-                        <Text fw={700} td="line-through">
-                          €{selectedPack.pre_price?.toFixed(2)}
-                        </Text>
-                      </Badge>
-                      <Text c="red">-{selectedPack.discount_perc}%</Text>
-                      <Badge color="green" size="lg" variant="filled" w="fit-content">
-                        €{selectedPack.price.toFixed(2)}
-                      </Badge>
-                    </Flex>
+            <Grid gutter={0} className={classes.modalGrid}>
+              {/* Pack Images - Left Side */}
+              <Grid.Col span={{ base: 12, md: 6 }}>
+                {/* Fixed-size image container */}
+                <div className={classes.imageContainer}>
+                  {hasValidImages ? (
+                    <div className={classes.imageWrapper}>
+                      <Image
+                        src={selectedPack.images[activeImageIndex]}
+                        className={classes.productImage}
+                        onError={() => handleImageError(activeImageIndex)}
+                        alt={selectedPack.name}
+                      />
+                    </div>
                   ) : (
-                    <Badge color="gray" size="lg" variant="filled" w="fit-content" mt="xs">
-                      €{selectedPack.price.toFixed(2)}
-                    </Badge>
+                    <Center h="100%" w="100%" className={classes.imagePlaceholder}>
+                      <IconPackages size={80} color="gray" />
+                    </Center>
                   )}
 
-                  {/* Pack ID */}
-                  <Text size="sm" c="dimmed" mt="xs">
-                    Pack ID: {selectedPack.pack_code}
-                  </Text>
+                  {/* Thumbnails at the bottom of the image */}
+                  {renderThumbnails()}
+                </div>
+              </Grid.Col>
 
-                  {/* Description */}
-                  <Text mt="md">{selectedPack.description}</Text>
+              {/* Pack Details - Right Side */}
+              <Grid.Col
+                span={{ base: 12, md: 6 }}
+                p="md"
+                className={`${classes.productDetails} ${classes.productDetailsColumn}`}
+              >
+                <Stack gap="md" h="100%" style={{ position: 'relative' }}>
+                  <Box style={{ overflowY: 'auto', paddingRight: '8px', height: '100%' }}>
+                    {/* Pack type badge */}
+                    <Badge color="blue" size="lg" variant="filled" w="fit-content">
+                      Bundle Pack
+                    </Badge>
 
-                  <Divider label="What's Included" labelPosition="center" mt="lg" mb="md" />
-
-                  {/* Pack Items Summary */}
-                  <Paper withBorder p="md" radius="md">
-                    <Text fw={700} mb="xs">
-                      This pack contains {totalItems} item{totalItems !== 1 ? 's' : ''}:
+                    {/* Name at the top */}
+                    <Text size="xl" fw={700} mb={0} mt="xs">
+                      {selectedPack.name}
                     </Text>
 
-                    <Stack gap="xs">
-                      {/* Regular Items */}
-                      {regularItems.map((packItem) => (
-                        <Group key={packItem.id} justify="space-between">
-                          <Group gap="xs">
-                            <Badge size="sm" variant="filled" radius="sm">
-                              {packItem.quantity}×
-                            </Badge>
-                            <Text>{packItem.item?.name || 'Unknown Item'}</Text>
-                          </Group>
-                          <Text size="sm" fw={500}>
-                            €{packItem.item?.price.toFixed(2)}
+                    {selectedPack.pre_price !== 0 && selectedPack.discount_perc !== 0 ? (
+                      <Flex gap={10} align="center" mt="xs">
+                        <Badge variant="light" color="gray" size="lg" w="fit-content">
+                          <Text fw={700} td="line-through">
+                            €{selectedPack.pre_price?.toFixed(2)}
                           </Text>
-                        </Group>
-                      ))}
-
-                      {/* Optional Items - only show if they exist */}
-                      {optionalItems.length > 0 && (
-                        <>
-                          <Divider my="sm" label="Optional Items" labelPosition="center" />
-                          {optionalItems.map((packItem) => (
-                            <Group key={packItem.id} justify="space-between">
-                              <Group gap="xs">
-                                <Badge size="sm" variant="outline" color="green" radius="sm">
-                                  {packItem.quantity}×
-                                </Badge>
-                                <Text>{packItem.item?.name || 'Unknown Item'}</Text>
-                              </Group>
-                              <Text size="sm" fw={500} c="dimmed">
-                                €{packItem.item?.price.toFixed(2)}
-                              </Text>
-                            </Group>
-                          ))}
-                          <Text size="sm" c="dimmed" mt="xs">
-                            * Choose one from the optional items below
-                          </Text>
-                        </>
-                      )}
-                    </Stack>
-
-                    <Divider my="md" />
-
-                    <Group justify="space-between">
-                      <Text fw={700}>Bundle Price:</Text>
-                      <Text fw={700} size="lg">
+                        </Badge>
+                        <Text c="red">-{selectedPack.discount_perc}%</Text>
+                        <Badge color="green" size="lg" variant="filled" w="fit-content">
+                          €{selectedPack.price.toFixed(2)}
+                        </Badge>
+                      </Flex>
+                    ) : (
+                      <Badge color="gray" size="lg" variant="filled" w="fit-content" mt="xs">
                         €{selectedPack.price.toFixed(2)}
+                      </Badge>
+                    )}
+
+                    {/* Pack ID */}
+                    <Text size="sm" c="dimmed" mt="xs">
+                      Pack ID: {selectedPack.pack_code}
+                    </Text>
+
+                    {/* Description */}
+                    <Text mt="md">{selectedPack.description}</Text>
+
+                    <Divider label="What's Included" labelPosition="center" mt="lg" mb="md" />
+
+                    {/* Pack Items Summary */}
+                    <Paper withBorder p="md" radius="md">
+                      <Text fw={700} mb="xs">
+                        This pack contains {totalItems} item{totalItems !== 1 ? 's' : ''}:
                       </Text>
-                    </Group>
-                  </Paper>
 
-                  <Divider label="Customize Items" labelPosition="center" mt="lg" mb="md" />
+                      <Stack gap="xs">
+                        {/* Regular Items */}
+                        {regularItems.map((packItem) => (
+                          <Group key={packItem.id} justify="space-between">
+                            <Group gap="xs">
+                              <Badge size="sm" variant="filled" radius="sm">
+                                {packItem.quantity}×
+                              </Badge>
+                              <Text>{packItem.item?.name || 'Unknown Item'}</Text>
+                            </Group>
+                            <Text size="sm" fw={500}>
+                              €{packItem.item?.price.toFixed(2)}
+                            </Text>
+                          </Group>
+                        ))}
 
-                  {/* Item Customization Section */}
-                  <Accordion variant="separated">
-                    {/* Regular Items */}
-                    {cartPackItem.pack_items.map((packItem: CartPackItemDetail, index: number) => {
-                      const originalItem = selectedPack.pack_items?.find(
-                        (pi) => pi.item && pi.item.id === packItem.item_id
-                      )?.item;
+                        {/* Optional Items - only show if they exist */}
+                        {optionalItems.length > 0 && (
+                          <>
+                            <Divider my="sm" label="Optional Items" labelPosition="center" />
+                            {optionalItems.map((packItem) => (
+                              <Group key={packItem.id} justify="space-between">
+                                <Group gap="xs">
+                                  <Badge size="sm" variant="outline" color="green" radius="sm">
+                                    {packItem.quantity}×
+                                  </Badge>
+                                  <Text>{packItem.item?.name || 'Unknown Item'}</Text>
+                                </Group>
+                                <Text size="sm" fw={500} c="dimmed">
+                                  €{packItem.item?.price.toFixed(2)}
+                                </Text>
+                              </Group>
+                            ))}
+                            <Text size="sm" c="dimmed" mt="xs">
+                              * Choose one from the optional items below
+                            </Text>
+                          </>
+                        )}
+                      </Stack>
 
-                      if (!originalItem) return null;
+                      <Divider my="md" />
 
-                      return (
-                        <Accordion.Item
-                          key={`regular-${packItem.item_id}`}
-                          value={`regular-${packItem.item_id}`}
-                        >
+                      <Group justify="space-between">
+                        <Text fw={700}>Bundle Price:</Text>
+                        <Text fw={700} size="lg">
+                          €{selectedPack.price.toFixed(2)}
+                        </Text>
+                      </Group>
+                    </Paper>
+
+                    <Divider label="Customize Items" labelPosition="center" mt="lg" mb="md" />
+
+                    {/* Item Customization Section */}
+                    <Accordion variant="separated">
+                      {/* Regular Items */}
+                      {cartPackItem.pack_items.map(
+                        (packItem: CartPackItemDetail, index: number) => {
+                          const originalItem = selectedPack.pack_items?.find(
+                            (pi) => pi.item && pi.item.id === packItem.item_id
+                          )?.item;
+
+                          if (!originalItem) return null;
+
+                          return (
+                            <Accordion.Item
+                              key={`regular-${packItem.item_id}`}
+                              value={`regular-${packItem.item_id}`}
+                            >
+                              <Accordion.Control>
+                                <Group>
+                                  <Text fw={600}>{packItem.name}</Text>
+                                  <Badge>{packItem.quantity}x</Badge>
+                                </Group>
+                              </Accordion.Control>
+                              <Accordion.Panel>
+                                <Stack gap="md">
+                                  {/* Size Selection */}
+                                  {originalItem.sizes && originalItem.sizes.length > 0 && (
+                                    <Box>
+                                      <Text fw={600} size="sm" mb="xs">
+                                        Size
+                                      </Text>
+                                      {originalItem.sizes.length === 1 ? (
+                                        <Text>{originalItem.sizes[0]}</Text>
+                                      ) : (
+                                        <>
+                                          <Anchor
+                                            size="sm"
+                                            onClick={() => setSizeModalOpened(true)}
+                                            mb="xs"
+                                            style={{
+                                              display: 'flex',
+                                              alignItems: 'center',
+                                              gap: 4,
+                                            }}
+                                          >
+                                            <IconRulerMeasure size={16} />
+                                            Size Guide
+                                          </Anchor>
+                                          <Select
+                                            placeholder="Select a size"
+                                            data={originalItem.sizes.map((size: string) => ({
+                                              value: size,
+                                              label: size,
+                                            }))}
+                                            value={packItem.size || null}
+                                            onChange={(value) =>
+                                              handleSizeChange(index, value || '')
+                                            }
+                                            required
+                                            radius="md"
+                                          />
+                                        </>
+                                      )}
+                                    </Box>
+                                  )}
+
+                                  {/* Color Selection */}
+                                  {originalItem.colors && originalItem.colors.length > 0 && (
+                                    <Box>
+                                      <Text fw={600} size="sm" mb="xs">
+                                        Color
+                                      </Text>
+                                      <Flex gap="md" wrap="wrap">
+                                        {originalItem.colors.map(
+                                          (color: { name: string; hex: string }) => (
+                                            <Stack key={color.hex} align="center" gap="xs">
+                                              <ColorSwatch
+                                                color={color.hex}
+                                                size={36}
+                                                radius="xl"
+                                                className={
+                                                  packItem.colorHex === color.hex
+                                                    ? classes.colorSwatchActive
+                                                    : classes.colorSwatch
+                                                }
+                                                onClick={() => handleColorChange(index, color)}
+                                              />
+                                              <Text size="xs">{color.name}</Text>
+                                            </Stack>
+                                          )
+                                        )}
+                                      </Flex>
+                                    </Box>
+                                  )}
+                                </Stack>
+                              </Accordion.Panel>
+                            </Accordion.Item>
+                          );
+                        }
+                      )}
+
+                      {/* Optional Items Section */}
+                      {cartPackItem.optional_items.length > 0 && (
+                        <Accordion.Item key="optional-items" value="optional-items">
                           <Accordion.Control>
                             <Group>
-                              <Text fw={600}>{packItem.name}</Text>
-                              <Badge>{packItem.quantity}x</Badge>
+                              <Text fw={600}>Optional Items</Text>
+                              <Badge color="teal" variant="light">
+                                Choose 1
+                              </Badge>
                             </Group>
                           </Accordion.Control>
                           <Accordion.Panel>
                             <Stack gap="md">
-                              {/* Size Selection */}
-                              {originalItem.sizes && originalItem.sizes.length > 0 && (
-                                <Box>
-                                  <Text fw={600} size="sm" mb="xs">
-                                    Size
-                                  </Text>
-                                  {originalItem.sizes.length === 1 ? (
-                                    <Text>{originalItem.sizes[0]}</Text>
-                                  ) : (
-                                    <Select
-                                      placeholder="Select a size"
-                                      data={originalItem.sizes.map((size: string) => ({
-                                        value: size,
-                                        label: size,
-                                      }))}
-                                      value={packItem.size || null}
-                                      onChange={(value) => handleSizeChange(index, value || '')}
-                                      required
-                                      radius="md"
-                                    />
-                                  )}
-                                </Box>
-                              )}
+                              <Text size="sm" c="dimmed">
+                                Select one option from the following items:
+                              </Text>
 
-                              {/* Color Selection */}
-                              {originalItem.colors && originalItem.colors.length > 0 && (
-                                <Box>
-                                  <Text fw={600} size="sm" mb="xs">
-                                    Color
-                                  </Text>
-                                  <Flex gap="md" wrap="wrap">
-                                    {originalItem.colors.map(
-                                      (color: { name: string; hex: string }) => (
-                                        <Stack key={color.hex} align="center" gap="xs">
-                                          <ColorSwatch
-                                            color={color.hex}
-                                            size={36}
-                                            radius="xl"
-                                            className={
-                                              packItem.colorHex === color.hex
-                                                ? classes.colorSwatchActive
-                                                : classes.colorSwatch
+                              {cartPackItem.optional_items.map(
+                                (optionalItem: CartPackItemDetail, index: number) => {
+                                  const originalItem = selectedPack.pack_items?.find(
+                                    (pi) => pi.item && pi.item.id === optionalItem.item_id
+                                  )?.item;
+
+                                  if (!originalItem) return null;
+
+                                  const isSelected =
+                                    cartPackItem.selected_optional_item?.item_id ===
+                                    optionalItem.item_id;
+                                  const itemIndex = cartPackItem.pack_items.length + index; // Adjust index for handler functions
+
+                                  return (
+                                    <Paper
+                                      key={optionalItem.item_id}
+                                      withBorder
+                                      p="md"
+                                      radius="md"
+                                      style={{
+                                        borderColor: isSelected
+                                          ? 'var(--mantine-color-teal-6)'
+                                          : undefined,
+                                        backgroundColor: isSelected
+                                          ? 'var(--mantine-color-teal-0)'
+                                          : undefined,
+                                      }}
+                                    >
+                                      <Group justify="space-between" mb="sm">
+                                        <Text fw={600}>{optionalItem.name}</Text>
+                                        <Badge
+                                          color={isSelected ? 'teal' : 'gray'}
+                                          variant={isSelected ? 'filled' : 'light'}
+                                        >
+                                          {optionalItem.quantity}x
+                                        </Badge>
+                                      </Group>
+
+                                      <Stack gap="md">
+                                        {/* Size Selection */}
+                                        {originalItem.sizes && originalItem.sizes.length > 0 && (
+                                          <Box>
+                                            <Text fw={500} size="sm" mb="xs">
+                                              Size
+                                            </Text>
+                                            {originalItem.sizes.length === 1 ? (
+                                              <Text>{originalItem.sizes[0]}</Text>
+                                            ) : (
+                                              <>
+                                                <Anchor
+                                                  size="sm"
+                                                  onClick={() => setSizeModalOpened(true)}
+                                                  mb="xs"
+                                                  style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 4,
+                                                  }}
+                                                >
+                                                  <IconRulerMeasure size={16} />
+                                                  Size Guide
+                                                </Anchor>
+                                                <Select
+                                                  placeholder="Select a size"
+                                                  data={originalItem.sizes.map((size: string) => ({
+                                                    value: size,
+                                                    label: size,
+                                                  }))}
+                                                  value={
+                                                    cartPackItem.selected_optional_item?.size ||
+                                                    null
+                                                  }
+                                                  onChange={(value) => {
+                                                    if (isSelected) {
+                                                      const updatedItem = {
+                                                        ...cartPackItem,
+                                                        selected_optional_item: {
+                                                          ...cartPackItem.selected_optional_item,
+                                                          size: value || '',
+                                                        },
+                                                      };
+                                                      setCartPackItem(updatedItem);
+                                                    }
+                                                  }}
+                                                  required
+                                                  radius="md"
+                                                  disabled={!isSelected}
+                                                />
+                                              </>
+                                            )}
+                                          </Box>
+                                        )}
+
+                                        {/* Color Selection */}
+                                        {originalItem.colors && originalItem.colors.length > 0 && (
+                                          <Box>
+                                            <Text fw={500} size="sm" mb="xs">
+                                              Color
+                                            </Text>
+                                            <Flex gap="md" wrap="wrap">
+                                              {originalItem.colors.map(
+                                                (color: { name: string; hex: string }) => (
+                                                  <Stack key={color.hex} align="center" gap="xs">
+                                                    <ColorSwatch
+                                                      color={color.hex}
+                                                      size={28}
+                                                      radius="xl"
+                                                      className={
+                                                        optionalItem.colorHex === color.hex
+                                                          ? classes.colorSwatchActive
+                                                          : classes.colorSwatch
+                                                      }
+                                                      onClick={() =>
+                                                        isSelected &&
+                                                        handleColorChange(index, color, true)
+                                                      }
+                                                      style={{
+                                                        opacity: isSelected ? 1 : 0.6,
+                                                        cursor: isSelected ? 'pointer' : 'default',
+                                                      }}
+                                                    />
+                                                    <Text size="xs">{color.name}</Text>
+                                                  </Stack>
+                                                )
+                                              )}
+                                            </Flex>
+                                          </Box>
+                                        )}
+
+                                        <Button
+                                          fullWidth
+                                          variant={isSelected ? 'filled' : 'outline'}
+                                          color="teal"
+                                          onClick={() => {
+                                            if (isSelected) {
+                                              // Update the cart pack item to remove the selection
+                                              // You'll need to implement this function
+                                              setCartPackItem(
+                                                removeSelectedOptionalItem(cartPackItem)
+                                              );
+                                            } else {
+                                              // First update any size/color selections
+                                              const updatedItem = {
+                                                ...optionalItem,
+                                                // Include any default selections if none are made
+                                                size:
+                                                  optionalItem.size ||
+                                                  originalItem.sizes?.[0] ||
+                                                  undefined,
+                                                color:
+                                                  optionalItem.color ||
+                                                  originalItem.colors?.[0]?.name ||
+                                                  undefined,
+                                                colorHex:
+                                                  optionalItem.colorHex ||
+                                                  originalItem.colors?.[0]?.hex ||
+                                                  undefined,
+                                              };
+
+                                              // Then select this optional item
+                                              setCartPackItem(
+                                                selectOptionalItem(cartPackItem, index)
+                                              );
                                             }
-                                            onClick={() => handleColorChange(index, color)}
-                                          />
-                                          <Text size="xs">{color.name}</Text>
-                                        </Stack>
-                                      )
-                                    )}
-                                  </Flex>
-                                </Box>
+                                          }}
+                                        >
+                                          {isSelected ? 'Selected ✓' : 'Select This Option'}
+                                        </Button>
+                                      </Stack>
+                                    </Paper>
+                                  );
+                                }
                               )}
                             </Stack>
                           </Accordion.Panel>
                         </Accordion.Item>
-                      );
-                    })}
+                      )}
+                    </Accordion>
+                  </Box>
 
-                    {/* Optional Items Section */}
-                    {cartPackItem.optional_items.length > 0 && (
-                      <Accordion.Item key="optional-items" value="optional-items">
-                        <Accordion.Control>
-                          <Group>
-                            <Text fw={600}>Optional Items</Text>
-                            <Badge color="teal" variant="light">
-                              Choose 1
-                            </Badge>
-                          </Group>
-                        </Accordion.Control>
-                        <Accordion.Panel>
-                          <Stack gap="md">
-                            <Text size="sm" c="dimmed">
-                              Select one option from the following items:
-                            </Text>
-
-                            {cartPackItem.optional_items.map(
-                              (optionalItem: CartPackItemDetail, index: number) => {
-                                const originalItem = selectedPack.pack_items?.find(
-                                  (pi) => pi.item && pi.item.id === optionalItem.item_id
-                                )?.item;
-
-                                if (!originalItem) return null;
-
-                                const isSelected =
-                                  cartPackItem.selected_optional_item?.item_id ===
-                                  optionalItem.item_id;
-                                const itemIndex = cartPackItem.pack_items.length + index; // Adjust index for handler functions
-
-                                return (
-                                  <Paper
-                                    key={optionalItem.item_id}
-                                    withBorder
-                                    p="md"
-                                    radius="md"
-                                    style={{
-                                      borderColor: isSelected
-                                        ? 'var(--mantine-color-teal-6)'
-                                        : undefined,
-                                      backgroundColor: isSelected
-                                        ? 'var(--mantine-color-teal-0)'
-                                        : undefined,
-                                    }}
-                                  >
-                                    <Group justify="space-between" mb="sm">
-                                      <Text fw={600}>{optionalItem.name}</Text>
-                                      <Badge
-                                        color={isSelected ? 'teal' : 'gray'}
-                                        variant={isSelected ? 'filled' : 'light'}
-                                      >
-                                        {optionalItem.quantity}x
-                                      </Badge>
-                                    </Group>
-
-                                    <Stack gap="md">
-                                      {/* Size Selection */}
-                                      {originalItem.sizes && originalItem.sizes.length > 0 && (
-                                        <Box>
-                                          <Text fw={500} size="sm" mb="xs">
-                                            Size
-                                          </Text>
-                                          {originalItem.sizes.length === 1 ? (
-                                            <Text>{originalItem.sizes[0]}</Text>
-                                          ) : (
-                                            // In the optional items section, update the Select component:
-                                            <Select
-                                              placeholder="Select a size"
-                                              data={originalItem.sizes.map((size: string) => ({
-                                                value: size,
-                                                label: size,
-                                              }))}
-                                              value={
-                                                cartPackItem.selected_optional_item?.size || null
-                                              }
-                                              onChange={(value) => {
-                                                if (isSelected) {
-                                                  const updatedItem = {
-                                                    ...cartPackItem,
-                                                    selected_optional_item: {
-                                                      ...cartPackItem.selected_optional_item,
-                                                      size: value || '',
-                                                    },
-                                                  };
-                                                  setCartPackItem(updatedItem);
-                                                }
-                                              }}
-                                              required
-                                              radius="md"
-                                              disabled={!isSelected}
-                                            />
-                                          )}
-                                        </Box>
-                                      )}
-
-                                      {/* Color Selection */}
-                                      {originalItem.colors && originalItem.colors.length > 0 && (
-                                        <Box>
-                                          <Text fw={500} size="sm" mb="xs">
-                                            Color
-                                          </Text>
-                                          <Flex gap="md" wrap="wrap">
-                                            {originalItem.colors.map(
-                                              (color: { name: string; hex: string }) => (
-                                                <Stack key={color.hex} align="center" gap="xs">
-                                                  <ColorSwatch
-                                                    color={color.hex}
-                                                    size={28}
-                                                    radius="xl"
-                                                    className={
-                                                      optionalItem.colorHex === color.hex
-                                                        ? classes.colorSwatchActive
-                                                        : classes.colorSwatch
-                                                    }
-                                                    onClick={() =>
-                                                      isSelected &&
-                                                      handleColorChange(index, color, true)
-                                                    }
-                                                    style={{
-                                                      opacity: isSelected ? 1 : 0.6,
-                                                      cursor: isSelected ? 'pointer' : 'default',
-                                                    }}
-                                                  />
-                                                  <Text size="xs">{color.name}</Text>
-                                                </Stack>
-                                              )
-                                            )}
-                                          </Flex>
-                                        </Box>
-                                      )}
-
-                                      <Button
-                                        fullWidth
-                                        variant={isSelected ? 'filled' : 'outline'}
-                                        color="teal"
-                                        onClick={() => {
-                                          if (isSelected) {
-                                            // Update the cart pack item to remove the selection
-                                            // You'll need to implement this function
-                                            setCartPackItem(
-                                              removeSelectedOptionalItem(cartPackItem)
-                                            );
-                                          } else {
-                                            // First update any size/color selections
-                                            const updatedItem = {
-                                              ...optionalItem,
-                                              // Include any default selections if none are made
-                                              size:
-                                                optionalItem.size ||
-                                                originalItem.sizes?.[0] ||
-                                                undefined,
-                                              color:
-                                                optionalItem.color ||
-                                                originalItem.colors?.[0]?.name ||
-                                                undefined,
-                                              colorHex:
-                                                optionalItem.colorHex ||
-                                                originalItem.colors?.[0]?.hex ||
-                                                undefined,
-                                            };
-
-                                            // Then select this optional item
-                                            setCartPackItem(
-                                              selectOptionalItem(cartPackItem, index)
-                                            );
-                                          }
-                                        }}
-                                      >
-                                        {isSelected ? 'Selected ✓' : 'Select This Option'}
-                                      </Button>
-                                    </Stack>
-                                  </Paper>
-                                );
-                              }
-                            )}
-                          </Stack>
-                        </Accordion.Panel>
-                      </Accordion.Item>
-                    )}
-                  </Accordion>
-                </Box>
-
-                {/* Add to Cart Button - Fixed at the bottom */}
-                <Box
-                  mt="auto"
-                  pt="md"
-                  style={{
-                    position: 'sticky',
-                    bottom: 0,
-                    background: 'var(--mantine-color-gray-0)',
-                    zIndex: 2,
-                  }}
-                >
-                  <Button
-                    size="lg"
-                    leftSection={<IconShoppingCart size={20} />}
-                    onClick={() => {
-                      if (isAddToCartDisabled()) {
-                        showValidationMessage();
-                      } else {
-                        handleAddToCart();
-                      }
+                  {/* Add to Cart Button - Fixed at the bottom */}
+                  <Box
+                    mt="auto"
+                    pt="md"
+                    style={{
+                      position: 'sticky',
+                      bottom: 0,
+                      background: 'var(--mantine-color-gray-0)',
+                      zIndex: 2,
                     }}
-                    radius="md"
-                    color="blue"
-                    fullWidth
-                    disabled={isAddingToCart}
-                    loading={isAddingToCart}
                   >
-                    Add to Cart
-                  </Button>
-                </Box>
-              </Stack>
-            </Grid.Col>
-          </Grid>
-        </Box>
-      )}
-    </Modal>
+                    <Button
+                      size="lg"
+                      leftSection={<IconShoppingCart size={20} />}
+                      onClick={() => {
+                        if (isAddToCartDisabled()) {
+                          showValidationMessage();
+                        } else {
+                          handleAddToCart();
+                        }
+                      }}
+                      radius="md"
+                      color="blue"
+                      fullWidth
+                      disabled={isAddingToCart}
+                      loading={isAddingToCart}
+                    >
+                      Add to Cart
+                    </Button>
+                  </Box>
+                </Stack>
+              </Grid.Col>
+            </Grid>
+          </Box>
+        )}
+      </Modal>
+
+      {/* Size Chart Modal */}
+      <SizeModal opened={sizeModalOpened} onClose={() => setSizeModalOpened(false)} />
+    </>
   );
 }
