@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { getOrderById } from '@/lib/payhere/paymentRepository';
-import { isDelegatePayment } from '@/app/api/store/orders/my/route';
+import { applyDiscountIfApplicable } from '@/lib/store/utils';
 
 type OrderDetails = Awaited<ReturnType<typeof getOrderById>>;
 
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Missing orderId' }, { status: 400 });
   }
 
-  const orderDetails:OrderDetails = await getOrderById(orderId)
+  const orderDetails: OrderDetails = await getOrderById(orderId);
 
   try {
     const merchantId = process.env.PAYHERE_MERCHANT_ID;
@@ -38,15 +38,12 @@ export async function POST(req: Request) {
       .toUpperCase();
 
     const rawHash = merchantId + orderId + formattedAmount + currency + hashedSecret;
-    const hash = crypto
-      .createHash('md5')
-      .update(rawHash)
-      .digest('hex')
-      .toUpperCase();
+    const hash = crypto.createHash('md5').update(rawHash).digest('hex').toUpperCase();
 
-    const actionUrl = env === 'live'
-      ? 'https://www.payhere.lk/pay/checkout'
-      : 'https://sandbox.payhere.lk/pay/checkout';
+    const actionUrl =
+      env === 'live'
+        ? 'https://www.payhere.lk/pay/checkout'
+        : 'https://sandbox.payhere.lk/pay/checkout';
 
     const fields: Record<string, string> = {
       merchant_id: merchantId,
@@ -59,7 +56,7 @@ export async function POST(req: Request) {
       first_name: customer.first_name,
       last_name: customer.last_name,
       email: customer.email,
-      phone : customer.phone,
+      phone: customer.phone,
       address: customer.address,
       city: customer.city,
       country: customer.country,
@@ -73,15 +70,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message || 'Server Error' }, { status: 500 });
   }
 }
-
-export const applyDiscountIfApplicable = (amount: number | string): number => {
-  const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-
-  // If it's not a delegate payment, apply 10% discount
-  if (!isDelegatePayment(numericAmount)) {
-    return numericAmount * 0.9;
-  }
-
-  // If it's a delegate payment, return original amount
-  return numericAmount;
-};
