@@ -110,6 +110,10 @@
   overflow-y: auto;
 }
 
+.sizeModal {
+  max-width: 800px;
+}
+
 @media (max-width: 768px) {
   .imageContainer {
     height: 400px;
