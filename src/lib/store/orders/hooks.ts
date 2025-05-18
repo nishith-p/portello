@@ -4,13 +4,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notifications } from '@mantine/notifications';
 import { isPackItem } from '@/context/cart';
 import {
-  CartItem,
-  CartPackItem,
   CartPackItemDetail,
   CreateOrderItemInput,
   CreateOrderPackItem,
   Order,
-  OrderStatus,
   PayhereCheckoutInput,
   PayhereCheckoutResponse,
   PlaceOrderInput,
@@ -101,7 +98,6 @@ export function useOrderHooks() {
                 name: packItem.name,
                 image: packItem.image,
               })),
-              // Add selected optional item if it exists
               ...(item.selected_optional_item && {
                 selected_optional_item: {
                   item_code: item.selected_optional_item.item_code,
@@ -150,13 +146,24 @@ export function useOrderHooks() {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error?.message || 'Failed to place order');
+          const errorMessage = errorData.error?.message || 'Failed to place order';
+
+          // Handle stock-related errors specifically
+          if (
+            errorMessage.includes('Insufficient stock') ||
+            errorMessage.includes('No stock record found')
+          ) {
+            throw new Error(errorMessage);
+          } else {
+            throw new Error('Failed to place order. Please try again.');
+          }
         }
 
         return response.json();
       },
       onSuccess: async () => {
         await queryClient.invalidateQueries({ queryKey: ['orders'] });
+        await queryClient.invalidateQueries({ queryKey: ['storeItems'] }); // Invalidate items to refresh stock
 
         notifications.show({
           title: 'Order Placed',
@@ -167,7 +174,7 @@ export function useOrderHooks() {
       onError: (error) => {
         notifications.show({
           title: 'Error',
-          message: error.message || 'Failed to place order. Please try again.',
+          message: error.message,
           color: 'red',
         });
       },
@@ -213,31 +220,32 @@ export function useOrderHooks() {
     });
   };
 
+  // Payhere
   const usePayhereCheckout = () => {
-  return useMutation<PayhereCheckoutResponse, Error, PayhereCheckoutInput>({
-    mutationFn: async (payload: PayhereCheckoutInput) => {
-      const response = await fetch('/api/payhere/create-checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+    return useMutation<PayhereCheckoutResponse, Error, PayhereCheckoutInput>({
+      mutationFn: async (payload: PayhereCheckoutInput) => {
+        const response = await fetch('/api/payhere/create-checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to create checkout session');
-      }
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to create checkout session');
+        }
 
-      return response.json();
-    },
-    onError: (error) => {
-      notifications.show({
-        title: 'Payment Error',
-        message: error.message,
-        color: 'red',
-      });
-    },
-  });
-};
+        return response.json();
+      },
+      onError: (error) => {
+        notifications.show({
+          title: 'Payment Error',
+          message: error.message,
+          color: 'red',
+        });
+      },
+    });
+  };
 
   return {
     useUserOrders,
@@ -245,7 +253,7 @@ export function useOrderHooks() {
     useOrder,
     usePlaceOrder,
     useUpdateOrderStatus,
-    usePayhereCheckout
+    usePayhereCheckout,
   };
 }
 
