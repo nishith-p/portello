@@ -19,6 +19,7 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
+import { useStoreItemStock } from '@/lib/store/items/hooks';
 import { StoreItem } from '@/lib/store/types';
 import { SizeModal } from './size-modal';
 import classes from './product-modal.module.css';
@@ -90,6 +91,13 @@ export function ProductModal({
     }
     return selectedItem.colors.find((color) => color.hex === selectedColorHex);
   };
+
+  // Get the stock quantity
+  const { data: stock } = useStoreItemStock(
+    selectedItem?.item_code || '',
+    selectedColorHex ? getSelectedColorObject()?.name : undefined,
+    selectedSize || undefined
+  );
 
   // Handle add to cart with selected options
   const handleAddToCart = () => {
@@ -299,6 +307,15 @@ export function ProductModal({
                       </Flex>
                     </Box>
                   )}
+                {/* Stock Quantity*/}
+                {typeof stock === 'number' && (
+                  <Text c={stock > 0 ? 'yellow' : 'red'} fw={500}>
+                    {stock > 0 ? `${stock} in stock` : 'Out of stock'}
+                  </Text>
+                )}
+
+                {/* Push button to bottom */}
+                <div style={{ flexGrow: 1 }} />
 
                   {/* Push button to bottom */}
                   <div style={{ flexGrow: 1 }} />

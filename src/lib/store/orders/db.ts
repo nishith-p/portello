@@ -14,7 +14,7 @@ import {
   OrderStatus,
   PackWithQuantity,
 } from '@/lib/store/types';
-import { getActiveStoreItems, getStoreItems } from '../items/db';
+import { getStoreItems, reduceItemStock } from '../items/db';
 import { getActiveStorePacks } from '../packs/db';
 
 type OrderWithNestedItems = Omit<Order, 'items'> & {
@@ -359,7 +359,26 @@ export async function createOrder(orderInput: CreateOrderInputExtended): Promise
       (item): item is CreateOrderItemInput => !('is_pack' in item) || !item.is_pack
     );
 
-    // First, insert regular items
+    // First, handle stock for regular items
+    for (const item of regularItems) {
+      try {
+        await reduceItemStock(
+          item.item_code,
+          item.quantity,
+          item.color || undefined,
+          item.size || undefined
+        );
+        // If item isn't in stock table (pre-order), we just continue
+      } catch (error) {
+        // Only throw error if it's not a "not found" error
+        if (!(error instanceof Error && error.message.includes('No matching stock record'))) {
+          throw new Error(`Failed to process item ${item.item_code}: ${error instanceof Error ? error.message : String(error)}`);
+        }
+        // Otherwise, it's a pre-order item and we continue
+      }
+    }
+
+    // Insert regular items (whether they have stock or not)
     if (regularItems.length > 0) {
       const regularItemsToInsert = regularItems.map((item: CreateOrderItemInput) => ({
         order_id: newOrder.id,
@@ -374,7 +393,7 @@ export async function createOrder(orderInput: CreateOrderInputExtended): Promise
         pre_price: item.pre_price || 0,
         discount_perc: item.discount_perc || 0,
         is_pack: false,
-        pack_code: null, // Explicitly set pack_code to null for regular items
+        pack_code: null,
       }));
 
       const { error: regularItemsError } = await supabaseServer
@@ -389,7 +408,45 @@ export async function createOrder(orderInput: CreateOrderInputExtended): Promise
 
     // Now handle pack items
     for (const packItem of packItems) {
-      // Insert the pack item
+      // Handle stock for pack items
+      for (const item of packItem.pack_items) {
+        try {
+          await reduceItemStock(
+            item.item_code,
+            item.quantity * packItem.quantity,
+            item.color || undefined,
+            item.size || undefined
+          );
+          // If item isn't in stock table (pre-order), we just continue
+        } catch (error) {
+          // Only throw error if it's not a "not found" error
+          if (!(error instanceof Error && error.message.includes('No matching stock record'))) {
+            throw new Error(`Failed to process pack item ${item.item_code}: ${error instanceof Error ? error.message : String(error)}`);
+          }
+          // Otherwise, it's a pre-order item and we continue
+        }
+      }
+
+      // Handle stock for optional item if selected
+      if (packItem.selected_optional_item) {
+        try {
+          await reduceItemStock(
+            packItem.selected_optional_item.item_code,
+            packItem.selected_optional_item.quantity * packItem.quantity,
+            packItem.selected_optional_item.color || undefined,
+            packItem.selected_optional_item.size || undefined
+          );
+          // If item isn't in stock table (pre-order), we just continue
+        } catch (error) {
+          // Only throw error if it's not a "not found" error
+          if (!(error instanceof Error && error.message.includes('No matching stock record'))) {
+            throw new Error(`Failed to process optional item ${packItem.selected_optional_item.item_code}: ${error instanceof Error ? error.message : String(error)}`);
+          }
+          // Otherwise, it's a pre-order item and we continue
+        }
+      }
+
+      // Insert the pack item (whether components have stock or not)
       const { data: insertedPack, error: packError } = await supabaseServer
         .from('order_items')
         .insert({
@@ -423,7 +480,7 @@ export async function createOrder(orderInput: CreateOrderInputExtended): Promise
             order_id: newOrder.id,
             parent_pack_id: insertedPack.id,
             item_code: item.item_code,
-            quantity: item.quantity,
+            quantity: item.quantity * packItem.quantity,
             price: item.price || 0,
             size: item.size || null,
             color: item.color || null,
