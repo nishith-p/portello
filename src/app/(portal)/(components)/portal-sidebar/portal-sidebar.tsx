@@ -12,8 +12,9 @@ import {
   IconShirt,
   IconShoppingBag,
   IconUsers,
+  IconFileText,
 } from '@tabler/icons-react';
-import { Box, NavLink, Stack, Tooltip } from '@mantine/core';
+import { Box, NavLink, Stack, Tooltip, Divider } from '@mantine/core';
 import classes from './portal-sidebar.module.css';
 
 type NavigationItem = {
@@ -75,6 +76,24 @@ const navigationData: NavigationItem[] = [
     label: 'Settings',
     icon: IconSettings,
     adminOnly: false,
+  },
+];
+
+const policyLinks = [
+  {
+    link: 'https://www.ic2025.org/privacy-policy',
+    label: 'Privacy & Cookie Policy',
+    icon: IconFileText,
+  },
+  {
+    link: 'https://www.ic2025.org/terms-and-conditions',
+    label: 'Terms & Conditions',
+    icon: IconFileText,
+  },
+  {
+    link: 'https://www.ic2025.org/refund-policy',
+    label: 'Cancellation & Refund Policy',
+    icon: IconFileText,
   },
 ];
 
@@ -167,6 +186,25 @@ export const PortalSidebar = memo(({ onNavigate }: PortalSidebarProps) => {
 
             return navLink;
           })}
+        </Stack>
+      </Box>
+
+      {/* Policy Links Section */}
+      <Box>
+        <Divider my="sm" />
+        <Stack gap="xs">
+          {policyLinks.map((item) => (
+            <NavLink
+              key={item.label}
+              className={classes.link}
+              active={pathname === item.link}
+              label={item.label}
+              component={Link}
+              href={item.link}
+              leftSection={<item.icon className={classes.linkIcon} stroke={1.5} />}
+              onClick={(e) => handleNavClick(e, false)}
+            />
+          ))}
         </Stack>
       </Box>
     </Box>
