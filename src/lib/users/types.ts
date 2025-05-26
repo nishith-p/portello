@@ -1,6 +1,6 @@
 export enum RegionType {
   APAC = 'Asia Pacific',
-  MENA = 'Middle East & Africa',
+  MENA = 'Middle East and Africa',
   ECA = 'Europe',
   AMERICAS = 'Americas',
 }
