@@ -19,12 +19,12 @@ export async function GET(request: NextRequest) {
 
         const orders = await getUserOrders(user.id);
 
-        // Filter out orders where isDelegatePayment returns true
-        const filteredOrders = orders.filter((order) => {
-          return !isDelegatePayment(order.total_amount);
-        });
+        // // Filter out orders where isDelegatePayment returns true
+        // const filteredOrders = orders.filter(order => {
+        //   return !isDelegatePayment(order.total_amount);
+        // });
 
-        return NextResponse.json(filteredOrders);
+        return NextResponse.json(orders);
       } catch (error) {
         return errorResponse(error as Error);
       }
@@ -34,3 +34,10 @@ export async function GET(request: NextRequest) {
     }
   );
 }
+
+
+// // Hack fix for delegate payment related renderings
+// const isDelegatePayment = (amount: number | string): boolean => {
+//   // eslint-disable-next-line eqeqeq
+//   return amount == 560 || amount == 630;
+// }

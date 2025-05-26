@@ -282,7 +282,7 @@ export function PaymentForm({ orderId, currency, customer, amount }: PaymentForm
                   Total:
                 </Text>
                 <Text fw={700} size="md" c="blue">
-                  {currency} {amount.toFixed(2)}
+                  {currency} {order.total_amount.toFixed(2)}
                 </Text>
               </Group>
             </Stack>
