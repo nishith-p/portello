@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { getOrderById } from '@/lib/payhere/paymentRepository';
-import { applyDiscountIfApplicable } from '@/lib/store/utils';
+// import { applyDiscountIfApplicable } from '@/lib/store/utils';
 
 type OrderDetails = Awaited<ReturnType<typeof getOrderById>>;
 
@@ -27,7 +27,8 @@ export async function POST(req: Request) {
       throw new Error('Missing PayHere environment configuration');
     }
 
-    const formattedAmount = applyDiscountIfApplicable(orderDetails.total_amount).toFixed(2);
+    // const formattedAmount = applyDiscountIfApplicable(orderDetails.total_amount).toFixed(2);
+    const formattedAmount = parseFloat(orderDetails.total_amount.toString()).toFixed(2);
 
     const currency = 'EUR';
 
