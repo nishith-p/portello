@@ -10,9 +10,9 @@ export default async function OrderPage({ params }: { params: Params }) {
   const { orderId } = await params;
   const orderDetails: OrderDetails = await getOrderById(orderId);
 
-  // Calculate discounted price (10% off) if amount is not a delegate fee (560 or 630)
-  const isDelegateFee = orderDetails.total_amount === 560 || orderDetails.total_amount === 630;
-  const amount = isDelegateFee ? orderDetails.total_amount : orderDetails.total_amount * 0.9;
+  // // Calculate discounted price (10% off) if amount is not a delegate fee (560 or 630)
+  // const isDelegateFee = orderDetails.total_amount === 560 || orderDetails.total_amount === 630;
+  // const amount = isDelegateFee ? orderDetails.total_amount : orderDetails.total_amount * 0.9;
 
   return (
     <Container fluid p="md">
@@ -26,7 +26,7 @@ export default async function OrderPage({ params }: { params: Params }) {
         </Text>
         <PaymentForm
           orderId={orderId}
-          amount={amount}
+          amount={orderDetails.total_amount}
           currency="EUR"
           customer={orderDetails.users?.[0]}
         />
