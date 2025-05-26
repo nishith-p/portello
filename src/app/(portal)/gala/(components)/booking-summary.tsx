@@ -1,19 +1,28 @@
-"use client"
+'use client';
 
-import { Paper, Title, Text, Stack, Button, Divider, List, ThemeIcon, Box } from "@mantine/core"
-import { IconArmchair, IconCheck } from "@tabler/icons-react"
+import { IconArmchair, IconCheck } from '@tabler/icons-react';
+import { Box, Button, Divider, List, Paper, Stack, Text, ThemeIcon, Title } from '@mantine/core';
+import { UserBooking } from '@/lib/gala/types';
 
 interface BookingSummaryProps {
   selectedSeats: {
     tableId: number
-    seatId: string
     seatNumber: number
   }[]
-  tables: any[]
+  tables: {
+    id: number
+    name: string
+  }[]
   onSubmit: () => Promise<void>
+  userBookings: UserBooking[]
 }
 
-export default function BookingSummary({ selectedSeats, tables, onSubmit }: BookingSummaryProps) {
+export default function BookingSummary({ 
+  selectedSeats, 
+  tables, 
+  onSubmit, 
+  userBookings 
+}: BookingSummaryProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     await onSubmit()
@@ -21,23 +30,22 @@ export default function BookingSummary({ selectedSeats, tables, onSubmit }: Book
 
   const getTableName = (tableId: number) => {
     const table = tables.find((t) => t.id === tableId)
-    return table ? table.name : ""
+    return table ? table.name : `Table ${tableId}`
   }
 
   return (
     <Paper withBorder p="md" radius="md" style={{ width: "100%", maxWidth: 400 }}>
       <Title order={3} mb="md">
-        Complete Your Booking
+        {userBookings.length > 0 ? 'Your Bookings' : 'Complete Your Booking'}
       </Title>
 
       {selectedSeats.length > 0 ? (
         <Stack>
-          <Text fw={500}>Selected Seats ({selectedSeats.length})</Text>
-
+          <Text fw={500}>Selected Additional Seats ({selectedSeats.length})</Text>
           <List spacing="xs" size="sm" center>
-            {selectedSeats.map((seat) => (
+            {selectedSeats.map((seat, index) => (
               <List.Item
-                key={seat.seatId}
+                key={`${seat.tableId}-${seat.seatNumber}-${index}`}
                 icon={
                   <ThemeIcon color="green" size={24} radius="xl">
                     <IconArmchair size={16} />
@@ -48,21 +56,44 @@ export default function BookingSummary({ selectedSeats, tables, onSubmit }: Book
               </List.Item>
             ))}
           </List>
-
-          <Divider my="sm" />
-
           <form onSubmit={handleSubmit}>
             <Stack>
               <Button type="submit" leftSection={<IconCheck size={16} />}>
-                Confirm Booking
+                Confirm Additional Booking
               </Button>
             </Stack>
           </form>
         </Stack>
       ) : (
         <Box py="md">
-          <Text c="dimmed">Please select seats to continue with your booking</Text>
+          <Text c="dimmed">
+            {userBookings.length > 0 
+              ? "Select more seats to add to your booking"
+              : "Please select seats to continue with your booking"}
+          </Text>
         </Box>
+      )}
+
+      <Divider my="lg" />
+
+      {userBookings.length > 0 && (
+        <Stack mb="md">
+          <Text fw={500}>Your Current Seats ({userBookings.length})</Text>
+          <List spacing="xs" size="sm" center>
+            {userBookings.map((booking, index) => (
+              <List.Item
+                key={`${booking.tableId}-${booking.seatNumber}-${index}`}
+                icon={
+                  <ThemeIcon color="blue" size={24} radius="xl">
+                    <IconArmchair size={16} />
+                  </ThemeIcon>
+                }
+              >
+                {booking.tableName}, Seat {booking.seatNumber}
+              </List.Item>
+            ))}
+          </List>
+        </Stack>
       )}
     </Paper>
   )

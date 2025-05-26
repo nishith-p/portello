@@ -14,49 +14,69 @@ import {
   Text,
   Title,
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { useGalaSeating } from '@/lib/gala/hooks';
 import BookingSummary from './(components)/booking-summary';
 import Table from './(components)/table';
 
 // Generate initial tables with all seats available
 const generateTables = () => {
-  const tables = [];
-  for (let i = 1; i <= 45; i++) {
-    tables.push({
-      id: i,
-      name: `Table ${i}`,
+  return Array(45)
+    .fill(null)
+    .map((_, i) => ({
+      id: i + 1,
+      name: `Table ${i + 1}`,
       seats: Array(10)
         .fill(null)
-        .map((_, index) => ({
-          id: `${i}-${index + 1}`,
-          number: index + 1,
-          status: 'available' as const, // Mark as const to ensure type safety
+        .map((_, j) => ({
+          number: j + 1,
+          status: 'available' as const,
         })),
-    });
-  }
-  return tables;
+    }));
 };
 
 export default function GalaBookingPage() {
-  const { isAuthenticated, isLoading } = useKindeBrowserClient()
-  const { tables, selectedSeats, loading, handleSeatClick, submitBooking } = 
-    useGalaSeating({ initialTables: generateTables() })
+  const { user, isAuthenticated, isLoading } = useKindeBrowserClient();
+  const {
+    tables,
+    selectedSeats,
+    loading,
+    handleSeatClick,
+    handleTableClick,
+    submitBooking,
+    userBookings,
+  } = useGalaSeating({
+    initialTables: generateTables(),
+    userId: user?.id,
+  });
 
   const handleSubmit = async () => {
     if (!isAuthenticated) {
-      alert("Please log in to book seats")
-      return
+      notifications.show({
+        title: 'Error',
+        message: 'Please log in to book seats',
+        color: 'red',
+      });
+      return;
     }
-    const success = await submitBooking()
+    const success = await submitBooking();
     if (success) {
-      alert("Booking successful!")
+      notifications.show({
+        title: 'Gala Night Seat Booking',
+        message: 'Booking Successful!',
+        color: 'green',
+      });
     } else {
-      alert("Booking failed. Please try again.")
+      notifications.show({
+        title: 'Error',
+        message: 'Booking failed. Please try again.',
+        color: 'red',
+      });
     }
-  }
+  };
 
   if (isLoading) {
-    return <Text>Loading user data...</Text>
+    return <Text>Loading user data...</Text>;
   }
 
   return (
@@ -74,7 +94,7 @@ export default function GalaBookingPage() {
               <Group justify="center" mb="lg">
                 <IconScan size={48} stroke={1.5} />
                 <Text size="lg" fw={500}>
-                  Stage / Screen
+                  Stage
                 </Text>
               </Group>
 
@@ -93,7 +113,12 @@ export default function GalaBookingPage() {
                     }}
                   >
                     {tables.map((table) => (
-                      <Table key={table.id} table={table} onSeatClick={handleSeatClick} />
+                      <Table
+                        key={table.id}
+                        table={table}
+                        onSeatClick={handleSeatClick}
+                        onTableClick={handleTableClick}
+                      />
                     ))}
                   </Box>
                 </ScrollArea>
@@ -118,7 +143,12 @@ export default function GalaBookingPage() {
             </Paper>
           </Box>
 
-          <BookingSummary selectedSeats={selectedSeats} tables={tables} onSubmit={handleSubmit} />
+          <BookingSummary
+            selectedSeats={selectedSeats}
+            tables={tables}
+            onSubmit={handleSubmit}
+            userBookings={userBookings}
+          />
         </Flex>
       )}
     </Container>

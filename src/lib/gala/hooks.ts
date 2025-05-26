@@ -1,121 +1,234 @@
 import { useEffect, useState } from 'react';
-import { BookingSummary, Table } from './types';
+import { Booking, SeatStatus, SelectedSeat, Table, UserBooking } from './types';
 
 interface UseGalaSeatingProps {
   initialTables: Table[];
+  userId?: string;
 }
 
-export function useGalaSeating({ initialTables }: UseGalaSeatingProps) {
+export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
   const [tables, setTables] = useState<Table[]>(initialTables);
-  const [selectedSeats, setSelectedSeats] = useState<BookingSummary[]>([]);
+  const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>([]);
   const [loading, setLoading] = useState(true);
+  const [userBookings, setUserBookings] = useState<UserBooking[]>([]);
 
   useEffect(() => {
-    async function fetchBookedSeats() {
+    async function loadBookings() {
       try {
-        const response = await fetch('/api/gala-seating');
-        const bookedSeats = await response.json();
+        const res = await fetch('/api/gala-seating');
+        const data = await res.json();
 
-        setTables((prevTables) => {
-          return prevTables.map((table) => {
-            const bookedSeatsForTable = bookedSeats.filter(
-              (seat: any) => seat.table_id === table.id
-            );
+        // Handle both response formats
+        const bookings = Array.isArray(data) ? data : data.allBookings || [];
 
-            const seats = table.seats.map((seat) => {
-              const isBooked = bookedSeatsForTable.some(
-                (bookedSeat: any) => bookedSeat.seat_id === seat.id
-              );
-              return {
-                ...seat,
-                status: isBooked ? 'booked' : seat.status,
-              };
-            });
+        if (!Array.isArray(bookings)) {
+          console.error('Unexpected bookings format:', bookings);
+          return;
+        }
 
+        // Find all of the user's bookings
+        if (userId) {
+          const userBookedSeats = bookings.filter((b) => b.chief_delegate_id === userId);
+          const bookingsWithNames = userBookedSeats.map((booking) => {
+            const table = initialTables.find((t) => t.id === booking.table);
             return {
-              ...table,
-              seats,
+              tableId: booking.table,
+              seatNumber: booking.seat,
+              tableName: table?.name || `Table ${booking.table}`,
             };
           });
-        });
+          setUserBookings(bookingsWithNames);
+        }
+
+        setTables((prev) =>
+          prev.map((table) => ({
+            ...table,
+            seats: Array(10)
+              .fill(null)
+              .map((_, i) => {
+                const seatNumber = i + 1;
+                const isBooked = bookings.some(
+                  (b) => b.table === table.id && b.seat === seatNumber
+                );
+                return {
+                  number: seatNumber,
+                  status: isBooked ? 'booked' : 'available',
+                };
+              }),
+          }))
+        );
       } catch (error) {
-        console.error('Failed to fetch booked seats:', error);
+        console.error('Failed to load bookings:', error);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchBookedSeats();
-  }, []);
+    loadBookings();
+  }, [userId]);
 
-  const handleSeatClick = (tableId: number, seatId: string, seatNumber: number, status: string) => {
+  const handleSeatClick = (table: number, seat: number, status: SeatStatus) => {
     if (status === 'booked') return;
 
-    const seatIndex = selectedSeats.findIndex((seat) => seat.seatId === seatId);
+    setSelectedSeats((prev) => {
+      const existingIndex = prev.findIndex((s) => s.tableId === table && s.seatNumber === seat);
 
-    if (seatIndex > -1) {
-      // Deselect seat
-      setSelectedSeats((prev) => prev.filter((seat) => seat.seatId !== seatId));
-      updateSeatStatus(tableId, seatId, 'available');
-    } else {
+      if (existingIndex >= 0) {
+        // Deselect seat
+        return prev.filter((s) => !(s.tableId === table && s.seatNumber === seat));
+      }
       // Select seat
-      setSelectedSeats((prev) => [...prev, { tableId, seatId, seatNumber }]);
-      updateSeatStatus(tableId, seatId, 'selected');
-    }
+      return [...prev, { tableId: table, seatNumber: seat }];
+    });
+
+    setTables((prev) =>
+      prev.map((t) =>
+        t.id === table
+          ? {
+              ...t,
+              seats: t.seats.map((s) =>
+                s.number === seat
+                  ? {
+                      ...s,
+                      status: s.status === 'selected' ? 'available' : 'selected',
+                    }
+                  : s
+              ),
+            }
+          : t
+      )
+    );
   };
 
-  const updateSeatStatus = (
-    tableId: number,
-    seatId: string,
-    status: 'available' | 'selected' | 'booked'
-  ) => {
+  const handleTableClick = (tableId: number) => {
+    const table = tables.find((t) => t.id === tableId);
+    if (!table) return;
+
+    // Get all available and selected seats in this table
+    const selectableSeats = table.seats.filter(
+      (seat) => seat.status === 'available' || seat.status === 'selected'
+    );
+
+    // Check if all selectable seats are already selected
+    const allAlreadySelected = selectableSeats.every((seat) => seat.status === 'selected');
+
+    setSelectedSeats((prev) => {
+      if (allAlreadySelected) {
+        // Deselect all seats from this table
+        return prev.filter((s) => s.tableId !== tableId);
+      } else {
+        // Remove existing selections from this table
+        const otherSelections = prev.filter((s) => s.tableId !== tableId);
+        // Add all selectable seats from this table
+        const newSelections = selectableSeats.map((seat) => ({
+          tableId,
+          seatNumber: seat.number,
+        }));
+        return [...otherSelections, ...newSelections];
+      }
+    });
+
     setTables((prev) =>
-      prev.map((table) =>
-        table.id === tableId
+      prev.map((t) =>
+        t.id === tableId
           ? {
-              ...table,
-              seats: table.seats.map((seat) => (seat.id === seatId ? { ...seat, status } : seat)),
+              ...t,
+              seats: t.seats.map((s) => ({
+                ...s,
+                status:
+                  allAlreadySelected && s.status === 'selected'
+                    ? 'available'
+                    : s.status === 'available' || s.status === 'selected'
+                      ? 'selected'
+                      : s.status,
+              })),
             }
-          : table
+          : t
       )
     );
   };
 
   const submitBooking = async () => {
+    if (!selectedSeats.length) return false;
+
     try {
-      const response = await fetch("/api/gala-seating", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(
-          selectedSeats.map((seat) => ({
-            tableId: seat.tableId,
-            seatId: seat.seatId
-          }))
-        ),
-      })
+      const bookings = selectedSeats.map((seat) => ({
+        table: seat.tableId,
+        seat: seat.seatNumber,
+      }));
 
-      if (!response.ok) throw new Error("Booking failed")
+      const res = await fetch('/api/gala-seating', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookings),
+      });
 
-      // Update local state to mark seats as booked
-      selectedSeats.forEach((seat) => {
-        updateSeatStatus(seat.tableId, seat.seatId, "booked")
-      })
+      if (!res.ok) throw new Error('Booking failed');
 
-      setSelectedSeats([])
-      return true
+      // Update local state
+      setTables((prev) =>
+        prev.map((t) => ({
+          ...t,
+          seats: t.seats.map((s) => ({
+            ...s,
+            status: selectedSeats.some((sel) => sel.tableId === t.id && sel.seatNumber === s.number)
+              ? 'booked'
+              : s.status,
+          })),
+        }))
+      );
+
+      setSelectedSeats([]);
+      return true;
     } catch (error) {
-      console.error("Booking error:", error)
-      return false
+      console.error('Booking error:', error);
+      return false;
     }
-  }
+  };
+
+  const deleteBooking = async (tableId: number, seatNumber: number) => {
+    try {
+      const res = await fetch('/api/gala-seating', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table: tableId, seat: seatNumber }),
+      });
+
+      if (!res.ok) throw new Error('Delete failed');
+
+      // Update local state
+      setTables((prev) =>
+        prev.map((t) =>
+          t.id === tableId
+            ? {
+                ...t,
+                seats: t.seats.map((s) =>
+                  s.number === seatNumber ? { ...s, status: 'available' } : s
+                ),
+              }
+            : t
+        )
+      );
+
+      // Remove from user bookings if present
+      setUserBookings((prev) =>
+        prev.filter((b) => !(b.tableId === tableId && b.seatNumber === seatNumber))
+      );
+
+      return true;
+    } catch (error) {
+      console.error('Delete booking error:', error);
+      return false;
+    }
+  };
 
   return {
     tables,
     selectedSeats,
     loading,
+    userBookings,
     handleSeatClick,
+    handleTableClick,
     submitBooking,
   };
 }

@@ -1,42 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/utils';
 import { bookSeats, getBookedSeats } from '@/lib/gala/db';
-import { GalaSeating } from '@/lib/gala/types';
-import { ValidationError } from '@/lib/core/errors';
+import { Booking } from '@/lib/gala/types';
 
 export async function GET(request: NextRequest) {
   return withAuth(
     request,
     async (req, user) => {
       const bookedSeats = await getBookedSeats();
-      return NextResponse.json(bookedSeats);
+      // Include user's booking status in response if authenticated
+      if (user?.id) {
+        const userBooking = bookedSeats.find(b => b.chief_delegate_id === user.id);
+        return NextResponse.json({
+          allBookings: bookedSeats,
+          userBooking: userBooking || null
+        });
+      }
+      return NextResponse.json({ allBookings: bookedSeats });
     },
     { requireAuth: false }
-  ); // Allow unauthenticated users to see seating
+  );
 }
 
 export async function POST(request: NextRequest) {
-  return withAuth(
-    request,
-    async (req, user) => {
-      if (!user || !user.id) {
-        throw new ValidationError('User is required', { user: 'User ID is required' });
-      }
-      const bookings: Pick<GalaSeating, 'table' | 'seat'>[] = await request.json();
+  return withAuth(request, async (req, user) => {
+    if (!user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-      // Add user ID to each booking
-      const bookingsWithUser = bookings.map((booking) => ({
-        ...booking,
-        chief_delegate_id: user.id,
-      }));
+    const newBookings: Omit<Booking, 'chief_delegate_id'>[] = await request.json();
 
-      try {
-        const result = await bookSeats(bookingsWithUser);
-        return NextResponse.json(result);
-      } catch (error) {
-        return NextResponse.json({ error: 'Failed to book seats' }, { status: 500 });
-      }
-    },
-    { requireAuth: true }
-  ); // Require authentication for booking
+    const bookingsWithUser = newBookings.map(b => ({
+      ...b,
+      chief_delegate_id: user.id
+    }));
+
+    try {
+      await bookSeats(bookingsWithUser);
+      return NextResponse.json({ success: true });
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Booking failed" }, 
+        { status: 500 }
+      );
+    }
+  });
 }

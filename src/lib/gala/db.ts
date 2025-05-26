@@ -1,31 +1,30 @@
+import { supabaseServer } from "../core/supabase";
+import { Booking } from "./types";
 
-import { supabaseServer } from "../core/supabase"
-import { GalaSeating } from "./types"
-
-export async function getBookedSeats(): Promise<GalaSeating[]> {
+export async function getBookedSeats(): Promise<Booking[]> {
   const { data, error } = await supabaseServer
     .from("gala_seating")
-    .select("*")
-    .not("chief_delegate_id", "is", null)
+    .select("table, seat, chief_delegate_id")
+    .not("chief_delegate_id", "is", null);
 
   if (error) {
-    console.error("Error fetching booked seats:", error)
-    return []
+    console.error("Error fetching booked seats:", error);
+    return [];
   }
 
-  return data || []
+  return data || [];
 }
 
-export async function bookSeats(bookings: GalaSeating[]) {
+export async function bookSeats(bookings: Booking[]) {
   const { data, error } = await supabaseServer
     .from("gala_seating")
-    .upsert(bookings, { onConflict: 'table,seat' })
-    .select()
+    .upsert(bookings)
+    .select();
 
   if (error) {
-    console.error("Error booking seats:", error)
-    throw error
+    console.error("Error booking seats:", error);
+    throw error;
   }
 
-  return data
+  return data;
 }

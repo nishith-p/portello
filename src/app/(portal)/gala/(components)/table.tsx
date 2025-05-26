@@ -1,26 +1,23 @@
 "use client"
 
 import { Paper, Text, Group, Tooltip } from "@mantine/core"
-import { IconTable } from "@tabler/icons-react"
 import Seat from "./seat"
-
-interface SeatType {
-  id: string
-  number: number
-  status: string
-}
+import { SeatStatus } from "@/lib/gala/types"
 
 interface TableProps {
   table: {
     id: number
     name: string
-    seats: SeatType[]
+    seats: {
+      number: number
+      status: SeatStatus
+    }[]
   }
-  onSeatClick: (tableId: number, seatId: string, seatNumber: number, status: string) => void
+  onSeatClick: (tableId: number, seatNumber: number, status: SeatStatus) => void
+  onTableClick: (tableId: number) => void
 }
 
-export default function Table({ table, onSeatClick }: TableProps) {
-  // Calculate positions for 10 seats in a circle
+export default function Table({ table, onSeatClick, onTableClick }: TableProps) {
   const getPosition = (index: number, total = 10) => {
     const angleStep = (2 * Math.PI) / total
     const angle = index * angleStep
@@ -32,8 +29,20 @@ export default function Table({ table, onSeatClick }: TableProps) {
     }
   }
 
+  // Check if all selectable seats are selected
+  const allSelectableSelected = table.seats.every(
+    seat => seat.status === 'selected' || seat.status === 'booked'
+  );
+
   return (
-    <Tooltip label={table.name} position="top">
+    <Tooltip 
+      label={
+        allSelectableSelected
+          ? `Click to deselect all seats at ${table.name}`
+          : `Click to select all available seats at ${table.name}`
+      } 
+      position="top"
+    >
       <Paper
         withBorder
         radius="xl"
@@ -44,10 +53,17 @@ export default function Table({ table, onSeatClick }: TableProps) {
           position: "relative",
           margin: "0",
           minWidth: "120px",
+          cursor: "pointer",
         }}
       >
-        <Group justify="center" style={{ height: "100%" }}>
-          {/* <IconTable size={24} stroke={1.5} /> */}
+        <Group 
+          justify="center" 
+          style={{ height: "100%" }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onTableClick(table.id);
+          }}
+        >
           <Text size="xs" fw={500}>
             {table.name}
           </Text>
@@ -55,10 +71,9 @@ export default function Table({ table, onSeatClick }: TableProps) {
 
         {table.seats.map((seat, index) => {
           const position = getPosition(index)
-
           return (
             <Seat
-              key={seat.id}
+              key={`${table.id}-${seat.number}`}
               seat={seat}
               style={{
                 position: "absolute",
@@ -66,7 +81,7 @@ export default function Table({ table, onSeatClick }: TableProps) {
                 top: `${position.top}%`,
                 transform: "translate(-50%, -50%)",
               }}
-              onClick={() => onSeatClick(table.id, seat.id, seat.number, seat.status)}
+              onClick={() => onSeatClick(table.id, seat.number, seat.status)}
             />
           )
         })}

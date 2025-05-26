@@ -1,14 +1,14 @@
 "use client"
 
-import { ActionIcon, Tooltip } from "@mantine/core"
+import type { CSSProperties, MouseEvent } from "react"
 import { IconArmchair } from "@tabler/icons-react"
-import type { CSSProperties } from "react"
+import { ActionIcon, Tooltip } from "@mantine/core"
+import type { SeatStatus } from "@/lib/gala/types"
 
 interface SeatProps {
   seat: {
-    id: string
     number: number
-    status: string
+    status: SeatStatus
   }
   style?: CSSProperties
   onClick: () => void
@@ -26,15 +26,35 @@ export default function Seat({ seat, style, onClick }: SeatProps) {
     }
   }
 
+  const getVariant = () => {
+    switch (seat.status) {
+      case "selected":
+      case "booked":
+        return "filled"
+      default:
+        return "light"
+    }
+  }
+
+  const handleClick = (e: MouseEvent) => {
+    e.stopPropagation()
+    if (seat.status !== "booked") {
+      onClick()
+    }
+  }
+
   return (
     <Tooltip label={`Seat ${seat.number} (${seat.status})`}>
       <ActionIcon
         color={getColor()}
-        variant={seat.status === "selected" ? "filled" : "light"}
+        variant={getVariant()}
         size="sm"
-        style={style}
-        onClick={onClick}
-        disabled={seat.status === "booked"}
+        style={{
+          ...style,
+          cursor: seat.status === "booked" ? "not-allowed" : "pointer",
+          opacity: seat.status === "booked" ? 0.8 : 1,
+        }}
+        onClick={handleClick}
       >
         <IconArmchair size={16} />
       </ActionIcon>
