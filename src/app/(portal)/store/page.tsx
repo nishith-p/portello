@@ -105,10 +105,6 @@ export default function StorePage() {
         Store
       </Title>
 
-      <Container fluid mb="xl" style={{ padding: 0}}>
-        <DiscountBanner />
-      </Container>
-
       {hasItems || hasPacks ? (
         <>
           {/* Packs Section */}
