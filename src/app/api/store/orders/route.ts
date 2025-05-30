@@ -204,6 +204,14 @@ export async function POST(request: NextRequest) {
         const newOrder = await createOrder(serviceData);
         return NextResponse.json(newOrder, { status: 201 });
       } catch (error) {
+        if (error instanceof Error) {
+          if (error.message.includes('Insufficient stock')) {
+            return NextResponse.json(
+              { error: { message: error.message } },
+              { status: 400 }
+            );
+          }
+        }
         return errorResponse(error as Error);
       }
     },

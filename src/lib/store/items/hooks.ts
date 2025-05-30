@@ -253,3 +253,24 @@ export function useUpdateStoreItemStatus() {
     },
   });
 }
+
+export function useStoreItemStock(itemCode: string, color?: string, size?: string) {
+  return useQuery<number | null>({
+    queryKey: ['storeItemStock', itemCode, color, size],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      params.set('item_code', itemCode);
+      if (color) params.set('color', color);
+      if (size) params.set('size', size);
+
+      const response = await fetch(`/api/store/items/stock?${params.toString()}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to fetch stock');
+      }
+      const data = await response.json();
+      return data.stock;
+    },
+    enabled: !!itemCode, // Only run if itemCode exists
+  });
+}
