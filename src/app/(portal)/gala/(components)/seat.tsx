@@ -9,6 +9,7 @@ interface SeatProps {
   seat: {
     number: number
     status: SeatStatus
+    bookedByUser?: boolean
   }
   style?: CSSProperties
   onClick: () => void
@@ -16,14 +17,11 @@ interface SeatProps {
 
 export default function Seat({ seat, style, onClick }: SeatProps) {
   const getColor = () => {
-    switch (seat.status) {
-      case "selected":
-        return "green"
-      case "booked":
-        return "red"
-      default:
-        return "gray"
+    if (seat.status === "selected") return "green"
+    if (seat.status === "booked") {
+      return seat.bookedByUser ? "blue" : "red"
     }
+    return "gray"
   }
 
   const getVariant = () => {

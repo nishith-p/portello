@@ -47,12 +47,13 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
               .fill(null)
               .map((_, i) => {
                 const seatNumber = i + 1;
-                const isBooked = bookings.some(
+                const booking = bookings.find(
                   (b) => b.table === table.id && b.seat === seatNumber
                 );
                 return {
                   number: seatNumber,
-                  status: isBooked ? 'booked' : 'available',
+                  status: booking ? 'booked' : 'available',
+                  bookedByUser: booking?.chief_delegate_id === userId,
                 };
               }),
           }))

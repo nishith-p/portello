@@ -1,46 +1,46 @@
-"use client"
+'use client';
 
-import { Paper, Text, Group, Tooltip } from "@mantine/core"
-import Seat from "./seat"
-import { SeatStatus } from "@/lib/gala/types"
+import { Group, Paper, Text, Tooltip } from '@mantine/core';
+import { SeatStatus } from '@/lib/gala/types';
+import Seat from './seat';
 
 interface TableProps {
   table: {
-    id: number
-    name: string
+    id: number;
+    name: string;
     seats: {
-      number: number
-      status: SeatStatus
-    }[]
-  }
-  onSeatClick: (tableId: number, seatNumber: number, status: SeatStatus) => void
-  onTableClick: (tableId: number) => void
+      number: number;
+      status: SeatStatus;
+    }[];
+  };
+  onSeatClick: (tableId: number, seatNumber: number, status: SeatStatus) => void;
+  onTableClick: (tableId: number) => void;
 }
 
 export default function Table({ table, onSeatClick, onTableClick }: TableProps) {
   const getPosition = (index: number, total = 10) => {
-    const angleStep = (2 * Math.PI) / total
-    const angle = index * angleStep
-    const radius = 40
+    const angleStep = (2 * Math.PI) / total;
+    const angle = index * angleStep;
+    const radius = 40;
 
     return {
       left: 50 + radius * Math.cos(angle - Math.PI / 2),
       top: 50 + radius * Math.sin(angle - Math.PI / 2),
-    }
-  }
+    };
+  };
 
   // Check if all selectable seats are selected
   const allSelectableSelected = table.seats.every(
-    seat => seat.status === 'selected' || seat.status === 'booked'
+    (seat) => seat.status === 'selected' || seat.status === 'booked'
   );
 
   return (
-    <Tooltip 
+    <Tooltip
       label={
         allSelectableSelected
           ? `Click to deselect all seats at ${table.name}`
           : `Click to select all available seats at ${table.name}`
-      } 
+      }
       position="top"
     >
       <Paper
@@ -48,17 +48,17 @@ export default function Table({ table, onSeatClick, onTableClick }: TableProps) 
         radius="xl"
         p={0}
         style={{
-          width: "100%",
+          width: '100%',
           height: 120,
-          position: "relative",
-          margin: "0",
-          minWidth: "120px",
-          cursor: "pointer",
+          position: 'relative',
+          margin: '0',
+          minWidth: '120px',
+          cursor: 'pointer',
         }}
       >
-        <Group 
-          justify="center" 
-          style={{ height: "100%" }}
+        <Group
+          justify="center"
+          style={{ height: '100%' }}
           onClick={(e) => {
             e.stopPropagation();
             onTableClick(table.id);
@@ -70,22 +70,22 @@ export default function Table({ table, onSeatClick, onTableClick }: TableProps) 
         </Group>
 
         {table.seats.map((seat, index) => {
-          const position = getPosition(index)
+          const position = getPosition(index);
           return (
             <Seat
               key={`${table.id}-${seat.number}`}
               seat={seat}
               style={{
-                position: "absolute",
+                position: 'absolute',
                 left: `${position.left}%`,
                 top: `${position.top}%`,
-                transform: "translate(-50%, -50%)",
+                transform: 'translate(-50%, -50%)',
               }}
               onClick={() => onSeatClick(table.id, seat.number, seat.status)}
             />
-          )
+          );
         })}
       </Paper>
     </Tooltip>
-  )
+  );
 }

@@ -52,14 +52,6 @@ export default function GalaBookingPage() {
   });
 
   const handleSubmit = async () => {
-    if (!isAuthenticated) {
-      notifications.show({
-        title: 'Error',
-        message: 'Please log in to book seats',
-        color: 'red',
-      });
-      return;
-    }
     const success = await submitBooking();
     if (success) {
       notifications.show({
@@ -139,6 +131,9 @@ export default function GalaBookingPage() {
               </Badge>
               <Badge leftSection={<IconCircleX size={14} />} color="red">
                 Booked
+              </Badge>
+              <Badge leftSection={<IconCircleX size={14} />} color="blue">
+                Booked by You
               </Badge>
             </Group>
           </Paper>

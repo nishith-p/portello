@@ -41,7 +41,7 @@ export default function BookingSummary({
 
       {selectedSeats.length > 0 ? (
         <Stack>
-          <Text fw={500}>Selected Additional Seats ({selectedSeats.length})</Text>
+          <Text fw={500}>Selected Seats ({selectedSeats.length})</Text>
           <List spacing="xs" size="sm" center>
             {selectedSeats.map((seat, index) => (
               <List.Item
@@ -59,7 +59,7 @@ export default function BookingSummary({
           <form onSubmit={handleSubmit}>
             <Stack>
               <Button type="submit" leftSection={<IconCheck size={16} />}>
-                Confirm Additional Booking
+                Confirm Booking
               </Button>
             </Stack>
           </form>
@@ -72,28 +72,6 @@ export default function BookingSummary({
               : "Please select seats to continue with your booking"}
           </Text>
         </Box>
-      )}
-
-      <Divider my="lg" />
-
-      {userBookings.length > 0 && (
-        <Stack mb="md">
-          <Text fw={500}>Your Current Seats ({userBookings.length})</Text>
-          <List spacing="xs" size="sm" center>
-            {userBookings.map((booking, index) => (
-              <List.Item
-                key={`${booking.tableId}-${booking.seatNumber}-${index}`}
-                icon={
-                  <ThemeIcon color="blue" size={24} radius="xl">
-                    <IconArmchair size={16} />
-                  </ThemeIcon>
-                }
-              >
-                {booking.tableName}, Seat {booking.seatNumber}
-              </List.Item>
-            ))}
-          </List>
-        </Stack>
       )}
     </Paper>
   )

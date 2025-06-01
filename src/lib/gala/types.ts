@@ -3,6 +3,7 @@ export type SeatStatus = "available" | "selected" | "booked";
 export interface Seat {
   number: number;
   status: SeatStatus;
+  bookedByUser?: boolean;
 }
 
 export interface Table {
