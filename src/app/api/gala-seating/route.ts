@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/utils';
-import { bookSeats, getBookedSeats } from '@/lib/gala/db';
+import { bookSeats, getBookedSeats, getUserEntityCount } from '@/lib/gala/db';
 import { Booking } from '@/lib/gala/types';
 
 export async function GET(request: NextRequest) {
@@ -8,12 +8,16 @@ export async function GET(request: NextRequest) {
     request,
     async (req, user) => {
       const bookedSeats = await getBookedSeats();
-      // Include user's booking status in response if authenticated
+      
+      // Include user's booking status and entity count in response if authenticated
       if (user?.id) {
         const userBooking = bookedSeats.find(b => b.chief_delegate_id === user.id);
+        const entityCount = await getUserEntityCount(user.id);
+        
         return NextResponse.json({
           allBookings: bookedSeats,
-          userBooking: userBooking || null
+          userBooking: userBooking || null,
+          maxSeatsAllowed: entityCount
         });
       }
       return NextResponse.json({ allBookings: bookedSeats });
@@ -29,6 +33,22 @@ export async function POST(request: NextRequest) {
     }
 
     const newBookings: Omit<Booking, 'chief_delegate_id'>[] = await request.json();
+
+    // Get current user's entity count limit
+    const maxSeatsAllowed = await getUserEntityCount(user.id);
+    
+    // Get current bookings for this user
+    const currentBookings = await getBookedSeats();
+    const userCurrentBookings = currentBookings.filter(b => b.chief_delegate_id === user.id);
+    
+    // Check if new bookings would exceed the limit
+    const totalSeatsAfterBooking = userCurrentBookings.length + newBookings.length;
+    
+    if (totalSeatsAfterBooking > maxSeatsAllowed) {
+      return NextResponse.json({ 
+        error: `Booking would exceed your limit of ${maxSeatsAllowed} seats (${userCurrentBookings.length} already booked)` 
+      }, { status: 400 });
+    }
 
     const bookingsWithUser = newBookings.map(b => ({
       ...b,

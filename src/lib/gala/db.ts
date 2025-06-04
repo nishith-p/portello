@@ -28,3 +28,28 @@ export async function bookSeats(bookings: Booking[]) {
 
   return data;
 }
+
+export async function getUserEntityCount(userId: string): Promise<number> {
+  const { data: userData, error: userError } = await supabaseServer
+    .from('users')
+    .select('entity')
+    .eq('kinde_id', userId)
+    .single();
+
+  if (userError || !userData?.entity) {
+    console.error('Error fetching user entity:', userError);
+    return 0;
+  }
+
+  const { count, error: countError } = await supabaseServer
+    .from('users')
+    .select('*', { count: 'exact', head: true })
+    .eq('entity', userData.entity);
+
+  if (countError) {
+    console.error('Error fetching entity count:', countError);
+    return 0;
+  }
+
+  return count || 0;
+}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Booking, SeatStatus, SelectedSeat, Table, UserBooking } from './types';
+import { SeatStatus, SelectedSeat, Table, UserBooking } from './types';
 
 interface UseGalaSeatingProps {
   initialTables: Table[];
@@ -11,65 +11,85 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
   const [selectedSeats, setSelectedSeats] = useState<SelectedSeat[]>([]);
   const [loading, setLoading] = useState(true);
   const [userBookings, setUserBookings] = useState<UserBooking[]>([]);
+  const [maxSeatsAllowed, setMaxSeatsAllowed] = useState<number | undefined>(undefined);
+
+  const loadBookings = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/gala-seating');
+      const data = await res.json();
+
+      // Handle both response formats
+      const bookings = Array.isArray(data) ? data : data.allBookings || [];
+      const maxSeats = data.maxSeatsAllowed;
+
+      if (!Array.isArray(bookings)) {
+        console.error('Unexpected bookings format:', bookings);
+        return;
+      }
+
+      // Set the maximum seats allowed for this user
+      if (maxSeats !== undefined) {
+        setMaxSeatsAllowed(maxSeats);
+      }
+
+      // Find all of the user's bookings
+      if (userId) {
+        const userBookedSeats = bookings.filter((b) => b.chief_delegate_id === userId);
+        const bookingsWithNames = userBookedSeats.map((booking) => {
+          const table = initialTables.find((t) => t.id === booking.table);
+          return {
+            tableId: booking.table,
+            seatNumber: booking.seat,
+            tableName: table?.name || `Table ${booking.table}`,
+          };
+        });
+        setUserBookings(bookingsWithNames);
+      }
+
+      setTables((prev) =>
+        prev.map((table) => ({
+          ...table,
+          seats: Array(10)
+            .fill(null)
+            .map((_, i) => {
+              const seatNumber = i + 1;
+              const booking = bookings.find(
+                (b) => b.table === table.id && b.seat === seatNumber
+              );
+              return {
+                number: seatNumber,
+                status: booking ? 'booked' : 'available',
+                bookedByUser: booking?.chief_delegate_id === userId,
+              };
+            }),
+        }))
+      );
+    } catch (error) {
+      console.error('Failed to load bookings:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    async function loadBookings() {
-      try {
-        const res = await fetch('/api/gala-seating');
-        const data = await res.json();
-
-        // Handle both response formats
-        const bookings = Array.isArray(data) ? data : data.allBookings || [];
-
-        if (!Array.isArray(bookings)) {
-          console.error('Unexpected bookings format:', bookings);
-          return;
-        }
-
-        // Find all of the user's bookings
-        if (userId) {
-          const userBookedSeats = bookings.filter((b) => b.chief_delegate_id === userId);
-          const bookingsWithNames = userBookedSeats.map((booking) => {
-            const table = initialTables.find((t) => t.id === booking.table);
-            return {
-              tableId: booking.table,
-              seatNumber: booking.seat,
-              tableName: table?.name || `Table ${booking.table}`,
-            };
-          });
-          setUserBookings(bookingsWithNames);
-        }
-
-        setTables((prev) =>
-          prev.map((table) => ({
-            ...table,
-            seats: Array(10)
-              .fill(null)
-              .map((_, i) => {
-                const seatNumber = i + 1;
-                const booking = bookings.find(
-                  (b) => b.table === table.id && b.seat === seatNumber
-                );
-                return {
-                  number: seatNumber,
-                  status: booking ? 'booked' : 'available',
-                  bookedByUser: booking?.chief_delegate_id === userId,
-                };
-              }),
-          }))
-        );
-      } catch (error) {
-        console.error('Failed to load bookings:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
     loadBookings();
   }, [userId]);
 
   const handleSeatClick = (table: number, seat: number, status: SeatStatus) => {
     if (status === 'booked') return;
+
+    // Check if selecting this seat would exceed the limit
+    const totalBooked = userBookings.length;
+    const totalSelected = selectedSeats.length;
+    const isCurrentlySelected = selectedSeats.some(s => s.tableId === table && s.seatNumber === seat);
+    
+    if (!isCurrentlySelected && maxSeatsAllowed !== undefined) {
+      const newTotal = totalBooked + totalSelected + 1;
+      if (newTotal > maxSeatsAllowed) {
+        return; // Don't allow selection if it would exceed the limit
+      }
+    }
 
     setSelectedSeats((prev) => {
       const existingIndex = prev.findIndex((s) => s.tableId === table && s.seatNumber === seat);
@@ -112,6 +132,17 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
 
     // Check if all selectable seats are already selected
     const allAlreadySelected = selectableSeats.every((seat) => seat.status === 'selected');
+
+    // Check if selecting all seats would exceed the limit
+    if (!allAlreadySelected && maxSeatsAllowed !== undefined) {
+      const totalBooked = userBookings.length;
+      const currentSelectedFromOtherTables = selectedSeats.filter(s => s.tableId !== tableId).length;
+      const newTotal = totalBooked + currentSelectedFromOtherTables + selectableSeats.length;
+      
+      if (newTotal > maxSeatsAllowed) {
+        return; // Don't allow selection if it would exceed the limit
+      }
+    }
 
     setSelectedSeats((prev) => {
       if (allAlreadySelected) {
@@ -164,61 +195,20 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
         body: JSON.stringify(bookings),
       });
 
-      if (!res.ok) throw new Error('Booking failed');
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Booking failed');
+      }
 
-      // Update local state
-      setTables((prev) =>
-        prev.map((t) => ({
-          ...t,
-          seats: t.seats.map((s) => ({
-            ...s,
-            status: selectedSeats.some((sel) => sel.tableId === t.id && sel.seatNumber === s.number)
-              ? 'booked'
-              : s.status,
-          })),
-        }))
-      );
-
+      // Clear selected seats immediately for better UX
       setSelectedSeats([]);
+      
+      // Refetch all data to ensure consistency
+      await loadBookings();
+      
       return true;
     } catch (error) {
       console.error('Booking error:', error);
-      return false;
-    }
-  };
-
-  const deleteBooking = async (tableId: number, seatNumber: number) => {
-    try {
-      const res = await fetch('/api/gala-seating', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ table: tableId, seat: seatNumber }),
-      });
-
-      if (!res.ok) throw new Error('Delete failed');
-
-      // Update local state
-      setTables((prev) =>
-        prev.map((t) =>
-          t.id === tableId
-            ? {
-                ...t,
-                seats: t.seats.map((s) =>
-                  s.number === seatNumber ? { ...s, status: 'available' } : s
-                ),
-              }
-            : t
-        )
-      );
-
-      // Remove from user bookings if present
-      setUserBookings((prev) =>
-        prev.filter((b) => !(b.tableId === tableId && b.seatNumber === seatNumber))
-      );
-
-      return true;
-    } catch (error) {
-      console.error('Delete booking error:', error);
       return false;
     }
   };
@@ -228,8 +218,11 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
     selectedSeats,
     loading,
     userBookings,
+    maxSeatsAllowed,
+    currentlyBooked: userBookings.length,
     handleSeatClick,
     handleTableClick,
     submitBooking,
+    refreshData: loadBookings,
   };
 }
