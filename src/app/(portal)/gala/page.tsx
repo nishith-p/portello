@@ -89,39 +89,106 @@ export default function GalaBookingPage() {
   }
 
   return (
-    <Container size="xl" py="xl">
-      <Title order={1} mb="md">
+    <Container
+      size="xl"
+      py={{ base: 'md', md: 'xl' }}
+      px={{ base: 'xs', sm: 'md' }}
+      style={{
+        '@media (max-width: 768px)': {
+          padding: '1rem 0.5rem',
+        },
+      }}
+    >
+      <Title
+        order={1}
+        mb="md"
+        ta={{ base: 'center', md: 'left' }}
+        style={{
+          '@media (max-width: 768px)': {
+            fontSize: '1.5rem',
+            textAlign: 'center',
+          },
+          '@media (min-width: 769px)': {
+            fontSize: '2rem',
+            textAlign: 'left',
+          },
+        }}
+      >
         Gala Night Seat Booking
       </Title>
 
       <Box style={{ position: 'relative' }}>
         <LoadingOverlay visible={loading} zIndex={500} overlayProps={{ radius: 'md', blur: 2 }} />
 
-        <Flex gap="xl" direction={{ base: 'column', md: 'row' }}>
-          <Box style={{ flex: 1, width: '70%' }}>
-            <Paper withBorder p="md" radius="md" mb="lg">
-              <Group justify="center" mb="lg">
-                <IconScan size={48} stroke={1.5} />
-                <Text size="lg" fw={500}>
+        <Flex gap={{ base: 'md', md: 'xl' }} direction={{ base: 'column', lg: 'row' }}>
+          <Box
+            style={{
+              flex: 1,
+              '@media (max-width: 991px)': {
+                width: '100%',
+              },
+              '@media (min-width: 992px)': {
+                width: '70%',
+              },
+            }}
+            w={{ base: '100%', lg: '70%' }}
+          >
+            <Paper withBorder p={{ base: 'sm', md: 'md' }} radius="md" mb="lg">
+              <Group justify="center" mb={{ base: 'md', md: 'lg' }}>
+                <Box
+                  style={{
+                    '@media (max-width: 768px)': { transform: 'scale(0.8)' },
+                    '@media (min-width: 769px)': { transform: 'scale(1)' },
+                  }}
+                >
+                  <IconScan size={48} stroke={1.5} />
+                </Box>
+                <Text
+                  fw={500}
+                  style={{
+                    '@media (max-width: 768px)': { fontSize: '1rem' },
+                    '@media (min-width: 769px)': { fontSize: '1.125rem' },
+                  }}
+                >
                   Stage
                 </Text>
               </Group>
 
-              <Divider mb="xl" label="Seating Area" labelPosition="center" />
+              <Divider mb={{ base: 'md', md: 'xl' }} label="Seating Area" labelPosition="center" />
 
-              <Box style={{ width: '100%', height: 500, position: 'relative' }}>
-                <ScrollArea h={500} w="100%" type="always" offsetScrollbars>
+              <Box
+                style={{
+                  width: '100%',
+                  position: 'relative',
+                  '@media (max-width: 575px)': { height: '350px' },
+                  '@media (min-width: 576px) and (max-width: 767px)': { height: '400px' },
+                  '@media (min-width: 768px)': { height: '500px' },
+                }}
+                h={{ base: 400, sm: 450, md: 500 }}
+              >
+                <ScrollArea
+                  h={{ base: 400, sm: 450, md: 500 }}
+                  w="100%"
+                  type="always"
+                  offsetScrollbars
+                  style={{
+                    '@media (max-width: 575px)': { height: '350px' },
+                    '@media (min-width: 576px) and (max-width: 767px)': { height: '400px' },
+                    '@media (min-width: 768px)': { height: '500px' },
+                  }}
+                >
                   <Box
                     style={{
                       display: 'grid',
                       gridTemplateColumns: 'repeat(13, 1fr)',
                       width: 'fit-content',
                       minWidth: '100%',
+                      gap: '2px',
                     }}
                   >
                     {tables.map((table) => {
                       const isOddRow = table.row % 2 === 0;
-                      
+
                       return (
                         <Box
                           key={table.id}
@@ -147,35 +214,44 @@ export default function GalaBookingPage() {
               </Box>
             </Paper>
 
-            <Paper withBorder p="md" radius="md">
-              <Title order={4} mb="md">
+            <Paper withBorder p={{ base: 'sm', md: 'md' }} radius="md">
+              <Title
+                order={4}
+                mb="md"
+                style={{
+                  '@media (max-width: 768px)': { fontSize: '1rem' },
+                  '@media (min-width: 769px)': { fontSize: '1.25rem' },
+                }}
+              >
                 Seat Legend
               </Title>
               <Group>
-                <Badge leftSection={<IconCircleDashed size={14} />} color="gray">
+                <Badge leftSection={<IconCircleDashed size={14} />} color="gray" size="sm">
                   Available
                 </Badge>
-                <Badge leftSection={<IconCircleCheck size={14} />} color="green">
+                <Badge leftSection={<IconCircleCheck size={14} />} color="green" size="sm">
                   Selected
                 </Badge>
-                <Badge leftSection={<IconCircleX size={14} />} color="red">
+                <Badge leftSection={<IconCircleX size={14} />} color="red" size="sm">
                   Booked
                 </Badge>
-                <Badge leftSection={<IconCircleX size={14} />} color="blue">
+                <Badge leftSection={<IconCircleX size={14} />} color="blue" size="sm">
                   Booked by You
                 </Badge>
               </Group>
             </Paper>
           </Box>
 
-          <BookingSummary
-            selectedSeats={selectedSeats}
-            tables={tables}
-            onSubmit={handleSubmit}
-            userBookings={userBookings}
-            maxSeatsAllowed={maxSeatsAllowed}
-            currentlyBooked={currentlyBooked}
-          />
+          <Box w={{ base: '100%', lg: '30%' }}>
+            <BookingSummary
+              selectedSeats={selectedSeats}
+              tables={tables}
+              onSubmit={handleSubmit}
+              userBookings={userBookings}
+              maxSeatsAllowed={maxSeatsAllowed}
+              currentlyBooked={currentlyBooked}
+            />
+          </Box>
         </Flex>
       </Box>
     </Container>
