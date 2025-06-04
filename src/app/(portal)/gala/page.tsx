@@ -22,18 +22,32 @@ import Table from './(components)/table';
 
 // Generate initial tables with all seats available
 const generateTables = () => {
-  return Array(45)
-    .fill(null)
-    .map((_, i) => ({
-      id: i + 1,
-      name: `Table ${i + 1}`,
-      seats: Array(10)
-        .fill(null)
-        .map((_, j) => ({
-          number: j + 1,
-          status: 'available' as const,
-        })),
-    }));
+  const tables = [];
+  let tableNumber = 1;
+  const totalRows = 6; // Adjust based on how many rows you want
+
+  for (let row = 0; row < totalRows; row++) {
+    const isOddRow = row % 2 === 0;
+    const tablesInRow = isOddRow ? 7 : 6;
+
+    for (let i = 0; i < tablesInRow; i++) {
+      tables.push({
+        id: tableNumber,
+        name: `Table ${tableNumber}`,
+        seats: Array(10)
+          .fill(null)
+          .map((_, j) => ({
+            number: j + 1,
+            status: 'available' as const,
+          })),
+        row: row, // Add row information to each table
+        positionInRow: i, // Add position in row information
+      });
+      tableNumber++;
+    }
+  }
+
+  return tables;
 };
 
 export default function GalaBookingPage() {
@@ -84,7 +98,7 @@ export default function GalaBookingPage() {
         <LoadingOverlay visible={loading} zIndex={500} overlayProps={{ radius: 'md', blur: 2 }} />
 
         <Flex gap="xl" direction={{ base: 'column', md: 'row' }}>
-          <Box style={{ flex: 1 }}>
+          <Box style={{ flex: 1, width: '70%' }}>
             <Paper withBorder p="md" radius="md" mb="lg">
               <Group justify="center" mb="lg">
                 <IconScan size={48} stroke={1.5} />
@@ -100,21 +114,34 @@ export default function GalaBookingPage() {
                   <Box
                     style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(5, 1fr)',
-                      gap: '16px',
-                      padding: '16px',
+                      gridTemplateColumns: 'repeat(13, 1fr)',
                       width: 'fit-content',
                       minWidth: '100%',
                     }}
                   >
-                    {tables.map((table) => (
-                      <Table
-                        key={table.id}
-                        table={table}
-                        onSeatClick={handleSeatClick}
-                        onTableClick={handleTableClick}
-                      />
-                    ))}
+                    {tables.map((table) => {
+                      const isOddRow = table.row % 2 === 0;
+                      
+                      return (
+                        <Box
+                          key={table.id}
+                          style={{
+                            // For odd rows (7 tables): normal position (columns 1-7)
+                            // For even rows (6 tables): offset by 1 column (columns 2-7)
+                            gridColumn: isOddRow
+                              ? `${table.positionInRow * 2 + 1} / span 1`
+                              : `${table.positionInRow * 2 + 2} / span 1`,
+                            gridRow: `${table.row + 1}`,
+                          }}
+                        >
+                          <Table
+                            table={table}
+                            onSeatClick={handleSeatClick}
+                            onTableClick={handleTableClick}
+                          />
+                        </Box>
+                      );
+                    })}
                   </Box>
                 </ScrollArea>
               </Box>
