@@ -77,6 +77,7 @@ export interface UserListItem {
   sub_entity: string | null;
   aiesec_email: string;
   round: number | null;
+  telegram_id?: string;
 }
 
 export interface UserSearchParams {

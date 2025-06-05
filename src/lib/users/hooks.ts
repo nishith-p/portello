@@ -6,6 +6,7 @@ import { notifications } from '@mantine/notifications';
 import { UserStats } from '@/lib/users/stats/db';
 import {
   UpdateDocumentParams,
+  UserListItem,
   UserListResponse,
   UserProfile,
   UserSearchParams,
@@ -255,4 +256,40 @@ export function useRequestAccountDeletion() {
       });
     },
   });
+}
+
+/**
+ * Hook to fetch users from a specific room
+ */
+export function useRoomUsers(roomNo: string | null) {
+  const query = useQuery<{ users: UserListItem[] }>({
+    queryKey: ['users', 'room', roomNo],
+    queryFn: async () => {
+      if (!roomNo) {
+        throw new Error('Room number is required');
+      }
+
+      const response = await fetch(`/api/users/room/${encodeURIComponent(roomNo)}`);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to fetch room users');
+      }
+
+      return response.json();
+    },
+    enabled: !!roomNo, // Only run the query if roomNo is provided
+  });
+
+  useEffect(() => {
+    if (query.error) {
+      notifications.show({
+        title: 'Error',
+        message: query.error.message || 'Failed to load room users',
+        color: 'red',
+      });
+    }
+  }, [query.error]);
+
+  return query;
 }
