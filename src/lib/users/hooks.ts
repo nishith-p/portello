@@ -269,7 +269,10 @@ export function useRoomUsers(roomNo: string | null) {
         throw new Error('Room number is required');
       }
 
-      const response = await fetch(`/api/users/room/${encodeURIComponent(roomNo)}`);
+      const params = new URLSearchParams();
+      params.set('roomNo', roomNo);
+      
+      const response = await fetch(`/api/users/room?${params.toString()}`);
 
       if (!response.ok) {
         const errorData = await response.json();

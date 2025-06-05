@@ -4,13 +4,10 @@ import { errorResponse } from '@/lib/core/errors';
 import { getUsersByRoom } from '@/lib/users/db';
 
 /**
- * GET /api/users/room/[roomNo]
+ * GET /api/users/room?roomNo=123
  * Get all users from a specific room
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { roomNo: string } }
-) {
+export async function GET(request: NextRequest) {
   return withAuth(
     request,
     async (req, user) => {
@@ -20,7 +17,8 @@ export async function GET(
           throw new Error('User ID not found in authentication');
         }
 
-        const { roomNo } = params;
+        const url = new URL(req.url);
+        const roomNo = url.searchParams.get('roomNo');
         
         if (!roomNo) {
           return NextResponse.json(
@@ -29,10 +27,7 @@ export async function GET(
           );
         }
 
-        // Decode the room number in case it contains special characters
-        const decodedRoomNo = decodeURIComponent(roomNo);
-        
-        const users = await getUsersByRoom(decodedRoomNo);
+        const users = await getUsersByRoom(roomNo);
         
         return NextResponse.json({ users });
       } catch (error) {
