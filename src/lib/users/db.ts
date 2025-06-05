@@ -144,3 +144,34 @@ export async function updateUserDeleteRequest(
 
   return data as User;
 }
+
+/**
+ * Get all users from the same room
+ */
+export async function getUsersByRoom(roomNo: string): Promise<UserListItem[]> {
+  const { data, error } = await supabaseServer
+    .from('users')
+    .select('id, kinde_id, first_name, last_name, position, entity, sub_entity, aiesec_email, round, room_no, telegram_id')
+    .eq('room_no', roomNo)
+    .order('first_name', { ascending: true });
+
+  if (error) {
+    console.error('Error fetching users by room:', error);
+    throw error;
+  }
+
+  const users = data.map((user) => ({
+    id: user.id,
+    kinde_id: user.kinde_id,
+    full_name: `${user.first_name} ${user.last_name}`,
+    position: user.position,
+    entity: user.entity,
+    sub_entity: user.sub_entity,
+    aiesec_email: user.aiesec_email,
+    round: user.round,
+    room_no: user.room_no,
+    telegram_id: user.telegram_id
+  }));
+
+  return users;
+}
