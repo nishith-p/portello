@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { notifications } from '@mantine/notifications';
 import { SeatStatus, SelectedSeat, Table, UserBooking } from './types';
 
 interface UseGalaSeatingProps {
@@ -12,12 +13,17 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
   const [loading, setLoading] = useState(true);
   const [userBookings, setUserBookings] = useState<UserBooking[]>([]);
   const [maxSeatsAllowed, setMaxSeatsAllowed] = useState<number | undefined>(undefined);
+  const [isChiefDelegate, setIsChiefDelegate] = useState<boolean>(false);
 
   const loadBookings = async () => {
     try {
       setLoading(true);
       const res = await fetch('/api/gala-seating');
       const data = await res.json();
+
+      if (data.isChiefDelegate !== undefined) {
+        setIsChiefDelegate(data.isChiefDelegate);
+      }
 
       // Handle both response formats
       const bookings = Array.isArray(data) ? data : data.allBookings || [];
@@ -54,9 +60,7 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
             .fill(null)
             .map((_, i) => {
               const seatNumber = i + 1;
-              const booking = bookings.find(
-                (b) => b.table === table.id && b.seat === seatNumber
-              );
+              const booking = bookings.find((b) => b.table === table.id && b.seat === seatNumber);
               return {
                 number: seatNumber,
                 status: booking ? 'booked' : 'available',
@@ -82,8 +86,10 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
     // Check if selecting this seat would exceed the limit
     const totalBooked = userBookings.length;
     const totalSelected = selectedSeats.length;
-    const isCurrentlySelected = selectedSeats.some(s => s.tableId === table && s.seatNumber === seat);
-    
+    const isCurrentlySelected = selectedSeats.some(
+      (s) => s.tableId === table && s.seatNumber === seat
+    );
+
     if (!isCurrentlySelected && maxSeatsAllowed !== undefined) {
       const newTotal = totalBooked + totalSelected + 1;
       if (newTotal > maxSeatsAllowed) {
@@ -136,9 +142,11 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
     // Check if selecting all seats would exceed the limit
     if (!allAlreadySelected && maxSeatsAllowed !== undefined) {
       const totalBooked = userBookings.length;
-      const currentSelectedFromOtherTables = selectedSeats.filter(s => s.tableId !== tableId).length;
+      const currentSelectedFromOtherTables = selectedSeats.filter(
+        (s) => s.tableId !== tableId
+      ).length;
       const newTotal = totalBooked + currentSelectedFromOtherTables + selectableSeats.length;
-      
+
       if (newTotal > maxSeatsAllowed) {
         return; // Don't allow selection if it would exceed the limit
       }
@@ -202,13 +210,18 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
 
       // Clear selected seats immediately for better UX
       setSelectedSeats([]);
-      
+
       // Refetch all data to ensure consistency
       await loadBookings();
-      
+
       return true;
     } catch (error) {
       console.error('Booking error:', error);
+      notifications.show({
+        title: 'Booking Error',
+        message: error instanceof Error ? error.message : 'Booking failed',
+        color: 'red',
+      });
       return false;
     }
   };
@@ -220,6 +233,7 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
     userBookings,
     maxSeatsAllowed,
     currentlyBooked: userBookings.length,
+    isChiefDelegate,
     handleSeatClick,
     handleTableClick,
     submitBooking,

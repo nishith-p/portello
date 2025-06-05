@@ -19,6 +19,7 @@ import { notifications } from '@mantine/notifications';
 import { useGalaSeating } from '@/lib/gala/hooks';
 import BookingSummary from './(components)/booking-summary';
 import Table from './(components)/table';
+import { isChiefDelegate } from '@/lib/gala/db';
 
 // Generate initial tables with all seats available
 const generateTables = () => {
@@ -58,6 +59,7 @@ export default function GalaBookingPage() {
     loading,
     maxSeatsAllowed,
     currentlyBooked,
+    isChiefDelegate,
     handleSeatClick,
     handleTableClick,
     submitBooking,
@@ -94,7 +96,7 @@ export default function GalaBookingPage() {
       py={{ base: 'md', md: 'xl' }}
       px={{ base: 'xs', sm: 'md' }}
       style={{
-        '@media (max-width: 768px)': {
+        '@media (maxWidth: 768px)': {
           padding: '1rem 0.5rem',
         },
       }}
@@ -104,11 +106,11 @@ export default function GalaBookingPage() {
         mb="md"
         ta={{ base: 'center', md: 'left' }}
         style={{
-          '@media (max-width: 768px)': {
+          '@media (maxWidth: 768px)': {
             fontSize: '1.5rem',
             textAlign: 'center',
           },
-          '@media (min-width: 769px)': {
+          '@media (minWidth: 769px)': {
             fontSize: '2rem',
             textAlign: 'left',
           },
@@ -124,10 +126,10 @@ export default function GalaBookingPage() {
           <Box
             style={{
               flex: 1,
-              '@media (max-width: 991px)': {
+              '@media (maxWidth: 991px)': {
                 width: '100%',
               },
-              '@media (min-width: 992px)': {
+              '@media (minWidth: 992px)': {
                 width: '70%',
               },
             }}
@@ -137,8 +139,8 @@ export default function GalaBookingPage() {
               <Group justify="center" mb={{ base: 'md', md: 'lg' }}>
                 <Box
                   style={{
-                    '@media (max-width: 768px)': { transform: 'scale(0.8)' },
-                    '@media (min-width: 769px)': { transform: 'scale(1)' },
+                    '@media (maxWidth: 768px)': { transform: 'scale(0.8)' },
+                    '@media (minWidth: 769px)': { transform: 'scale(1)' },
                   }}
                 >
                   <IconScan size={48} stroke={1.5} />
@@ -146,8 +148,8 @@ export default function GalaBookingPage() {
                 <Text
                   fw={500}
                   style={{
-                    '@media (max-width: 768px)': { fontSize: '1rem' },
-                    '@media (min-width: 769px)': { fontSize: '1.125rem' },
+                    '@media (maxWidth: 768px)': { fontSize: '1rem' },
+                    '@media (minWidth: 769px)': { fontSize: '1.125rem' },
                   }}
                 >
                   Stage
@@ -160,9 +162,9 @@ export default function GalaBookingPage() {
                 style={{
                   width: '100%',
                   position: 'relative',
-                  '@media (max-width: 575px)': { height: '350px' },
-                  '@media (min-width: 576px) and (max-width: 767px)': { height: '400px' },
-                  '@media (min-width: 768px)': { height: '500px' },
+                  '@media (maxWidth: 575px)': { height: '350px' },
+                  '@media (minWidth: 576px) and (maxWidth: 767px)': { height: '400px' },
+                  '@media (minWidth: 768px)': { height: '500px' },
                 }}
                 h={{ base: 400, sm: 450, md: 500 }}
               >
@@ -172,9 +174,9 @@ export default function GalaBookingPage() {
                   type="always"
                   offsetScrollbars
                   style={{
-                    '@media (max-width: 575px)': { height: '350px' },
-                    '@media (min-width: 576px) and (max-width: 767px)': { height: '400px' },
-                    '@media (min-width: 768px)': { height: '500px' },
+                    '@media (maxWidth: 575px)': { height: '350px' },
+                    '@media (minWidth: 576px) and (maxWidth: 767px)': { height: '400px' },
+                    '@media (minWidth: 768px)': { height: '500px' },
                   }}
                 >
                   <Box
@@ -219,8 +221,8 @@ export default function GalaBookingPage() {
                 order={4}
                 mb="md"
                 style={{
-                  '@media (max-width: 768px)': { fontSize: '1rem' },
-                  '@media (min-width: 769px)': { fontSize: '1.25rem' },
+                  '@media (maxWidth: 768px)': { fontSize: '1rem' },
+                  '@media (minWidth: 769px)': { fontSize: '1.25rem' },
                 }}
               >
                 Seat Legend
@@ -250,6 +252,7 @@ export default function GalaBookingPage() {
               userBookings={userBookings}
               maxSeatsAllowed={maxSeatsAllowed}
               currentlyBooked={currentlyBooked}
+              isChiefDelegate={isChiefDelegate}
             />
           </Box>
         </Flex>

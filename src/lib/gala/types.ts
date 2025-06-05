@@ -7,6 +7,8 @@ export interface Seat {
 }
 
 export interface Table {
+  row: number;
+  positionInRow: number;
   id: number;
   name: string;
   seats: Seat[];

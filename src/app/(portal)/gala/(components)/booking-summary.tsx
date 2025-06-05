@@ -29,6 +29,7 @@ interface BookingSummaryProps {
   userBookings: UserBooking[];
   maxSeatsAllowed?: number;
   currentlyBooked?: number;
+  isChiefDelegate?: boolean;
 }
 
 export default function BookingSummary({
@@ -38,7 +39,8 @@ export default function BookingSummary({
   userBookings,
   maxSeatsAllowed,
   currentlyBooked = 0,
-}: BookingSummaryProps) {
+  isChiefDelegate = true
+}: BookingSummaryProps & { isChiefDelegate?: boolean }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onSubmit();
@@ -52,7 +54,7 @@ export default function BookingSummary({
   const totalSelected = selectedSeats.length;
   const totalSeats = currentlyBooked + totalSelected;
   const seatsRemaining = maxSeatsAllowed ? maxSeatsAllowed - totalSeats : 0;
-  const isDisabled = maxSeatsAllowed !== undefined && totalSeats > maxSeatsAllowed;
+  const isDisabled = maxSeatsAllowed !== undefined && totalSeats > maxSeatsAllowed || !isChiefDelegate;
 
   return (
     <Paper withBorder p="md" radius="md" style={{ width: '100%', maxWidth: 400 }}>
@@ -135,7 +137,11 @@ export default function BookingSummary({
               >
                 Confirm Booking ({selectedSeats.length} seat{selectedSeats.length !== 1 ? 's' : ''})
               </Button>
-              {isDisabled && (
+              {!isChiefDelegate ? (
+                <Text c="red" size="sm" ta="center">
+                  Only chief delegates can book seats
+                </Text>
+              ) : isDisabled && maxSeatsAllowed !== undefined && (
                 <Text c="red" size="sm" ta="center">
                   You've exceeded your allowed number of seats ({maxSeatsAllowed})
                 </Text>
@@ -146,7 +152,8 @@ export default function BookingSummary({
       ) : (
         <Box py="md">
           <Text c="dimmed" ta="center">
-            {maxSeatsAllowed
+            {!isChiefDelegate ? 'Only chief delegates can book seats' :
+             maxSeatsAllowed
               ? userBookings.length > 0 && userBookings.length < maxSeatsAllowed
                 ? 'Select more seats to add to your booking'
                 : 'You have booked the maximum allowed seat limit'

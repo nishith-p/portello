@@ -53,3 +53,18 @@ export async function getUserEntityCount(userId: string): Promise<number> {
 
   return count || 0;
 }
+
+export async function isChiefDelegate(userId: string): Promise<boolean> {
+  const { data, error } = await supabaseServer
+    .from('users')
+    .select('is_chief_delegate')
+    .eq('kinde_id', userId)
+    .single();
+
+  if (error || !data) {
+    console.error('Error checking chief delegate status:', error);
+    return false;
+  }
+
+  return data.is_chief_delegate || false;
+}
