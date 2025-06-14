@@ -81,7 +81,8 @@ export default function AdminGalaPage() {
   const getBookingStatusColor = (bookedSeats: number, maxSeats: number) => {
     if (bookedSeats === 0) return 'red';
     if (bookedSeats === maxSeats) return 'green';
-    return 'yellow';
+    if (bookedSeats > maxSeats) return 'purple';
+    return 'blue';
   };
 
   if (error) {
