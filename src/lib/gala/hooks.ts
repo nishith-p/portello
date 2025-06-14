@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 import { notifications } from '@mantine/notifications';
-import { SeatStatus, SelectedSeat, Table, UserBooking } from './types';
+import {
+  AdminGalaData,
+  SeatStatus,
+  SelectedSeat,
+  Table,
+  UserBooking,
+} from './types';
 
 interface UseGalaSeatingProps {
   initialTables: Table[];
@@ -41,7 +47,7 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
 
       // Find all of the user's bookings
       if (userId) {
-        const userBookedSeats = bookings.filter((b) => b.chief_delegate_id === userId);
+        const userBookedSeats = bookings.filter((b) => b.kinde_id === userId);
         const bookingsWithNames = userBookedSeats.map((booking) => {
           const table = initialTables.find((t) => t.id === booking.table);
           return {
@@ -64,7 +70,7 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
               return {
                 number: seatNumber,
                 status: booking ? 'booked' : 'available',
-                bookedByUser: booking?.chief_delegate_id === userId,
+                bookedByUser: booking?.kinde_id === userId,
               };
             }),
         }))
@@ -238,5 +244,62 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
     handleTableClick,
     submitBooking,
     refreshData: loadBookings,
+  };
+}
+
+// for admins only
+export function useAdminGalaSeating() {
+  const [data, setData] = useState<AdminGalaData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const res = await fetch('/api/gala-seating/bookings', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${res.status}: ${res.statusText}`);
+      }
+
+      const json = await res.json();
+
+      if (json.error) {
+        throw new Error(json.error);
+      }
+
+      setData(json);
+    } catch (err) {
+      console.error('Error loading admin gala data:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      setError(errorMessage);
+      
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to load admin data',
+        color: 'red',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  return {
+    data,
+    loading,
+    error,
+    refresh: loadData,
   };
 }

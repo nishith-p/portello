@@ -19,14 +19,14 @@ export async function GET(request: NextRequest) {
           );
         }
 
-        const userBooking = bookedSeats.find((b) => b.chief_delegate_id === user.id);
+        const userBooking = bookedSeats.find((b) => b.kinde_id === user.id);
         const entityCount = await getUserEntityCount(user.id);
 
         return NextResponse.json({
           allBookings: bookedSeats,
           userBooking: userBooking || null,
           maxSeatsAllowed: entityCount,
-          isChiefDelegate: isChief
+          isChiefDelegate: isChief,
         });
       }
       return NextResponse.json({ allBookings: bookedSeats });
@@ -41,14 +41,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const newBookings: Omit<Booking, 'chief_delegate_id'>[] = await request.json();
+    const newBookings: Omit<Booking, 'kinde_id'>[] = await request.json();
 
     // Get current user's entity count limit
     const maxSeatsAllowed = await getUserEntityCount(user.id);
 
     // Get current bookings for this user
     const currentBookings = await getBookedSeats();
-    const userCurrentBookings = currentBookings.filter((b) => b.chief_delegate_id === user.id);
+    const userCurrentBookings = currentBookings.filter((b) => b.kinde_id === user.id);
 
     // Check if new bookings would exceed the limit
     const totalSeatsAfterBooking = userCurrentBookings.length + newBookings.length;
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     const bookingsWithUser = newBookings.map((b) => ({
       ...b,
-      chief_delegate_id: user.id,
+      kinde_id: user.id,
     }));
 
     try {

@@ -71,6 +71,13 @@ const navigationData: NavigationItem[] = [
     link: '/gala',
     label: 'Gala Seating',
     icon: IconArmchair,
+    adminOnly: false,
+  },
+  {
+    link: '/admin/gala',
+    label: 'Gala Dashboard',
+    icon: IconArmchair,
+    adminOnly: true,
   },
   {
     link: '/contact',

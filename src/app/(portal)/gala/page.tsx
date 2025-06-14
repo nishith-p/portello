@@ -19,10 +19,9 @@ import { notifications } from '@mantine/notifications';
 import { useGalaSeating } from '@/lib/gala/hooks';
 import BookingSummary from './(components)/booking-summary';
 import Table from './(components)/table';
-import { isChiefDelegate } from '@/lib/gala/db';
 
 // Generate initial tables with all seats available
-const generateTables = () => {
+export const generateTables = () => {
   const tables = [];
   let tableNumber = 1;
   const totalRows = 6; // Adjust based on how many rows you want
