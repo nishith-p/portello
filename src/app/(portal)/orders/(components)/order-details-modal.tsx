@@ -1,7 +1,7 @@
 // (portal)/orders/(components)/order-details-modal.tsx
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
@@ -21,6 +21,8 @@ import {
 import { useMediaQuery } from '@mantine/hooks';
 import { Order, OrderItem, OrderStatus } from '@/lib/store/types';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { notifications } from '@mantine/notifications';
+import { useCreditPayment, useWallet } from '@/lib/wallet/hooks';
 
 interface OrderDetailsModalProps {
   opened: boolean;
@@ -32,6 +34,7 @@ const statusColorMap: Record<OrderStatus, string> = {
   pending: 'orange',
   confirmed: 'blue',
   paid: 'teal',
+  'paid with credit': 'teal',
   processing: 'indigo',
   shipped: 'cyan',
   delivered: 'green',
@@ -46,9 +49,75 @@ const statusColorMap: Record<OrderStatus, string> = {
 export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetailsModalProps) {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const router = useRouter();
+  const { processCreditPayment } = useCreditPayment();
+  const { walletData, refetch: refetchWallet } = useWallet();
+  const [localLoading, setLocalLoading] = useState(false);
 
   const handlePayNow = (orderData: Order) => {
     router.push(`/orders/${orderData.id}`);
+  };
+
+  const handleCreditPay = async (orderData: Order) => {
+    if (!walletData?.wallet) {
+      notifications.show({
+        title: 'Error',
+        message: 'Unable to fetch wallet information',
+        color: 'red',
+      });
+      return;
+    }
+
+    const userCredit = walletData.wallet.credit;
+    const orderAmount = orderData.total_amount*1000;
+
+    // Check if user has sufficient credit (1 euro = 1 credit)
+    if (userCredit < orderAmount) {
+      notifications.show({
+        title: 'Insufficient Credit',
+        message: `You need ${orderAmount.toFixed(2)} credits but only have ${userCredit.toFixed(2)} credits available.`,
+        color: 'orange',
+      });
+      return;
+    }
+
+    try {
+      setLocalLoading(true);
+      
+      const result = await processCreditPayment(orderData.id, orderAmount);
+
+      if (result.success) {
+        notifications.show({
+          title: 'Payment Success',
+          message: 'Your order has been paid successfully using credits!',
+          color: 'green',
+        });
+
+        // Refresh wallet data to show updated balance
+        refetchWallet();
+        
+        // Close modal and potentially refresh orders
+        onCloseAction();
+        
+        // Optionally redirect or refresh the page
+        setTimeout(() => {
+          window.location.reload(); // Or use a more sophisticated state update
+        }, 1000);
+      } else {
+        notifications.show({
+          title: 'Payment Failed',
+          message: result.error || 'Failed to process credit payment',
+          color: 'red',
+        });
+      }
+    } catch (error) {
+      notifications.show({
+        title: 'Payment Error',
+        message: 'An unexpected error occurred while processing payment',
+        color: 'red',
+      });
+    } finally {
+      setLocalLoading(false);
+    }
   };
 
   const isDelegateFeeOrder = order?.items?.some((item) => item.item_code === 'DELEGATE_FEE');
@@ -162,6 +231,7 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
                             src={item.image}
                             alt={item.name || 'Product image'}
                             fill
+                            sizes="lg"
                             style={{ objectFit: 'cover', borderRadius: 4 }}
                           />
                         </Box>
@@ -217,10 +287,21 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
             </Group>
           </Card>
 
-          {order.status !== 'paid' && (
-            <Button color="green" size="md" mt="md" fullWidth onClick={() => handlePayNow(order)}>
-              {isDelegateFeeOrder ? 'Pay Delegate Fee' : 'Checkout'}
-            </Button>
+          {order.status !== 'paid' && order.status !== 'paid with credit' && (
+            <Group>
+              <Button color="green" size="md" mt="md" fullWidth onClick={() => handlePayNow(order)}>
+                {isDelegateFeeOrder ? 'Pay Delegate Fee' : 'Checkout with Payhere'}
+              </Button>
+              <Button
+                color="green"
+                variant="outline"
+                size="md"
+                fullWidth
+                onClick={() => handleCreditPay(order)}
+              >
+                Checkout with Credit (Credits {order.total_amount*1000})
+              </Button>
+            </Group>
           )}
         </Card>
       </Stack>

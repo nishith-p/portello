@@ -13,6 +13,7 @@ import {
   IconShoppingBag,
   IconUsers,
   IconFileText,
+  IconWallet,
 } from '@tabler/icons-react';
 import { Box, NavLink, Stack, Tooltip, Divider } from '@mantine/core';
 import classes from './portal-sidebar.module.css';
@@ -65,6 +66,11 @@ const navigationData: NavigationItem[] = [
     label: 'Delegate Payments',
     icon: IconCreditCard,
     adminOnly: false,
+  },
+  {
+    link: '/wallet',
+    label: 'Wallet',
+    icon: IconWallet,
   },
   {
     link: '/contact',
