@@ -71,6 +71,7 @@ const navigationData: NavigationItem[] = [
     link: '/wallet',
     label: 'Wallet',
     icon: IconWallet,
+    adminOnly: false
   },
   {
     link: '/contact',

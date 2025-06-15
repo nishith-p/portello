@@ -1,7 +1,7 @@
 // lib/wallet/types.ts - Updated with transaction types
 export type CreditTransactionStatus = "pending" | "completed" | "failed" | "cancelled"
 
-export type TransactionType = "credit_added" | "purchase" | "transfer_sent" | "transfer_received"
+export type TransactionType = "topup" | "purchase" | "transfer_sent" | "transfer_received"
 
 export interface CreditTransaction {
   to_name: string | null | undefined
@@ -23,4 +23,9 @@ export interface WalletData {
   wallet: UserWallet
   transactions: CreditTransaction[]
   userId: string
+}
+
+export interface UpdateCreditResponse {
+  success: boolean;
+  error?: string;
 }

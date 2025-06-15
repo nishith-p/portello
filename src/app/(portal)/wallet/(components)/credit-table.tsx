@@ -12,17 +12,26 @@ import {
   getTransactionDescription,
 } from '../(utils)/wallet-utils';
 import { CreditTransactionDetailsModal } from './credit-transaction-modal';
+import CreditTransactionsPagination from './credit-transaction-pagination';
 
 interface CreditTransactionsTableProps {
   transactions: CreditTransaction[];
   userId?: string;
   onTransactionClick?: (transaction: CreditTransaction) => void;
+  currentOffset?: number;
+  limit?: number;
+  total?: number;
+  onPageChangeAction?: (newOffset: number) => void;
 }
 
 export const CreditTransactionsTable = ({
   transactions,
   userId,
   onTransactionClick,
+  currentOffset = 0,
+  limit = 10,
+  total = 0,
+  onPageChangeAction,
 }: CreditTransactionsTableProps) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -92,7 +101,6 @@ export const CreditTransactionsTable = ({
                     </Text>
                   </Group>
 
-                  {/* Rest of the mobile card content remains the same */}
                   <Group justify="space-between">
                     <Text fw={500} size="sm">
                       Transaction ID
@@ -134,6 +142,14 @@ export const CreditTransactionsTable = ({
               </Card>
             );
           })
+        )}
+        {total > 0 && (
+          <CreditTransactionsPagination
+            currentOffset={currentOffset}
+            limit={limit}
+            total={total}
+            onPageChangeAction={onPageChangeAction}
+          />
         )}
       </Stack>
     );
@@ -225,6 +241,14 @@ export const CreditTransactionsTable = ({
           )}
         </Table.Tbody>
       </Table>
+      {total > 0 && (
+        <CreditTransactionsPagination
+          currentOffset={currentOffset}
+          limit={limit}
+          total={total}
+          onPageChangeAction={onPageChangeAction}
+        />
+      )}
       <CreditTransactionDetailsModal
         opened={modalOpened}
         onCloseAction={handleCloseModal}

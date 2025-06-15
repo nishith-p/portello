@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { IconCreditCard, IconRefresh } from '@tabler/icons-react';
 import {
   Alert,
@@ -24,6 +25,10 @@ import { formatCredit } from './(utils)/wallet-utils';
 
 export default function WalletPage() {
   const { walletData, loading, error, refetch } = useWallet();
+  const [pagination, setPagination] = useState({
+    offset: 0,
+    limit: 10,
+  });
 
   const handleTransactionClick = (transaction: CreditTransaction) => {
     console.log('Transaction clicked:', transaction);
@@ -31,6 +36,10 @@ export default function WalletPage() {
 
   const handleRefresh = () => {
     refetch();
+  };
+
+  const handlePageChange = (newOffset: number) => {
+    setPagination(prev => ({ ...prev, offset: newOffset }));
   };
 
   if (loading) {
@@ -56,6 +65,12 @@ export default function WalletPage() {
       </Container>
     );
   }
+
+  // For client-side pagination (if all transactions are loaded at once)
+  const paginatedTransactions = walletData?.transactions?.slice(
+    pagination.offset,
+    pagination.offset + pagination.limit
+  ) || [];
 
   return (
     <Container size="lg" py="xl">
@@ -141,15 +156,19 @@ export default function WalletPage() {
           <Group justify="space-between">
             <Title order={2}>Credit Transaction History</Title>
             <Text size="sm" c="dimmed">
-              {walletData?.transactions.length || 0} transactions
+              {walletData?.transactions.length || 0} total transactions
             </Text>
           </Group>
 
           <Paper shadow="xs" radius="md" p="md">
             <CreditTransactionsTable
-              transactions={walletData?.transactions || []}
+              transactions={paginatedTransactions}
               userId={walletData?.userId}
               onTransactionClick={handleTransactionClick}
+              currentOffset={pagination.offset}
+              limit={pagination.limit}
+              total={walletData?.transactions.length || 0}
+              onPageChangeAction={handlePageChange}
             />
           </Paper>
         </Stack>

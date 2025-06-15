@@ -146,13 +146,14 @@ export async function processCreditPayment(
 
     // Create credit transaction record
     const { error: transactionError } = await supabaseServer.from('credit_payments').insert({
-        order_id: orderId,
+      order_id: orderId,
       amount: amount,
       status: 'completed',
       type: 'purchase',
       from_id: userId,
       to_id: null, // null indicates payment to system/store
       created_at: new Date().toISOString(),
+      updated_by: userId
     });
 
     if (transactionError) {
@@ -181,5 +182,90 @@ export async function processCreditPayment(
   } catch (error) {
     console.error('Error in processCreditPayment:', error);
     return { success: false, error: 'Internal server error' };
+  }
+}
+
+/**
+ * Update user's credit balance (admin only)
+ */
+export async function updateUserCredit(
+  userId: string,
+  amount: number,
+  reason: string,
+  adminId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    // First get current balance
+    const { data: userData, error: fetchError } = await supabaseServer
+      .from('users')
+      .select('credit')
+      .eq('kinde_id', userId)
+      .single();
+
+    if (fetchError) {
+      console.error('Error fetching user credit:', fetchError);
+      return { success: false, error: 'Failed to fetch current balance' };
+    }
+
+    const currentCredit = userData?.credit || 0;
+    const newCredit = currentCredit + amount;
+
+    // Update credit in users table
+    const { error: updateError } = await supabaseServer
+      .from('users')
+      .update({ credit: newCredit })
+      .eq('kinde_id', userId);
+
+    if (updateError) {
+      console.error('Error updating user credit:', updateError);
+      return { success: false, error: 'Failed to update balance' };
+    }
+
+    // Record transaction in credit_payments table
+    const { error: transactionError } = await supabaseServer.from('credit_payments').insert({
+      amount: Math.abs(amount),
+      status: 'completed',
+      from_id: amount < 0 ? userId : null, // If deducting, user is sender
+      to_id: amount > 0 ? userId : null, // If adding, user is recipient
+      type: 'topup',
+      created_at: new Date().toISOString(),
+      description: reason || null,
+      updated_by: adminId,
+    });
+
+    if (transactionError) {
+      console.error('Error recording transaction:', transactionError);
+      // We still consider this a success since the balance was updated
+      return {
+        success: true,
+        error: 'Balance updated but failed to log transaction',
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error in updateUserCredit:', error);
+    return { success: false, error: 'Internal server error' };
+  }
+}
+
+/**
+ * Get any user's wallet data (admin only)
+ */
+export async function getAnyUserWalletData(userId: string) {
+  try {
+    const [wallet, transactions] = await Promise.all([
+      getUserCredit(userId),
+      getUserCreditTransactions(userId),
+    ]);
+
+    return {
+      wallet: wallet || { credit: 0 },
+      transactions: transactions || [],
+      userId,
+    };
+  } catch (error) {
+    console.error('Error in getAnyUserWalletData:', error);
+    throw error;
   }
 }
