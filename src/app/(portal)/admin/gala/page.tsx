@@ -121,7 +121,7 @@ export default function AdminGalaPage() {
                 Total Seats Booked
               </Text>
               <Title order={2}>
-                {data?.totalSeatsBooked || 0} / {tables.length * 10}
+                {data?.totalSeatsBooked || 0} / {tables.length * 12}
               </Title>
             </Paper>
 

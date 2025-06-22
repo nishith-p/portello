@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react';
 import { notifications } from '@mantine/notifications';
-import {
-  AdminGalaData,
-  SeatStatus,
-  SelectedSeat,
-  Table,
-  UserBooking,
-} from './types';
+import { AdminGalaData, SeatStatus, SelectedSeat, Table, UserBooking } from './types';
 
 interface UseGalaSeatingProps {
   initialTables: Table[];
@@ -62,7 +56,7 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
       setTables((prev) =>
         prev.map((table) => ({
           ...table,
-          seats: Array(10)
+          seats: Array(table.seats.length)
             .fill(null)
             .map((_, i) => {
               const seatNumber = i + 1;
@@ -70,6 +64,7 @@ export function useGalaSeating({ initialTables, userId }: UseGalaSeatingProps) {
               return {
                 number: seatNumber,
                 status: booking ? 'booked' : 'available',
+                entityCode: booking?.users?.entity,
                 bookedByUser: booking?.kinde_id === userId,
               };
             }),
@@ -257,7 +252,7 @@ export function useAdminGalaSeating() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const res = await fetch('/api/gala-seating/bookings', {
         method: 'GET',
         headers: {
@@ -281,7 +276,7 @@ export function useAdminGalaSeating() {
       console.error('Error loading admin gala data:', err);
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
-      
+
       notifications.show({
         title: 'Error',
         message: 'Failed to load admin data',

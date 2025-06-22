@@ -4,7 +4,7 @@ import { AdminGalaData, Booking, EntityBooking } from './types';
 export async function getBookedSeats(): Promise<Booking[]> {
   const { data, error } = await supabaseServer
     .from('gala_seating')
-    .select('table, seat, kinde_id')
+    .select('table, seat, kinde_id, users!inner(first_name, entity, is_chief_delegate)')
     .not('kinde_id', 'is', null);
 
   if (error) {
@@ -12,18 +12,45 @@ export async function getBookedSeats(): Promise<Booking[]> {
     return [];
   }
 
-  return data || [];
+  return (data || []).map((booking: any) => ({
+    table: booking.table,
+    seat: booking.seat,
+    kinde_id: booking.kinde_id,
+    users: booking.users
+      ? {
+          first_name: booking.users.first_name,
+          entity: booking.users.entity,
+          is_chief_delegate: booking.users.is_chief_delegate,
+        }
+      : undefined,
+  }));
 }
 
 export async function bookSeats(bookings: Booking[]) {
-  const { data, error } = await supabaseServer.from('gala_seating').upsert(bookings).select();
+  const { data, error } = await supabaseServer
+  .from('gala_seating')
+  .upsert(bookings)
+  .select(`
+    table, 
+      seat, 
+      kinde_id,
+      users!inner(first_name, entity, is_chief_delegate)`);
 
   if (error) {
     console.error('Error booking seats:', error);
     throw error;
   }
 
-  return data;
+  return (data || []).map((booking: any) => ({
+    table: booking.table,
+    seat: booking.seat,
+    kinde_id: booking.kinde_id,
+    users: booking.users ? {
+      first_name: booking.users.first_name,
+      entity: booking.users.entity,
+      is_chief_delegate: booking.users.is_chief_delegate
+    } : undefined
+  }));
 }
 
 export async function getUserEntityCount(userId: string): Promise<number> {
@@ -71,12 +98,14 @@ export async function getAdminGalaData(): Promise<AdminGalaData | null> {
   // Get all booked seats with user details
   const { data: bookings, error } = await supabaseServer
     .from('gala_seating')
-    .select(`
+    .select(
+      `
       table, 
       seat, 
       kinde_id,
       users!inner(first_name, entity, is_chief_delegate)
-    `)
+    `
+    )
     .not('kinde_id', 'is', null)
     .order('table')
     .order('seat');
@@ -92,15 +121,15 @@ export async function getAdminGalaData(): Promise<AdminGalaData | null> {
       table: booking.table,
       seat: booking.seat,
       kinde_id: booking.kinde_id,
-      users: booking.users ? {
-        first_name: booking.users.first_name,
-        entity: booking.users.entity,
-        is_chief_delegate: booking.users.is_chief_delegate
-      } : undefined
+      users: booking.users
+        ? {
+            first_name: booking.users.first_name,
+            entity: booking.users.entity,
+            is_chief_delegate: booking.users.is_chief_delegate,
+          }
+        : undefined,
     };
   });
-
-  console.log('Typed bookings:', typedBookings);
 
   // Get all entities with their delegate counts
   const { data: entityStats, error: entityError } = await supabaseServer
@@ -116,7 +145,7 @@ export async function getAdminGalaData(): Promise<AdminGalaData | null> {
   // Count delegates per entity
   const entityCounts: Record<string, number> = {};
   const allEntities = new Set<string>();
-  
+
   entityStats.forEach((user: any) => {
     entityCounts[user.entity] = (entityCounts[user.entity] || 0) + 1;
     allEntities.add(user.entity);
@@ -126,7 +155,7 @@ export async function getAdminGalaData(): Promise<AdminGalaData | null> {
   const bookingsByEntity: Record<string, EntityBooking> = {};
 
   // Initialize all entities (even those without bookings)
-  allEntities.forEach(entity => {
+  allEntities.forEach((entity) => {
     bookingsByEntity[entity] = {
       entity,
       bookedSeats: 0,
@@ -143,7 +172,7 @@ export async function getAdminGalaData(): Promise<AdminGalaData | null> {
     }
 
     const entity = booking.users.entity;
-    
+
     // Check if delegate already exists
     const existingDelegateIndex = bookingsByEntity[entity].delegates.findIndex(
       (d) => d.id === booking.kinde_id
@@ -155,7 +184,8 @@ export async function getAdminGalaData(): Promise<AdminGalaData | null> {
         id: booking.kinde_id || '',
         name: booking.users.first_name || 'Unknown',
         seats: [{ table: booking.table, seat: booking.seat }],
-        is_chief_delegate: booking.users.is_chief_delegate || false
+        is_chief_delegate: booking.users.is_chief_delegate || false,
+        entity: '',
       });
     } else {
       // Add seat to existing delegate
@@ -170,7 +200,9 @@ export async function getAdminGalaData(): Promise<AdminGalaData | null> {
 
   // Calculate totals
   const totalSeatsBooked = typedBookings.length;
-  const totalEntitiesBooked = Object.values(bookingsByEntity).filter(entity => entity.bookedSeats > 0).length;
+  const totalEntitiesBooked = Object.values(bookingsByEntity).filter(
+    (entity) => entity.bookedSeats > 0
+  ).length;
   const totalEntitiesRegistered = allEntities.size;
 
   return {

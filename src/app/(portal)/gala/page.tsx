@@ -24,24 +24,22 @@ import Table from './(components)/table';
 export const generateTables = () => {
   const tables = [];
   let tableNumber = 1;
-  const totalRows = 6; // Adjust based on how many rows you want
+  const totalRows = 8;
+  const tablesPerRow = 4;
 
   for (let row = 0; row < totalRows; row++) {
-    const isOddRow = row % 2 === 0;
-    const tablesInRow = isOddRow ? 7 : 6;
-
-    for (let i = 0; i < tablesInRow; i++) {
+    for (let i = 0; i < tablesPerRow; i++) {
       tables.push({
         id: tableNumber,
         name: `Table ${tableNumber}`,
-        seats: Array(10)
+        seats: Array(12)
           .fill(null)
           .map((_, j) => ({
             number: j + 1,
             status: 'available' as const,
           })),
-        row: row, // Add row information to each table
-        positionInRow: i, // Add position in row information
+        row: row,
+        positionInRow: i,
       });
       tableNumber++;
     }
@@ -181,35 +179,28 @@ export default function GalaBookingPage() {
                   <Box
                     style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(13, 1fr)',
+                      gridTemplateColumns: 'repeat(4, 1fr)',
                       width: 'fit-content',
                       minWidth: '100%',
-                      gap: '2px',
+                      gap: '48px',
+                      padding: '16px'
                     }}
                   >
-                    {tables.map((table) => {
-                      const isOddRow = table.row % 2 === 0;
-
-                      return (
-                        <Box
-                          key={table.id}
-                          style={{
-                            // For odd rows (7 tables): normal position (columns 1-7)
-                            // For even rows (6 tables): offset by 1 column (columns 2-7)
-                            gridColumn: isOddRow
-                              ? `${table.positionInRow * 2 + 1} / span 1`
-                              : `${table.positionInRow * 2 + 2} / span 1`,
-                            gridRow: `${table.row + 1}`,
-                          }}
-                        >
-                          <Table
-                            table={table}
-                            onSeatClick={handleSeatClick}
-                            onTableClick={handleTableClick}
-                          />
-                        </Box>
-                      );
-                    })}
+                    {tables.map((table) => (
+                      <Box
+                        key={table.id}
+                        style={{
+                          gridColumn: `${table.positionInRow + 1} / span 1`,
+                          gridRow: `${table.row + 1}`,
+                        }}
+                      >
+                        <Table
+                          table={table}
+                          onSeatClick={handleSeatClick}
+                          onTableClick={handleTableClick}
+                        />
+                      </Box>
+                    ))}
                   </Box>
                 </ScrollArea>
               </Box>

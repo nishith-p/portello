@@ -18,14 +18,16 @@ interface TableProps {
 }
 
 export default function Table({ table, onSeatClick, onTableClick }: TableProps) {
-  const getPosition = (index: number, total = 10) => {
+  const getPosition = (index: number, total = 12) => {
     const angleStep = (2 * Math.PI) / total;
     const angle = index * angleStep;
     const radius = 40;
 
+    const adjustedAngle = angle - Math.PI / 2 - angleStep / 2;
+
     return {
-      left: 50 + radius * Math.cos(angle - Math.PI / 2),
-      top: 50 + radius * Math.sin(angle - Math.PI / 2),
+      left: 50 + radius * Math.cos(adjustedAngle),
+      top: 50 + radius * Math.sin(adjustedAngle),
     };
   };
 
@@ -49,10 +51,10 @@ export default function Table({ table, onSeatClick, onTableClick }: TableProps) 
         p={0}
         style={{
           width: '100%',
-          height: 120,
+          height: 140,
           position: 'relative',
           margin: '0',
-          minWidth: '120px',
+          minWidth: '140px',
           cursor: 'pointer',
         }}
       >
@@ -70,7 +72,7 @@ export default function Table({ table, onSeatClick, onTableClick }: TableProps) 
         </Group>
 
         {table.seats.map((seat, index) => {
-          const position = getPosition(index);
+          const position = getPosition(index, table.seats.length);
           return (
             <Seat
               key={`${table.id}-${seat.number}`}

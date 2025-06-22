@@ -10,6 +10,7 @@ interface SeatProps {
     number: number
     status: SeatStatus
     bookedByUser?: boolean
+    entityCode?: string
   }
   style?: CSSProperties
   onClick: () => void
@@ -42,7 +43,7 @@ export default function Seat({ seat, style, onClick }: SeatProps) {
   }
 
   return (
-    <Tooltip label={`Seat ${seat.number} (${seat.status})`}>
+    <Tooltip label={`Seat ${seat.number} (${seat.status} - ${seat.entityCode})`}>
       <ActionIcon
         color={getColor()}
         variant={getVariant()}

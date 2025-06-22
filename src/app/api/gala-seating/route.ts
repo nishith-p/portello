@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
         return NextResponse.json({
           allBookings: bookedSeats,
-          userBooking: userBooking || null,
+          userBooking,
           maxSeatsAllowed: entityCount,
           isChiefDelegate: isChief,
         });

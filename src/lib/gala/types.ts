@@ -4,6 +4,7 @@ export interface Seat {
   number: number;
   status: SeatStatus;
   bookedByUser?: boolean;
+  entityCode?: string;
 }
 
 export interface Table {
@@ -45,6 +46,7 @@ export interface EntityBooking {
   delegates: {
     id: string;
     name: string;
+    entity: string;
     seats: { table: number; seat: number }[];
     is_chief_delegate?: boolean;
   }[];
