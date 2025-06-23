@@ -13,6 +13,7 @@ import {
   IconShoppingBag,
   IconUsers,
   IconFileText,
+  IconTableColumn,
 } from '@tabler/icons-react';
 import { Box, NavLink, Stack, Tooltip, Divider } from '@mantine/core';
 import classes from './portal-sidebar.module.css';
@@ -34,6 +35,11 @@ const navigationData: NavigationItem[] = [
     link: '/',
     label: 'Dashboard',
     icon: IconHome,
+  },
+  {
+    link: '/agenda',
+    label: 'Agenda',
+    icon: IconTableColumn,
   },
   {
     link: '/admin/delegates',
