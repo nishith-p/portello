@@ -43,7 +43,7 @@ export default function Seat({ seat, style, onClick }: SeatProps) {
   }
 
   return (
-    <Tooltip label={`Seat ${seat.number} (${seat.status} - ${seat.entityCode})`}>
+    <Tooltip label={seat.status === "booked" ? `Seat ${seat.number} (${seat.status} - ${seat.entityCode})` : `Seat ${seat.number} (${seat.status})`}>
       <ActionIcon
         color={getColor()}
         variant={getVariant()}

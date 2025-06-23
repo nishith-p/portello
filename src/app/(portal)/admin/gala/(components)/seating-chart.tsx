@@ -3,8 +3,8 @@
 
 import { useMemo } from 'react';
 import { IconArmchair } from '@tabler/icons-react';
-import { Badge, Box, Paper, Text } from '@mantine/core';
-import { generateTables } from '@/app/(portal)/gala/page';
+import { Box, Paper, Text } from '@mantine/core';
+import { generateTables } from '@/lib/gala/utils';
 import { Booking, TableStatus } from '@/lib/gala/types';
 
 interface AdminSeatingChartProps {

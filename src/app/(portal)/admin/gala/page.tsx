@@ -19,7 +19,7 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core';
-import { generateTables } from '@/app/(portal)/gala/page';
+import { generateTables } from '@/lib/gala/utils';
 import { useAdminGalaSeating } from '@/lib/gala/hooks';
 import { EntityBooking } from '@/lib/gala/types';
 import { AdminSeatingChart } from './(components)/seating-chart';
