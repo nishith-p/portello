@@ -13,6 +13,7 @@ import {
   IconShoppingBag,
   IconUsers,
   IconFileText,
+  IconTableColumn,
   IconArmchair,
 } from '@tabler/icons-react';
 import { Box, NavLink, Stack, Tooltip, Divider } from '@mantine/core';
@@ -35,6 +36,11 @@ const navigationData: NavigationItem[] = [
     link: '/',
     label: 'Dashboard',
     icon: IconHome,
+  },
+  {
+    link: '/agenda',
+    label: 'Agenda',
+    icon: IconTableColumn,
   },
   {
     link: '/admin/delegates',
