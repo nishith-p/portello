@@ -1,6 +1,6 @@
 export enum RegionType {
   APAC = 'Asia Pacific',
-  MENA = 'Middle East & Africa',
+  MENA = 'Middle East and Africa',
   ECA = 'Europe',
   AMERICAS = 'Americas',
 }
@@ -77,6 +77,8 @@ export interface UserListItem {
   sub_entity: string | null;
   aiesec_email: string;
   round: number | null;
+  room_no?: string;
+  telegram_id?: string;
 }
 
 export interface UserSearchParams {
