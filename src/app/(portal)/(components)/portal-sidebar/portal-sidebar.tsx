@@ -72,6 +72,7 @@ const navigationData: NavigationItem[] = [
     label: 'Gala Seating',
     icon: IconArmchair,
     adminOnly: false,
+    disabledMessage: 'Coming Soon!'
   },
   {
     link: '/admin/gala',
