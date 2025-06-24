@@ -13,6 +13,7 @@ import {
   IconShoppingBag,
   IconUsers,
   IconFileText,
+  IconArmchair,
 } from '@tabler/icons-react';
 import { Box, NavLink, Stack, Tooltip, Divider } from '@mantine/core';
 import classes from './portal-sidebar.module.css';
@@ -65,6 +66,18 @@ const navigationData: NavigationItem[] = [
     label: 'Delegate Payments',
     icon: IconCreditCard,
     adminOnly: false,
+  },
+  {
+    link: '/gala',
+    label: 'Gala Seating',
+    icon: IconArmchair,
+    adminOnly: false,
+  },
+  {
+    link: '/admin/gala',
+    label: 'Gala Dashboard',
+    icon: IconArmchair,
+    adminOnly: true,
   },
   {
     link: '/contact',
