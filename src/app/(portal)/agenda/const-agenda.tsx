@@ -1331,12 +1331,6 @@ export const agendaData = {
         endTime: '15:45',
       },
       {
-        title: 'Building a performance driven MC',
-        targetRoles: ['MCP'],
-        startTime: '14:45',
-        endTime: '15:45',
-      },
-      {
         title: 'Cosales and working with AI',
         targetRoles: ['MCVP BD', 'MCVP EwA'],
         startTime: '14:45',
