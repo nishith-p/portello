@@ -254,7 +254,6 @@ export function useUpdateStoreItemStatus() {
   });
 }
 
-// Add this new hook to your existing hooks
 export function useStoreItemStock(itemCode: string, color?: string, size?: string) {
   return useQuery<number | null>({
     queryKey: ['storeItemStock', itemCode, color, size],
