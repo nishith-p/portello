@@ -5,7 +5,10 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tansta
 import { notifications } from '@mantine/notifications';
 import { UserStats } from '@/lib/users/stats/db';
 import {
+  TrackData,
+  TrackStatsData,
   UpdateDocumentParams,
+  UpdateTrackParams,
   UserListResponse,
   UserProfile,
   UserSearchParams,
@@ -251,6 +254,111 @@ export function useRequestAccountDeletion() {
       notifications.show({
         title: 'Request Failed',
         message: error.message || 'Failed to submit account deletion request',
+        color: 'red',
+      });
+    },
+  });
+}
+
+/**
+ * Hook to fetch track statistics only
+ */
+export function useTrackStats() {
+  const query = useQuery<Record<string, number>>({
+    queryKey: ['tracks', 'stats'],
+    queryFn: async () => {
+      const response = await fetch('/api/users/track?statsOnly=true');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to fetch track statistics');
+      }
+      const data: TrackStatsData = await response.json();
+      return data.trackStats;
+    },
+  });
+
+  useEffect(() => {
+    if (query.error) {
+      notifications.show({
+        title: 'Error',
+        message: query.error.message || 'Failed to load track statistics',
+        color: 'red',
+      });
+    }
+  }, [query.error]);
+
+  return query;
+}
+
+/**
+ * Hook to fetch user's track info and statistics
+ */
+export function useUserTrackInfo() {
+  const query = useQuery<TrackData>({
+    queryKey: ['tracks', 'userInfo'],
+    queryFn: async () => {
+      const response = await fetch('/api/users/track');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to fetch track information');
+      }
+      return response.json();
+    },
+  });
+
+  useEffect(() => {
+    if (query.error) {
+      notifications.show({
+        title: 'Error',
+        message: query.error.message || 'Failed to load track information',
+        color: 'red',
+      });
+    }
+  }, [query.error]);
+
+  return query;
+}
+
+/**
+ * Hook to update user's track selection
+ */
+export function useTrackSelection() {
+  const queryClient = useQueryClient();
+
+  return useMutation<unknown, Error, UpdateTrackParams>({
+    mutationFn: async (params: UpdateTrackParams) => {
+      const response = await fetch('/api/users/track', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(params),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to update track selection');
+      }
+
+      return response.json();
+    },
+    onSuccess: async () => {
+      // Invalidate and refetch track-related queries
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['tracks'] }),
+        queryClient.invalidateQueries({ queryKey: ['userProfile', 'current'] }),
+      ]);
+
+      notifications.show({
+        title: 'Track Selected',
+        message: 'Your track selection has been saved successfully',
+        color: 'green',
+      });
+    },
+    onError: (error) => {
+      notifications.show({
+        title: 'Selection Failed',
+        message: error.message || 'Failed to save track selection',
         color: 'red',
       });
     },

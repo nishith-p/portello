@@ -1,3 +1,4 @@
+import { TRACKS } from '@/app/(portal)/(components)/user-dashboard/const-ysf-tracks';
 import { supabaseServer } from '@/lib/core/supabase';
 import {
   User,
@@ -143,4 +144,86 @@ export async function updateUserDeleteRequest(
   }
 
   return data as User;
+}
+
+/**
+ * Get track statistics (count of users per track)
+ */
+export async function getTrackStats(): Promise<Record<string, number>> {
+  const { data, error } = await supabaseServer
+    .from('users')
+    .select('ysf_track')
+    .not('ysf_track', 'is', null);
+
+  if (error) {
+    console.error('Error fetching track stats:', error);
+    throw error;
+  }
+
+  // Initialize with all possible tracks set to 0
+  const stats: Record<string, number> = {};
+  
+  // This ensures we include all tracks even if they have no selections
+  TRACKS.forEach(track => {
+    stats[track.id] = 0;
+  });
+
+  // Count actual selections
+  data?.forEach((user) => {
+    if (user.ysf_track && stats.hasOwnProperty(user.ysf_track)) {
+      stats[user.ysf_track]++;
+    }
+  });
+
+  return stats;
+}
+
+/**
+ * Update user's YSF track
+ */
+export async function updateUserTrack(
+  kindeId: string,
+  track: string
+): Promise<{ success: boolean }> {
+  // Validate track
+  const validTracks = ['employability', 'leadership', 'sustainability', 'diversity'];
+  if (!validTracks.includes(track)) {
+    throw new Error('Invalid track selection');
+  }
+
+  const { error } = await supabaseServer
+    .from('users')
+    .update({ ysf_track: track })
+    .eq('kinde_id', kindeId);
+
+  if (error) {
+    console.error('Error updating user track:', error);
+    throw error;
+  }
+
+  return { success: true };
+}
+
+/**
+ * Get user's current track and check if they have submitted
+ */
+export async function getUserTrackInfo(kindeId: string): Promise<{
+  track: string | null;
+  hasSubmitted: boolean;
+}> {
+  const { data, error } = await supabaseServer
+    .from('users')
+    .select('ysf_track')
+    .eq('kinde_id', kindeId)
+    .single();
+
+  if (error) {
+    console.error('Error fetching user track info:', error);
+    throw error;
+  }
+
+  return {
+    track: data.ysf_track,
+    hasSubmitted: !!data.ysf_track, // If track exists, they have submitted
+  };
 }
