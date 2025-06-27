@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/utils';
 import { errorResponse } from '@/lib/core/errors';
-import { getTrackStats, updateUserTrack, getUserTrackInfo } from '@/lib/users/db';
+import { getAllTrackStats, getUserSelectionInfo, updateUserSelections } from '@/lib/users/db';
+import { TRACKS } from '@/app/(portal)/(components)/user-dashboard/const-ysf-tracks';
 
-/**
- * GET /api/users/track
- * Get track statistics and user's current track info
- */
 export async function GET(request: NextRequest) {
   return withAuth(
     request,
@@ -20,21 +17,19 @@ export async function GET(request: NextRequest) {
         const statsOnly = url.searchParams.get('statsOnly') === 'true';
 
         if (statsOnly) {
-          // Return only track statistics
-          const trackStats = await getTrackStats();
-          return NextResponse.json({ trackStats });
+          const stats = await getAllTrackStats();
+          return NextResponse.json(stats);
         }
 
-        // Return both track statistics and user's track info
-        const [trackStats, userTrackInfo] = await Promise.all([
-          getTrackStats(),
-          getUserTrackInfo(user.id),
+        const [stats, selectionInfo] = await Promise.all([
+          getAllTrackStats(),
+          getUserSelectionInfo(user.id),
         ]);
 
         return NextResponse.json({
-          trackStats,
-          userTrack: userTrackInfo.track,
-          hasSubmitted: userTrackInfo.hasSubmitted,
+          ...stats,
+          selections: selectionInfo.selections,
+          hasSubmitted: selectionInfo.hasSubmitted
         });
       } catch (error) {
         return errorResponse(error as Error);
@@ -44,10 +39,6 @@ export async function GET(request: NextRequest) {
   );
 }
 
-/**
- * PATCH /api/users/track
- * Update user's track selection
- */
 export async function PATCH(request: NextRequest) {
   return withAuth(
     request,
@@ -58,49 +49,57 @@ export async function PATCH(request: NextRequest) {
         }
 
         const body = await req.json();
-        const { track } = body;
+        const { track1, track2, panel } = body;
 
         // Validate input
-        if (!track || typeof track !== 'string') {
+        if (!track1 || !track2 || !panel) {
           return NextResponse.json(
-            { error: { message: 'Track is required and must be a string' } },
+            { error: { message: 'All selections are required' } },
             { status: 400 }
           );
         }
 
-        // Check if user has already submitted a track
-        const userTrackInfo = await getUserTrackInfo(user.id);
-        if (userTrackInfo.hasSubmitted) {
+        // Check if user has already submitted
+        const selectionInfo = await getUserSelectionInfo(user.id);
+        if (selectionInfo.hasSubmitted) {
           return NextResponse.json(
-            { error: { message: 'Track selection has already been submitted and cannot be changed' } },
+            { error: { message: 'Selections have already been submitted and cannot be changed' } },
             { status: 403 }
           );
         }
 
-        // Get current track stats to check availability
-        const trackStats = await getTrackStats();
+        // Get current stats to check availability
+        const stats = await getAllTrackStats();
         
-        // Define track limits
-        const trackLimits: Record<string, number> = {
-          employability: 50,
-          leadership: 40,
-          sustainability: 35,
-          diversity: 30,
-        };
-
-        // Check if track is full
-        const currentCount = trackStats[track] || 0;
-        const maxCount = trackLimits[track];
-        
-        if (currentCount >= maxCount) {
+        // Check track 1 availability
+        const track1Limit = TRACKS.find(t => t.id === track1)?.maxSlots || 0;
+        if (stats.track1Stats[track1] >= track1Limit) {
           return NextResponse.json(
-            { error: { message: 'This track is currently full. Please select another track.' } },
+            { error: { message: 'Track Session 1 selection is currently full' } },
             { status: 400 }
           );
         }
 
-        // Update user's track
-        await updateUserTrack(user.id, track);
+        // Check track 2 availability
+        const track2Limit = TRACKS.find(t => t.id === track2)?.maxSlots || 0;
+        if (stats.track2Stats[track2] >= track2Limit) {
+          return NextResponse.json(
+            { error: { message: 'Track Session 2 selection is currently full' } },
+            { status: 400 }
+          );
+        }
+
+        // Check panel availability
+        const panelLimit = 100;
+        if (stats.panelStats[panel] >= panelLimit) {
+          return NextResponse.json(
+            { error: { message: 'Panel selection is currently full' } },
+            { status: 400 }
+          );
+        }
+
+        // Update selections
+        await updateUserSelections(user.id, { track1, track2, panel });
 
         return NextResponse.json({ success: true });
       } catch (error) {

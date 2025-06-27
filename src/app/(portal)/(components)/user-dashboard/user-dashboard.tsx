@@ -5,10 +5,12 @@ import { Alert, Grid, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { DocumentStatusCard } from '@/app/(portal)/(components)/user-dashboard/document-card';
 import { QuickInfoCard } from '@/app/(portal)/(components)/user-dashboard/quick-info-card';
 import { UserProfile } from '@/app/(portal)/(components)/user-dashboard/user-profile';
-import { useCurrentUserProfile } from '@/lib/users/hooks';
+import { useCurrentUserProfile, useUserSelectionInfo } from '@/lib/users/hooks';
+import { YsfSessionsCard } from './ysf-card';
 
 export const UserDashboard = () => {
   const { data: userProfile, isLoading, error } = useCurrentUserProfile();
+  const { data: selectionInfo } = useUserSelectionInfo();
 
   const user = userProfile?.user;
   const userDocuments = userProfile?.documents;
@@ -49,6 +51,7 @@ export const UserDashboard = () => {
         <Grid.Col span={{ base: 12, sm: 12, md: 4 }} order={{ base: 1, md: 2 }}>
           <Stack gap="md">
             <QuickInfoCard user={user} />
+            <YsfSessionsCard user={user} />
             {userDocuments && <DocumentStatusCard documents={userDocuments} />}
           </Stack>
         </Grid.Col>

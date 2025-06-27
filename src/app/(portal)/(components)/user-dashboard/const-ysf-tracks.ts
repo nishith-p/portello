@@ -1,4 +1,4 @@
-interface Track {
+export interface Track {
   id: string;
   name: string;
   description: string;
@@ -12,7 +12,7 @@ export const TRACKS: Track[] = [
     name: 'Employability',
     description: 'Focus on career development, skills enhancement, and job readiness',
     color: 'blue',
-    maxSlots: 50,
+    maxSlots: 2,
   },
   {
     id: 'leadership',
@@ -35,4 +35,9 @@ export const TRACKS: Track[] = [
     color: 'grape',
     maxSlots: 30,
   },
+];
+
+export const PANELS = [
+  { id: 'panelA', name: 'Panel Discussion A', description: 'UN Foundation, UNICEF, JCI', maxSlots: 100 },
+  { id: 'panelB', name: 'Panel Discussion B', description: 'Project Everyone, UNIDO, EFF', maxSlots: 100 },
 ];

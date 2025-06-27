@@ -5,10 +5,7 @@ import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tansta
 import { notifications } from '@mantine/notifications';
 import { UserStats } from '@/lib/users/stats/db';
 import {
-  TrackData,
-  TrackStatsData,
   UpdateDocumentParams,
-  UpdateTrackParams,
   UserListResponse,
   UserProfile,
   UserSearchParams,
@@ -261,19 +258,18 @@ export function useRequestAccountDeletion() {
 }
 
 /**
- * Hook to fetch track statistics only
+ * Hook to fetch all track and panel statistics
  */
-export function useTrackStats() {
-  const query = useQuery<Record<string, number>>({
-    queryKey: ['tracks', 'stats'],
+export function useAllTrackStats() {
+  const query = useQuery({
+    queryKey: ['tracks', 'allStats'],
     queryFn: async () => {
       const response = await fetch('/api/users/track?statsOnly=true');
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error?.message || 'Failed to fetch track statistics');
       }
-      const data: TrackStatsData = await response.json();
-      return data.trackStats;
+      return response.json();
     },
   });
 
@@ -291,16 +287,16 @@ export function useTrackStats() {
 }
 
 /**
- * Hook to fetch user's track info and statistics
+ * Hook to fetch user's selection info
  */
-export function useUserTrackInfo() {
-  const query = useQuery<TrackData>({
-    queryKey: ['tracks', 'userInfo'],
+export function useUserSelectionInfo() {
+  const query = useQuery({
+    queryKey: ['tracks', 'userSelections'],
     queryFn: async () => {
       const response = await fetch('/api/users/track');
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Failed to fetch track information');
+        throw new Error(errorData.error?.message || 'Failed to fetch selection information');
       }
       return response.json();
     },
@@ -310,7 +306,7 @@ export function useUserTrackInfo() {
     if (query.error) {
       notifications.show({
         title: 'Error',
-        message: query.error.message || 'Failed to load track information',
+        message: query.error.message || 'Failed to load selection information',
         color: 'red',
       });
     }
@@ -320,45 +316,48 @@ export function useUserTrackInfo() {
 }
 
 /**
- * Hook to update user's track selection
+ * Hook to update user's selections
  */
-export function useTrackSelection() {
+export function useUpdateSelections() {
   const queryClient = useQueryClient();
 
-  return useMutation<unknown, Error, UpdateTrackParams>({
-    mutationFn: async (params: UpdateTrackParams) => {
+  return useMutation({
+    mutationFn: async (selections: {
+      track1: string;
+      track2: string;
+      panel: string;
+    }) => {
       const response = await fetch('/api/users/track', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(params),
+        body: JSON.stringify(selections),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error?.message || 'Failed to update track selection');
+        throw new Error(errorData.error?.message || 'Failed to update selections');
       }
 
       return response.json();
     },
     onSuccess: async () => {
-      // Invalidate and refetch track-related queries
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['tracks'] }),
-        queryClient.invalidateQueries({ queryKey: ['userProfile', 'current'] }),
+        queryClient.invalidateQueries({ queryKey: ['tracks', 'allStats'] }),
+        queryClient.invalidateQueries({ queryKey: ['tracks', 'userSelections'] }),
       ]);
 
       notifications.show({
-        title: 'Track Selected',
-        message: 'Your track selection has been saved successfully',
+        title: 'Selections Updated',
+        message: 'Your session selections have been saved successfully',
         color: 'green',
       });
     },
     onError: (error) => {
       notifications.show({
-        title: 'Selection Failed',
-        message: error.message || 'Failed to save track selection',
+        title: 'Update Failed',
+        message: error.message || 'Failed to save selections',
         color: 'red',
       });
     },

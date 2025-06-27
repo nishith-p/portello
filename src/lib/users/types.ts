@@ -105,17 +105,3 @@ export interface UpdateDocumentParams {
   status?: boolean;
   link?: string;
 }
-
-export interface TrackData {
-  trackStats: Record<string, number>;
-  userTrack: string | null;
-  hasSubmitted: boolean;
-}
-
-export interface TrackStatsData {
-  trackStats: Record<string, number>;
-}
-
-export interface UpdateTrackParams {
-  track: string;
-}

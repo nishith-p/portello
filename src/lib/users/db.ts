@@ -1,4 +1,4 @@
-import { TRACKS } from '@/app/(portal)/(components)/user-dashboard/const-ysf-tracks';
+import { PANELS, TRACKS } from '@/app/(portal)/(components)/user-dashboard/const-ysf-tracks';
 import { supabaseServer } from '@/lib/core/supabase';
 import {
   User,
@@ -147,57 +147,87 @@ export async function updateUserDeleteRequest(
 }
 
 /**
- * Get track statistics (count of users per track)
+ * Get all track and panel statistics
  */
-export async function getTrackStats(): Promise<Record<string, number>> {
-  const { data, error } = await supabaseServer
+export async function getAllTrackStats(): Promise<{
+  track1Stats: Record<string, number>;
+  track2Stats: Record<string, number>;
+  panelStats: Record<string, number>;
+}> {
+  const { data: users, error } = await supabaseServer
     .from('users')
-    .select('ysf_track')
-    .not('ysf_track', 'is', null);
+    .select('ysf_track_1, ysf_track_2, ysf_panel')
+    .or('ysf_track_1.not.is.null,ysf_track_2.not.is.null,ysf_panel.not.is.null');
 
   if (error) {
     console.error('Error fetching track stats:', error);
     throw error;
   }
 
-  // Initialize with all possible tracks set to 0
-  const stats: Record<string, number> = {};
-  
-  // This ensures we include all tracks even if they have no selections
+  // Initialize stats
+  const track1Stats: Record<string, number> = {};
+  const track2Stats: Record<string, number> = {};
+  const panelStats: Record<string, number> = {};
+
   TRACKS.forEach(track => {
-    stats[track.id] = 0;
+    track1Stats[track.id] = 0;
+    track2Stats[track.id] = 0;
   });
 
-  // Count actual selections
-  data?.forEach((user) => {
-    if (user.ysf_track && stats.hasOwnProperty(user.ysf_track)) {
-      stats[user.ysf_track]++;
+  PANELS.forEach(panel => {
+    panelStats[panel.id] = 0;
+  });
+
+  // Count selections
+  users?.forEach(user => {
+    if (user.ysf_track_1 && track1Stats.hasOwnProperty(user.ysf_track_1)) {
+      track1Stats[user.ysf_track_1]++;
+    }
+    if (user.ysf_track_2 && track2Stats.hasOwnProperty(user.ysf_track_2)) {
+      track2Stats[user.ysf_track_2]++;
+    }
+    if (user.ysf_panel && panelStats.hasOwnProperty(user.ysf_panel)) {
+      panelStats[user.ysf_panel]++;
     }
   });
 
-  return stats;
+  return { track1Stats, track2Stats, panelStats };
 }
 
 /**
- * Update user's YSF track
+ * Update user's session selections
  */
-export async function updateUserTrack(
+export async function updateUserSelections(
   kindeId: string,
-  track: string
+  selections: {
+    track1: string;
+    track2: string;
+    panel: string;
+  }
 ): Promise<{ success: boolean }> {
-  // Validate track
-  const validTracks = ['employability', 'leadership', 'sustainability', 'diversity'];
-  if (!validTracks.includes(track)) {
+  // Validate tracks
+  const validTracks = TRACKS.map(t => t.id);
+  if (!validTracks.includes(selections.track1) || !validTracks.includes(selections.track2)) {
     throw new Error('Invalid track selection');
+  }
+
+  // Validate panel
+  const validPanels = PANELS.map(p => p.id);
+  if (!validPanels.includes(selections.panel)) {
+    throw new Error('Invalid panel selection');
   }
 
   const { error } = await supabaseServer
     .from('users')
-    .update({ ysf_track: track })
+    .update({
+      ysf_track_1: selections.track1,
+      ysf_track_2: selections.track2,
+      ysf_panel: selections.panel
+    })
     .eq('kinde_id', kindeId);
 
   if (error) {
-    console.error('Error updating user track:', error);
+    console.error('Error updating user selections:', error);
     throw error;
   }
 
@@ -205,25 +235,33 @@ export async function updateUserTrack(
 }
 
 /**
- * Get user's current track and check if they have submitted
+ * Get user's current selections and submission status
  */
-export async function getUserTrackInfo(kindeId: string): Promise<{
-  track: string | null;
+export async function getUserSelectionInfo(kindeId: string): Promise<{
+  selections: {
+    track1: string | null;
+    track2: string | null;
+    panel: string | null;
+  };
   hasSubmitted: boolean;
 }> {
   const { data, error } = await supabaseServer
     .from('users')
-    .select('ysf_track')
+    .select('ysf_track_1, ysf_track_2, ysf_panel')
     .eq('kinde_id', kindeId)
     .single();
 
   if (error) {
-    console.error('Error fetching user track info:', error);
+    console.error('Error fetching user selection info:', error);
     throw error;
   }
 
   return {
-    track: data.ysf_track,
-    hasSubmitted: !!data.ysf_track, // If track exists, they have submitted
+    selections: {
+      track1: data.ysf_track_1,
+      track2: data.ysf_track_2,
+      panel: data.ysf_panel
+    },
+    hasSubmitted: !!(data.ysf_track_1 && data.ysf_track_2 && data.ysf_panel)
   };
 }
