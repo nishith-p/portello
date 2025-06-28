@@ -90,7 +90,7 @@ export async function PATCH(request: NextRequest) {
         }
 
         // Check panel availability
-        const panelLimit = 100;
+        const panelLimit = 150;
         if (stats.panelStats[panel] >= panelLimit) {
           return NextResponse.json(
             { error: { message: 'Panel selection is currently full' } },

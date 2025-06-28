@@ -141,7 +141,7 @@ export default function YsfTrackSelectionPage() {
 
           {/* Track Session 1 */}
           <div>
-            <Title order={2} size="h3" mb="sm">Track Session 1</Title>
+            <Title order={2} size="h3" mb="sm">Workshop Track Session 1</Title>
             <Radio.Group
               value={selections.track1}
               onChange={(value) => setSelections(prev => ({ ...prev, track1: value }))}
@@ -164,7 +164,7 @@ export default function YsfTrackSelectionPage() {
 
           {/* Track Session 2 */}
           <div>
-            <Title order={2} size="h3" mb="sm">Track Session 2</Title>
+            <Title order={2} size="h3" mb="sm">Workshop Track Session 2</Title>
             <Radio.Group
               value={selections.track2}
               onChange={(value) => setSelections(prev => ({ ...prev, track2: value }))}
