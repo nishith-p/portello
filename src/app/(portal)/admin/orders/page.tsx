@@ -151,7 +151,7 @@ export default function AdminOrdersPage() {
       'Item Count': order.items?.length || 0,
       Items:
         order.items
-          ?.map((item) => `${item.name} (${item.item_code}) - Qty: ${item.quantity}`)
+          ?.map((item) => `${item.name} (${item.item_code}) - Qty: ${item.quantity} - Size: ${item.size}`)
           .join('; ') || 'N/A',
     }));
 
