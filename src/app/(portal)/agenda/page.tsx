@@ -325,10 +325,6 @@ const MobileAgendaView = ({ day }: { day: typeof agendaData.day0 }) => {
                 </Badge>
               </Group>
 
-              <Text size="xs" c="dimmed" ta="center" mb="md" fw={500}>
-                {group[0].startTime} - {group[0].endTime}
-              </Text>
-
               <Stack gap="sm">
                 {group.map((session, sessionIndex) => {
                   const activityType = session.type || 'default';

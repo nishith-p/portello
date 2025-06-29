@@ -1331,12 +1331,6 @@ export const agendaData = {
         endTime: '15:45',
       },
       {
-        title: 'Building a performance driven MC',
-        targetRoles: ['MCP'],
-        startTime: '14:45',
-        endTime: '15:45',
-      },
-      {
         title: 'Cosales and working with AI',
         targetRoles: ['MCVP BD', 'MCVP EwA'],
         startTime: '14:45',
@@ -1362,32 +1356,8 @@ export const agendaData = {
         type: 'break',
       },
       {
-        title: 'Cluster 1',
-        targetRoles: ['MCP', 'LCP'],
-        startTime: '16:00',
-        endTime: '17:00',
-      },
-      {
-        title: 'Cluster 2',
-        targetRoles: ['LCVP', 'MCVP GV'],
-        startTime: '16:00',
-        endTime: '17:00',
-      },
-      {
-        title: 'Cluster 3',
-        targetRoles: ['MCVP GT', 'MCVP MXP', 'MCVP OD'],
-        startTime: '16:00',
-        endTime: '17:00',
-      },
-      {
-        title: 'Cluster 4',
-        targetRoles: ['MCVP FIN', 'MCVP BD', 'MCVP EwA', 'MCVP PR'],
-        startTime: '16:00',
-        endTime: '17:00',
-      },
-      {
-        title: 'Cluster 5',
-        targetRoles: ['MCVP MKT'],
+        title: 'Cluster Sessions',
+        targetRoles: ['MCP', 'LCP', 'LCVP', 'MCVP'],
         startTime: '16:00',
         endTime: '17:00',
       },
