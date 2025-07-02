@@ -1,7 +1,23 @@
 'use client';
 
-import { Center, CheckIcon, Container, Grid, Paper, Stack, Text, Title } from '@mantine/core';
+import { useRef, useState } from 'react';
+import { toPng } from 'html-to-image';
+import {
+  Button,
+  Center,
+  CheckIcon,
+  Container,
+  Grid,
+  Image,
+  Paper,
+  Stack,
+  Text,
+  Title,
+  useMantineTheme,
+} from '@mantine/core';
 import { useActivities } from '@/lib/bingo/hooks';
+import { download } from '@/lib/bingo/util-download';
+import { useMediaQuery, useViewportSize } from '@mantine/hooks';
 
 const activities = [
   'Drank coffee today',
@@ -17,44 +33,127 @@ const activities = [
 
 export default function BingoGame() {
   const { clickedSquares, toggleSquare } = useActivities(activities);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   const checkWin = () => {
-    return clickedSquares.every(square => square);
+    return clickedSquares.every((square) => square);
   };
 
   const isWinner = checkWin();
 
+  const exportAsPng = async () => {
+    if (!cardRef.current) return;
+
+    setIsExporting(true);
+    try {
+      const dataUrl = await toPng(cardRef.current, {
+        backgroundColor: '#ffffff',
+        quality: 1.0,
+        pixelRatio: 3,
+        cacheBust: true,
+        canvasWidth: 1080,
+        canvasHeight: 1920,
+      });
+
+      download(dataUrl, 'bingo-card.png');
+    } catch (error) {
+      console.error('Error exporting PNG:', error);
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // Responsive sizing calculations
+  const cardMaxWidth = isMobile ? '100vw' : '500px';
+  const cardPadding = isMobile ? 'md' : 'xl';
+  const titleSize = isMobile ? 'h3' : 'h1';
+  const activityTextSize = isMobile ? 'xs' : 'sm';
+  const gridGutter = isMobile ? 'xs' : 'md';
+
   return (
-    <Container size="sm" py="md">
-      <Paper shadow="xl" radius="xl" withBorder p="xl">
-        <Stack gap="xl" align="center">
-          <Stack gap="xs">
-            <Title order={1} ta="center" c="blue">
+    <Container
+      fluid
+      px={isMobile ? 'sm' : 'md'}
+      py="md"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        width: '100%',
+      }}
+    >
+      <Paper
+        ref={cardRef}
+        shadow="xl"
+        radius="xl"
+        withBorder
+        p={cardPadding}
+        style={{
+          width: '100%',
+          maxWidth: cardMaxWidth,
+          aspectRatio: '9/16',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          margin: '0 auto',
+        }}
+      >
+        <Stack gap={isMobile ? 'md' : 'xl'} align="center" style={{ flex: 1 }}>
+          <Stack gap="xs" align="center">
+            <Image 
+              radius="md" 
+              height={isMobile ? 40 : 50} 
+              width="auto" 
+              fit="contain" 
+              src="images/IC2025.png" 
+            />
+            <Title order={1} ta="center" c="blue" size={titleSize}>
               Activity Bingo
-            </Title>
-            <Title order={3} ta="center" c="blue.4">
-              IC 2025 Version
             </Title>
           </Stack>
 
           {isWinner && (
-            <Paper p="md" bg="yellow.1" radius="md" shadow='xl' style={{ border: '2px solid var(--mantine-color-yellow-6)' }}>
-              <Text size="lg" fw={700} ta="center" c="yellow.8">
+            <Paper
+              p="sm"
+              bg="yellow.1"
+              radius="md"
+              shadow="xl"
+              style={{ 
+                border: '2px solid var(--mantine-color-yellow-6)',
+                width: '100%',
+              }}
+            >
+              <Text size={isMobile ? 'sm' : 'lg'} fw={700} ta="center" c="yellow.8">
                 🎉 Congratulations! You completed all activities! 🎉
               </Text>
             </Paper>
           )}
 
-          <Grid gutter="md" style={{ maxWidth: '500px' }}>
+          <Grid 
+            gutter={gridGutter} 
+            style={{ 
+              width: '100%',
+              flex: 1,
+              margin: 0,
+            }}
+          >
             {activities.map((activity, index) => (
-              <Grid.Col span={4} key={index}>
+              <Grid.Col span={4} key={index} style={{ padding: gridGutter }}>
                 <Paper
-                  p="md"
+                  p={isMobile ? 'sm' : 'md'}
                   shadow="sm"
                   radius="lg"
                   style={{
                     cursor: 'pointer',
-                    minHeight: '120px',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
                     backgroundColor: clickedSquares[index]
                       ? 'var(--mantine-color-green-1)'
                       : 'var(--mantine-color-gray-0)',
@@ -62,45 +161,61 @@ export default function BingoGame() {
                       ? '2px solid var(--mantine-color-green-3)'
                       : '2px solid var(--mantine-color-gray-3)',
                     transition: 'all 0.2s ease',
-                    position: 'relative',
+                    aspectRatio: '1/1',
                   }}
                   onClick={() => toggleSquare(index)}
                 >
-                  <Center style={{ height: '100%' }}>
-                    <Stack gap="xs" align="center">
-                      <Text
-                        size="sm"
-                        ta="center"
-                        fw={clickedSquares[index] ? 600 : 400}
-                        c={clickedSquares[index] ? 'green.8' : 'dark.7'}
-                      >
-                        {activity}
-                      </Text>
-                      {clickedSquares[index] && (
-                        <CheckIcon
-                          size={24}
-                          color="var(--mantine-color-green-6)"
-                          style={{ marginTop: '4px' }}
-                        />
-                      )}
-                    </Stack>
-                  </Center>
+                  <Stack gap={2} align="center" justify="center" style={{ height: '100%' }}>
+                    <Text
+                      size={activityTextSize}
+                      ta="center"
+                      fw={clickedSquares[index] ? 600 : 400}
+                      c={clickedSquares[index] ? 'green.8' : 'dark.7'}
+                      style={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {activity}
+                    </Text>
+                    {clickedSquares[index] && (
+                      <CheckIcon
+                        size={isMobile ? 18 : 24}
+                        color="var(--mantine-color-green-6)"
+                        style={{ marginTop: '2px' }}
+                      />
+                    )}
+                  </Stack>
                 </Paper>
               </Grid.Col>
             ))}
           </Grid>
-
-          <Text size="sm" c="dimmed" ta="center">
-            Click to mark activities as completed
-            <br />
-            {isWinner ? (
-              "You've completed all activities!"
-            ) : (
-              "Complete all activities to finish the challenge!"
-            )}
-          </Text>
         </Stack>
       </Paper>
+      
+      <Stack mt="md" style={{ width: '100%', maxWidth: cardMaxWidth }}>
+        <Text size={isMobile ? 'xs' : 'sm'} c="dimmed" ta="center">
+          Click to mark activities as completed
+          <br />
+          {isWinner
+            ? "You've completed all activities!"
+            : 'Complete all activities to finish the challenge!'}
+        </Text>
+        <Button
+          onClick={exportAsPng}
+          loading={isExporting}
+          variant="filled"
+          data-html2canvas-ignore
+          fullWidth
+          size={isMobile ? 'sm' : 'md'}
+        >
+          Export for Instagram
+        </Button>
+      </Stack>
     </Container>
   );
 }
