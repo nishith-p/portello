@@ -69,13 +69,13 @@ export function DelegatePaymentCard({ user }: DelegatePaymentFormProps) {
             <List ml="xl">
               <List.Item>
                 <Group>
-                  <Text>MCP Current / MCP Elect =</Text>
+                  <Text>MCP Elect =</Text>
                   <Text fw={700}>€630</Text>
                 </Group>
               </List.Item>
               <List.Item>
                 <Group>
-                  <Text>MCVP Current / MCVP Elect / LCP / Other =</Text>
+                  <Text>MCP Current / MCVP Current / MCVP Elect / LCP / Other =</Text>
                   <Text fw={700}>€560</Text>
                 </Group>
               </List.Item>
