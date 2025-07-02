@@ -38,8 +38,8 @@ export default function BingoGame() {
           </Stack>
 
           {isWinner && (
-            <Paper p="md" bg="green.1" radius="md" shadow='xl' style={{ border: '2px solid var(--mantine-color-green-6)' }}>
-              <Text size="lg" fw={700} ta="center" c="green.8">
+            <Paper p="md" bg="yellow.1" radius="md" shadow='xl' style={{ border: '2px solid var(--mantine-color-yellow-6)' }}>
+              <Text size="lg" fw={700} ta="center" c="yellow.8">
                 🎉 Congratulations! You completed all activities! 🎉
               </Text>
             </Paper>
