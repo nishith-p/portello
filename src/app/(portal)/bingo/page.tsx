@@ -37,6 +37,7 @@ export default function BingoGame() {
   const [isExporting, setIsExporting] = useState(false);
   const theme = useMantineTheme();
   const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+  const isTablet = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
 
   const checkWin = () => {
     return clickedSquares.every((square) => square);
@@ -66,17 +67,20 @@ export default function BingoGame() {
     }
   };
 
-  // Responsive sizing calculations
-  const cardMaxWidth = isMobile ? '100vw' : '500px';
-  const cardPadding = isMobile ? 'md' : 'xl';
-  const titleSize = isMobile ? 'h3' : 'h1';
-  const activityTextSize = isMobile ? 'xs' : 'sm';
-  const gridGutter = isMobile ? 'xs' : 'md';
+  // Enhanced responsive sizing calculations
+  const cardMaxWidth = isMobile ? '100vw' : isTablet ? '400px' : '500px';
+  const cardPadding = isMobile ? 'sm' : isTablet ? 'md' : 'xl';
+  const titleSize = isMobile ? 'h4' : isTablet ? 'h3' : 'h1';
+  const activityTextSize = isMobile ? '10px' : isTablet ? 'xs' : 'sm';
+  const gridGutter = isMobile ? 4 : isTablet ? 6 : 8;
+  const squarePadding = isMobile ? 4 : isTablet ? 6 : 8;
+  const checkIconSize = isMobile ? 14 : isTablet ? 16 : 24;
+  const logoHeight = isMobile ? 30 : isTablet ? 35 : 50;
 
   return (
     <Container
       fluid
-      px={isMobile ? 'sm' : 'md'}
+      px={isMobile ? 'xs' : 'md'}
       py="md"
       style={{
         display: 'flex',
@@ -103,11 +107,11 @@ export default function BingoGame() {
           margin: '0 auto',
         }}
       >
-        <Stack gap={isMobile ? 'md' : 'xl'} align="center" style={{ flex: 1 }}>
+        <Stack gap={isMobile ? 'sm' : isTablet ? 'md' : 'xl'} align="center" style={{ flex: 1 }}>
           <Stack gap="xs" align="center">
             <Image 
               radius="md" 
-              height={isMobile ? 40 : 50} 
+              height={logoHeight} 
               width="auto" 
               fit="contain" 
               src="images/IC2025.png" 
@@ -128,7 +132,7 @@ export default function BingoGame() {
                 width: '100%',
               }}
             >
-              <Text size={isMobile ? 'sm' : 'lg'} fw={700} ta="center" c="yellow.8">
+              <Text size={isMobile ? 'xs' : isTablet ? 'sm' : 'lg'} fw={700} ta="center" c="yellow.8">
                 🎉 Congratulations! You completed all activities! 🎉
               </Text>
             </Paper>
@@ -143,14 +147,15 @@ export default function BingoGame() {
             }}
           >
             {activities.map((activity, index) => (
-              <Grid.Col span={4} key={index} style={{ padding: gridGutter }}>
+              <Grid.Col span={4} key={index} style={{ padding: gridGutter / 2 }}>
                 <Paper
-                  p={isMobile ? 'sm' : 'md'}
+                  p={squarePadding}
                   shadow="sm"
                   radius="lg"
                   style={{
                     cursor: 'pointer',
                     height: '100%',
+                    minHeight: isMobile ? '70px' : isTablet ? '80px' : '100px',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
@@ -173,20 +178,22 @@ export default function BingoGame() {
                       c={clickedSquares[index] ? 'green.8' : 'dark.7'}
                       style={{
                         overflow: 'hidden',
-                        textOverflow: 'ellipsis',
                         display: '-webkit-box',
-                        WebkitLineClamp: 2,
+                        WebkitLineClamp: isMobile ? 3 : isTablet ? 3 : 2,
                         WebkitBoxOrient: 'vertical',
-                        lineHeight: 1.2,
+                        lineHeight: isMobile ? 1.1 : isTablet ? 1.15 : 1.2,
+                        fontSize: isMobile ? '10px' : isTablet ? '11px' : '14px',
+                        hyphens: 'auto',
+                        wordBreak: 'break-word',
                       }}
                     >
                       {activity}
                     </Text>
                     {clickedSquares[index] && (
                       <CheckIcon
-                        size={isMobile ? 18 : 24}
+                        size={checkIconSize}
                         color="var(--mantine-color-green-6)"
-                        style={{ marginTop: '2px' }}
+                        style={{ marginTop: '2px', flexShrink: 0 }}
                       />
                     )}
                   </Stack>
@@ -198,7 +205,7 @@ export default function BingoGame() {
       </Paper>
       
       <Stack mt="md" style={{ width: '100%', maxWidth: cardMaxWidth }}>
-        <Text size={isMobile ? 'xs' : 'sm'} c="dimmed" ta="center">
+        <Text size={isMobile ? 'xs' : isTablet ? 'sm' : 'sm'} c="dimmed" ta="center">
           Click to mark activities as completed
           <br />
           {isWinner
@@ -211,7 +218,7 @@ export default function BingoGame() {
           variant="filled"
           data-html2canvas-ignore
           fullWidth
-          size={isMobile ? 'sm' : 'md'}
+          size={isMobile ? 'sm' : isTablet ? 'md' : 'md'}
         >
           Export for Instagram
         </Button>
