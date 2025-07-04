@@ -1,13 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IconCalendar, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import {
   Badge,
   Box,
   Button,
   Container,
-  Divider,
   Group,
   Paper,
   ScrollArea,
@@ -18,7 +17,8 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core';
-import { agendaData } from './const-agenda';
+import { useAgenda } from '@/lib/agenda/hooks';
+import { Day } from '@/lib/agenda/types';
 
 const getActivityColor = (type?: string) => {
   const colors: Record<string, string> = {
@@ -80,8 +80,8 @@ const getUsedTimeSlots = (sessions: any[]) => {
   const usedTimes = new Set<string>();
 
   sessions.forEach((session) => {
-    const startTime = session.startTime;
-    const endTime = session.endTime;
+    const startTime = session.start_time;
+    const endTime = session.end_time;
 
     const isStartEarlyMorning = startTime >= '00:00' && startTime < '07:00';
     const isEndEarlyMorning = endTime >= '00:00' && endTime < '07:00';
@@ -150,7 +150,7 @@ const renderActivityCard = (activity: any, dayColor: string, isMobile: boolean =
         {activity.title}
       </Text>
       <Text size="xs" c="dimmed">
-        {activity.startTime} - {activity.endTime}
+        {activity.start_time} - {activity.end_time}
       </Text>
       {!isCommon && activity.targetRoles.length > 0 && (
         <Group gap="xs">
@@ -200,7 +200,7 @@ const renderActivityCard = (activity: any, dayColor: string, isMobile: boolean =
                 })}
               </Group>
             )}
-            {!isBreak && activityType !== 'default' && activity.showBadges !== false && (
+            {!isBreak && activityType !== 'default' && activity.show_badges !== false && (
               <Badge size="xs" color={typeColor} variant="filled">
                 {activityType}
               </Badge>
@@ -230,7 +230,6 @@ const renderActivityCard = (activity: any, dayColor: string, isMobile: boolean =
   );
 };
 
-// Helper function to check if two time ranges overlap
 const timeRangesOverlap = (start1: string, end1: string, start2: string, end2: string) => {
   const parseTime = (time: string) => {
     const [hours, minutes] = time.split(':').map(Number);
@@ -245,7 +244,6 @@ const timeRangesOverlap = (start1: string, end1: string, start2: string, end2: s
   return start1Minutes < end2Minutes && start2Minutes < end1Minutes;
 };
 
-// Helper function to group sessions by time overlaps
 const groupSessionsByTime = (sessions: any[]) => {
   const groups: any[][] = [];
   const processed = new Set<number>();
@@ -260,10 +258,10 @@ const groupSessionsByTime = (sessions: any[]) => {
       if (otherIndex === index || processed.has(otherIndex)) return;
 
       const hasOverlap = timeRangesOverlap(
-        session.startTime,
-        session.endTime,
-        otherSession.startTime,
-        otherSession.endTime
+        session.start_time,
+        session.end_time,
+        otherSession.start_time,
+        otherSession.end_time
       );
 
       if (hasOverlap) {
@@ -278,10 +276,10 @@ const groupSessionsByTime = (sessions: any[]) => {
   return groups;
 };
 
-const MobileAgendaView = ({ day }: { day: typeof agendaData.day0 }) => {
+const MobileAgendaView = ({ day }: { day: Day }) => {
   const sortedSessions = [...day.sessions].sort((a, b) => {
-    const timeA = a.startTime.split(':').map(Number);
-    const timeB = b.startTime.split(':').map(Number);
+    const timeA = a.start_time.split(':').map(Number);
+    const timeB = b.start_time.split(':').map(Number);
     return timeA[0] * 60 + timeA[1] - (timeB[0] * 60 + timeB[1]);
   });
 
@@ -296,7 +294,6 @@ const MobileAgendaView = ({ day }: { day: typeof agendaData.day0 }) => {
         );
 
         if (isParallelTracks && !hasCommonSession) {
-          // Get the dominant color for the parallel tracks container
           const containerColor = day.color;
 
           return (
@@ -353,7 +350,7 @@ const MobileAgendaView = ({ day }: { day: typeof agendaData.day0 }) => {
                     >
                       <Stack gap="sm">
                         <Text size="xs" c="dimmed" mb="md" fw={500}>
-                          {session.startTime} - {session.endTime}
+                          {session.start_time} - {session.end_time}
                         </Text>
                         <Text fw={600} size="sm" style={{ flex: 1 }}>
                           {session.title}
@@ -382,7 +379,6 @@ const MobileAgendaView = ({ day }: { day: typeof agendaData.day0 }) => {
             </Paper>
           );
         } else {
-          // Single session or common session - render normally
           return group.map((session, sessionIndex) => {
             const activityType = session.type || 'default';
             const typeColor = getActivityColor(activityType);
@@ -410,7 +406,7 @@ const MobileAgendaView = ({ day }: { day: typeof agendaData.day0 }) => {
               >
                 <Group justify="space-between" mb="sm">
                   <Text size="xs" c="dimmed" ta="center" mb="md" fw={500}>
-                    {session.startTime} - {session.endTime}
+                    {session.start_time} - {session.end_time}
                   </Text>
                   <Group gap="xs">
                     {session.targetRoles.map((role: string) => {
@@ -443,10 +439,10 @@ const MobileAgendaView = ({ day }: { day: typeof agendaData.day0 }) => {
   );
 };
 
-const getActivitiesWithPlacement = (day: typeof agendaData.day0, relevantTimeSlots: string[]) => {
+const getActivitiesWithPlacement = (day: Day, relevantTimeSlots: string[]) => {
   return day.sessions.map((activity) => {
-    const startIndex = findTimeSlotIndex(relevantTimeSlots, activity.startTime);
-    const duration = calculateDuration(relevantTimeSlots, activity.startTime, activity.endTime);
+    const startIndex = findTimeSlotIndex(relevantTimeSlots, activity.start_time);
+    const duration = calculateDuration(relevantTimeSlots, activity.start_time, activity.end_time);
 
     let startCol: number;
     let span: number;
@@ -460,22 +456,22 @@ const getActivitiesWithPlacement = (day: typeof agendaData.day0, relevantTimeSlo
       activity.targetRoles.forEach((role: string) => {
         if (role === 'MCVP') {
           const mcvpIndices = day.tracks
-            .map((track, index) => (track.startsWith('MCVP') ? index : -1))
+            .map((track, index) => (track.name.startsWith('MCVP') ? index : -1))
             .filter((index) => index !== -1);
           targetIndices.push(...mcvpIndices);
         } else {
           const trackIndex = day.tracks.findIndex((track) => {
-            if (track === role) return true;
-            if (role.startsWith('MCVP') && track.startsWith('MCVP')) {
+            if (track.name === role) return true;
+            if (role.startsWith('MCVP') && track.name.startsWith('MCVP')) {
               const roleSpecific = role.replace('MCVP ', '').trim();
-              const trackSpecific = track.replace('MCVP ', '').trim();
+              const trackSpecific = track.name.replace('MCVP ', '').trim();
               return (
                 trackSpecific === roleSpecific ||
                 trackSpecific.includes(roleSpecific) ||
                 roleSpecific.includes(trackSpecific)
               );
             }
-            return track.includes(role) || role.includes(track);
+            return track.name.includes(role) || role.includes(track.name);
           });
 
           if (trackIndex !== -1) {
@@ -506,7 +502,7 @@ const getActivitiesWithPlacement = (day: typeof agendaData.day0, relevantTimeSlo
   });
 };
 
-const AgendaGridView = ({ day, isMobile }: { day: typeof agendaData.day0; isMobile: boolean }) => {
+const AgendaGridView = ({ day, isMobile }: { day: Day; isMobile: boolean }) => {
   const usedTimes = getUsedTimeSlots(day.sessions);
   const relevantTimeSlots = createTimeSlotPairs(usedTimes);
   const activitiesWithPlacement = getActivitiesWithPlacement(day, relevantTimeSlots);
@@ -556,7 +552,7 @@ const AgendaGridView = ({ day, isMobile }: { day: typeof agendaData.day0; isMobi
 
             {day.tracks.map((track, index) => (
               <Paper
-                key={track}
+                key={track.id}
                 p="xs"
                 bg={`${day.color}.1`}
                 style={{
@@ -568,7 +564,7 @@ const AgendaGridView = ({ day, isMobile }: { day: typeof agendaData.day0; isMobi
                 }}
               >
                 <Text fw={600} ta="center" size="xs" lineClamp={3}>
-                  {track}
+                  {track.name}
                 </Text>
               </Paper>
             ))}
@@ -619,7 +615,7 @@ const AgendaGridView = ({ day, isMobile }: { day: typeof agendaData.day0; isMobi
             .filter((activity) => activity.startIndex !== -1)
             .map((activity, index) => (
               <div
-                key={`${activity.title}-${index}`}
+                key={`${activity.id}-${index}`}
                 style={{
                   gridColumn: `${activity.startCol + 2} / span ${activity.span}`,
                   gridRow: `${activity.startIndex + 2} / span ${activity.duration}`,
@@ -637,7 +633,7 @@ const AgendaGridView = ({ day, isMobile }: { day: typeof agendaData.day0; isMobi
   );
 };
 
-const DayOverview = ({ day, isMobile }: { day: typeof agendaData.day0; isMobile: boolean }) => (
+const DayOverview = ({ day, isMobile }: { day: Day; isMobile: boolean }) => (
   <Paper
     shadow="xs"
     p={isMobile ? 'md' : 'lg'}
@@ -670,10 +666,11 @@ const DayOverview = ({ day, isMobile }: { day: typeof agendaData.day0; isMobile:
 );
 
 const AgendaWithTrackGrid = () => {
+  const { days, loading, error } = useAgenda();
   const [activeTab, setActiveTab] = useState<string>('day0');
   const [isMobile, setIsMobile] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -682,6 +679,36 @@ const AgendaWithTrackGrid = () => {
     window.addEventListener('resize', checkIsMobile);
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
+
+  if (loading) {
+    return (
+      <Container size="xl" py="xl">
+        <Text>Loading agenda...</Text>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container size="xl" py="xl">
+        <Text c="red">Error: {error}</Text>
+      </Container>
+    );
+  }
+
+  if (!days.length) {
+    return (
+      <Container size="xl" py="xl">
+        <Text>No agenda data available</Text>
+      </Container>
+    );
+  }
+
+  // Convert days array to object with day0, day1, etc. keys
+  const agendaData = days.reduce((acc, day, index) => {
+    acc[`day${index}`] = day;
+    return acc;
+  }, {} as Record<string, Day>);
 
   return (
     <Container size="xl" py="xl">
