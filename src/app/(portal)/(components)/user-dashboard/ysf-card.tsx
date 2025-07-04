@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { IconEdit, IconTarget, IconUsersGroup } from '@tabler/icons-react';
 import {
   ActionIcon,
@@ -7,126 +8,140 @@ import {
   Group,
   Paper,
   SimpleGrid,
+  Stack,
   Text,
   ThemeIcon,
+  Title,
   Tooltip,
 } from '@mantine/core';
 import { useUserSelectionInfo } from '@/lib/users/hooks';
 import { User } from '@/lib/users/types';
-import { PANELS, TRACKS } from './const-ysf-tracks';
-import { useRouter } from 'next/navigation';
+import { PANELS, TRACK1, TRACK2 } from './const-ysf-tracks';
 
 interface YsfSessionsCardProps {
   user: User;
 }
 
-const TRACK_COLORS: Record<string, string> = {
-  employability: 'blue',
-  leadership: 'green',
-  sustainability: 'teal',
-  diversity: 'grape',
+const THEME_COLORS: Record<string, string> = {
+  Employability: 'blue',
+  Leadership: 'green',
+  Sustainability: 'teal',
+  Diversity: 'grape',
 };
 
 export function YsfSessionsCard({ user }: YsfSessionsCardProps) {
   const router = useRouter();
   const { data: selectionInfo, isLoading } = useUserSelectionInfo();
 
-  const getTrackName = (id: string | null) =>
-    TRACKS.find((t) => t.id === id)?.name || 'Not Selected';
+  const getTrack1Name = (id: string | null) =>
+    TRACK1.find((t) => t.id === id)?.name || 'Not Selected';
+
+  const getTrack2Name = (id: string | null) =>
+    TRACK2.find((t) => t.id === id)?.name || 'Not Selected';
 
   const getPanelName = (id: string | null) =>
     PANELS.find((p) => p.id === id)?.name || 'Not Selected';
 
-  const getTrackColor = (id: string | null) => (id ? TRACK_COLORS[id] : 'gray');
+  const getTrack1Color = (id: string | null) => {
+    if (!id) return 'gray';
+    const track = TRACK1.find((t) => t.id === id);
+    return track ? THEME_COLORS[track.theme] || track.color : 'gray';
+  };
+
+  const getTrack2Color = (id: string | null) => {
+    if (!id) return 'gray';
+    const track = TRACK2.find((t) => t.id === id);
+    return track ? THEME_COLORS[track.theme] || track.color : 'gray';
+  };
 
   const handleEditClick = () => {
     router.push('/track');
   };
 
   return (
-    <Container fluid px={0} w="100%" m={0}>
+    <Container fluid px={0} w="100%" m={0} mb="xl">
       <Paper radius="md" withBorder p="md">
+        <Title order={3} mb="xs">
+          YSF - Session Preference Selection
+        </Title>
         <SimpleGrid cols={{ base: 1, lg: 2 }}>
           {/* Panel Discussion */}
           <Paper withBorder p="md" radius="md">
-            <Group justify="space-between">
-              <Group>
-                <ThemeIcon color="indigo" variant="light" size="lg" radius="md">
-                  <IconUsersGroup size={20} />
-                </ThemeIcon>
-                <div>
-                  <Text size="xs" c="dimmed">
-                    Panel Discussion
-                  </Text>
-                  <Text fw={500} size="lg">
-                    {getPanelName(selectionInfo?.selections.panel)}
-                  </Text>
-                </div>
-              </Group>
+            <Stack justify="space-between">
+              <ThemeIcon color="indigo" variant="light" size="lg" radius="md">
+                <IconUsersGroup size={20} />
+              </ThemeIcon>
+              <div>
+                <Text size="xs" c="dimmed">
+                  Panel Discussion
+                </Text>
+                <Text fw={500} size="lg">
+                  {getPanelName(selectionInfo?.selections.panel)}
+                </Text>
+              </div>
+
               {selectionInfo?.selections.panel && (
                 <Badge color="indigo" variant="light">
                   Selected
                 </Badge>
               )}
-            </Group>
+            </Stack>
           </Paper>
 
-          {/* Track Session 1 */}
+          {/* Workshop 1 */}
           <Paper withBorder p="md" radius="md">
-            <Group justify="space-between">
-              <Group>
-                <ThemeIcon
-                  color={getTrackColor(selectionInfo?.selections.track1)}
-                  variant="light"
-                  size="lg"
-                  radius="md"
-                >
-                  <IconTarget size={20} />
-                </ThemeIcon>
-                <div>
-                  <Text size="xs" c="dimmed">
-                    Track Session 1
-                  </Text>
-                  <Text fw={500} size="lg">
-                    {getTrackName(selectionInfo?.selections.track1)}
-                  </Text>
-                </div>
-              </Group>
+            <Stack justify="space-between">
+              <ThemeIcon
+                color={getTrack1Color(selectionInfo?.selections.track1)}
+                variant="light"
+                size="lg"
+                radius="md"
+              >
+                <IconTarget size={20} />
+              </ThemeIcon>
+              <div>
+                <Text size="xs" c="dimmed">
+                  Workshop 1
+                </Text>
+                <Text fw={500} size="lg">
+                  {getTrack1Name(selectionInfo?.selections.track1)}
+                </Text>
+              </div>
+
               {selectionInfo?.selections.track1 && (
-                <Badge color={getTrackColor(selectionInfo.selections.track1)} variant="light">
+                <Badge color={getTrack1Color(selectionInfo.selections.track1)} variant="light">
                   Selected
                 </Badge>
               )}
-            </Group>
+            </Stack>
           </Paper>
 
-          {/* Track Session 2 */}
+          {/* Workshop 2 */}
           <Paper withBorder p="md" radius="md">
-            <Group justify="space-between">
-              <Group>
-                <ThemeIcon
-                  color={getTrackColor(selectionInfo?.selections.track2)}
-                  variant="light"
-                  size="lg"
-                  radius="md"
-                >
-                  <IconTarget size={20} />
-                </ThemeIcon>
-                <div>
-                  <Text size="xs" c="dimmed">
-                    Track Session 2
-                  </Text>
-                  <Text fw={500} size="lg">
-                    {getTrackName(selectionInfo?.selections.track2)}
-                  </Text>
-                </div>
-              </Group>
+            <Stack justify="space-between">
+              <ThemeIcon
+                color={getTrack2Color(selectionInfo?.selections.track2)}
+                variant="light"
+                size="lg"
+                radius="md"
+              >
+                <IconTarget size={20} />
+              </ThemeIcon>
+              <div>
+                <Text size="xs" c="dimmed">
+                  Workshop 2
+                </Text>
+                <Text fw={500} size="lg">
+                  {getTrack2Name(selectionInfo?.selections.track2)}
+                </Text>
+              </div>
+
               {selectionInfo?.selections.track2 && (
-                <Badge color={getTrackColor(selectionInfo.selections.track2)} variant="light">
+                <Badge color={getTrack2Color(selectionInfo.selections.track2)} variant="light">
                   Selected
                 </Badge>
               )}
-            </Group>
+            </Stack>
           </Paper>
 
           {/* Edit Button */}

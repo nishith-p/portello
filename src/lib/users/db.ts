@@ -1,4 +1,4 @@
-import { PANELS, TRACKS } from '@/app/(portal)/(components)/user-dashboard/const-ysf-tracks';
+import { PANELS, TRACK1, TRACK2 } from '@/app/(portal)/(components)/user-dashboard/const-ysf-tracks';
 import { supabaseServer } from '@/lib/core/supabase';
 import {
   User,
@@ -169,11 +169,17 @@ export async function getAllTrackStats(): Promise<{
   const track2Stats: Record<string, number> = {};
   const panelStats: Record<string, number> = {};
 
-  TRACKS.forEach(track => {
+  // Initialize track1 stats
+  TRACK1.forEach(track => {
     track1Stats[track.id] = 0;
+  });
+
+  // Initialize track2 stats
+  TRACK2.forEach(track => {
     track2Stats[track.id] = 0;
   });
 
+  // Initialize panel stats
   PANELS.forEach(panel => {
     panelStats[panel.id] = 0;
   });
@@ -205,10 +211,16 @@ export async function updateUserSelections(
     panel: string;
   }
 ): Promise<{ success: boolean }> {
-  // Validate tracks
-  const validTracks = TRACKS.map(t => t.id);
-  if (!validTracks.includes(selections.track1) || !validTracks.includes(selections.track2)) {
-    throw new Error('Invalid track selection');
+  // Validate track1
+  const validTrack1Ids = TRACK1.map(t => t.id);
+  if (!validTrack1Ids.includes(selections.track1)) {
+    throw new Error('Invalid track1 selection');
+  }
+
+  // Validate track2
+  const validTrack2Ids = TRACK2.map(t => t.id);
+  if (!validTrack2Ids.includes(selections.track2)) {
+    throw new Error('Invalid track2 selection');
   }
 
   // Validate panel

@@ -45,13 +45,13 @@ export const UserDashboard = () => {
 
       <Grid gutter={{ base: 'xs', sm: 'md', md: 'lg' }}>
         <Grid.Col span={{ base: 12, sm: 12, md: 8 }} order={{ base: 2, md: 1 }}>
+          <YsfSessionsCard user={user} />
           <UserProfile user={user} />
         </Grid.Col>
 
         <Grid.Col span={{ base: 12, sm: 12, md: 4 }} order={{ base: 1, md: 2 }}>
           <Stack gap="md">
             <QuickInfoCard user={user} />
-            <YsfSessionsCard user={user} />
             {userDocuments && <DocumentStatusCard documents={userDocuments} />}
           </Stack>
         </Grid.Col>

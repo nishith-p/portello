@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { withAuth } from '@/lib/auth/utils';
 import { errorResponse } from '@/lib/core/errors';
 import { getAllTrackStats, getUserSelectionInfo, updateUserSelections } from '@/lib/users/db';
-import { TRACKS } from '@/app/(portal)/(components)/user-dashboard/const-ysf-tracks';
+import { TRACK1, TRACK2, PANELS } from '@/app/(portal)/(components)/user-dashboard/const-ysf-tracks';
 
 export async function GET(request: NextRequest) {
   return withAuth(
@@ -72,25 +72,28 @@ export async function PATCH(request: NextRequest) {
         const stats = await getAllTrackStats();
         
         // Check track 1 availability
-        const track1Limit = TRACKS.find(t => t.id === track1)?.maxSlots || 0;
+        const track1Item = TRACK1.find(t => t.id === track1);
+        const track1Limit = track1Item?.maxSlots || 0;
         if (stats.track1Stats[track1] >= track1Limit) {
           return NextResponse.json(
-            { error: { message: 'Track Session 1 selection is currently full' } },
+            { error: { message: 'Workshop 1 selection is currently full' } },
             { status: 400 }
           );
         }
 
         // Check track 2 availability
-        const track2Limit = TRACKS.find(t => t.id === track2)?.maxSlots || 0;
+        const track2Item = TRACK2.find(t => t.id === track2);
+        const track2Limit = track2Item?.maxSlots || 0;
         if (stats.track2Stats[track2] >= track2Limit) {
           return NextResponse.json(
-            { error: { message: 'Track Session 2 selection is currently full' } },
+            { error: { message: 'Workshop 2 selection is currently full' } },
             { status: 400 }
           );
         }
 
         // Check panel availability
-        const panelLimit = 150;
+        const panelItem = PANELS.find(p => p.id === panel);
+        const panelLimit = panelItem?.maxSlots || 0;
         if (stats.panelStats[panel] >= panelLimit) {
           return NextResponse.json(
             { error: { message: 'Panel selection is currently full' } },
