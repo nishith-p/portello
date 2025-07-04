@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { IconX, IconUser, IconPackage, IconShoppingCart } from '@tabler/icons-react';
+import { IconX, IconUser, IconPackage, IconShoppingCart, IconCoins, IconCash } from '@tabler/icons-react';
 import {
   Alert,
   Button,
@@ -21,13 +21,15 @@ import {
   Modal,
   TextInput,
   Textarea,
-  Avatar
+  Avatar,
+  Radio
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useUserSearch } from '@/lib/users/hooks';
 import { useStoreItems } from '@/lib/store/items/hooks';
 import { useStorePacks } from '@/lib/store/packs/hooks';
+import { useAdminWallet } from '@/lib/wallet/hooks';
 import { UserListItem } from '@/lib/users/types';
 import { StoreItem, StorePack, CreateOrderItemInput, CreateOrderPackItem } from '@/lib/store/types';
 import classes from './custom-order.module.css';
@@ -53,11 +55,18 @@ export default function CustomOrderPage() {
   const [packSearch, setPackSearch] = useState('');
   const [notes, setNotes] = useState('');
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  
+  // Payment and exchange handling state
+  const [paymentMethod, setPaymentMethod] = useState<'unpaid' | 'admin_paid' | 'credit_only'>('unpaid');
+  const [exchangeAmount, setExchangeAmount] = useState<number>(0);
+  const [exchangeCashAmount, setExchangeCashAmount] = useState<number>(0);
+  const [exchangeCreditAmount, setExchangeCreditAmount] = useState<number>(0);
 
   // Hooks
   const { data: delegatesData } = useUserSearch({ search: delegateSearch, limit: 50, offset: 0 });
   const { data: itemsData } = useStoreItems();
   const { data: packsData } = useStorePacks();
+  const { walletData, refetch: refetchWallet } = useAdminWallet(selectedDelegate?.kinde_id);
 
   const delegates = delegatesData?.users || [];
   const items = itemsData?.items || [];
@@ -140,6 +149,19 @@ export default function CustomOrderPage() {
       return;
     }
 
+    // Check if delegate has enough credits for credit_only payment
+    if (paymentMethod === 'credit_only' && walletData) {
+      const orderTotal = calculateTotal();
+      if (walletData.wallet.credit < orderTotal) {
+        notifications.show({
+          title: 'Insufficient Credits',
+          message: `Delegate has €${walletData.wallet.credit.toFixed(2)} but order total is €${orderTotal.toFixed(2)}`,
+          color: 'red',
+        });
+        return;
+      }
+    }
+
     openConfirmModal();
   };
 
@@ -185,17 +207,23 @@ export default function CustomOrderPage() {
       });
 
       // Create order using the admin endpoint with custom user_id
+      const orderPayload = {
+        user_id: selectedDelegate!.kinde_id,
+        items: orderData,
+        total_amount: calculateTotal(),
+        notes: notes.trim() || undefined,
+        payment_method: paymentMethod,
+        exchange_amount: paymentMethod === 'admin_paid' && exchangeAmount > 0 ? exchangeAmount : undefined,
+        exchange_cash_amount: paymentMethod === 'admin_paid' && exchangeAmount > 0 ? exchangeCashAmount : undefined,
+        exchange_credit_amount: paymentMethod === 'admin_paid' && exchangeAmount > 0 ? exchangeCreditAmount : undefined,
+      };
+
       const response = await fetch('/api/store/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          user_id: selectedDelegate!.kinde_id,
-          items: orderData,
-          total_amount: calculateTotal(),
-          notes: notes.trim() || undefined,
-        }),
+        body: JSON.stringify(orderPayload),
       });
 
       if (!response.ok) {
@@ -207,7 +235,11 @@ export default function CustomOrderPage() {
 
       notifications.show({
         title: 'Success',
-        message: `Custom order created successfully for ${selectedDelegate!.full_name}`,
+        message: `Custom order created successfully for ${selectedDelegate!.full_name}${
+          paymentMethod === 'admin_paid' ? ' and marked as paid' : ''
+        }${
+          exchangeAmount > 0 ? ` with €${exchangeCreditAmount.toFixed(2)} added to their wallet` : ''
+        }`,
         color: 'green',
       });
 
@@ -215,6 +247,13 @@ export default function CustomOrderPage() {
       setSelectedDelegate(null);
       setOrderItems([]);
       setNotes('');
+      setPaymentMethod('unpaid');
+      setExchangeAmount(0);
+      setExchangeCashAmount(0);
+      setExchangeCreditAmount(0);
+      
+      // Refresh wallet data
+      refetchWallet();
 
     } catch (error) {
       notifications.show({
@@ -270,20 +309,32 @@ export default function CustomOrderPage() {
 
             {selectedDelegate && (
               <Card withBorder p="md" radius="md" className={classes.selectedDelegateCard}>
-                <Group>
-                  <Avatar
-                    src={null}
-                    size={48}
-                    radius="xl"
-                    color="blue"
-                  >
-                    {selectedDelegate.full_name.split(' ').map(n => n[0]).join('')}
-                  </Avatar>
-                  <div>
-                    <Text fw={600}>{selectedDelegate.full_name}</Text>
-                    <Text size="sm" c="dimmed">{selectedDelegate.position}</Text>
-                    <Text size="sm" c="dimmed">{selectedDelegate.entity}</Text>
-                  </div>
+                <Group justify="space-between">
+                  <Group>
+                    <Avatar
+                      src={null}
+                      size={48}
+                      radius="xl"
+                      color="blue"
+                    >
+                      {selectedDelegate.full_name.split(' ').map(n => n[0]).join('')}
+                    </Avatar>
+                    <div>
+                      <Text fw={600}>{selectedDelegate.full_name}</Text>
+                      <Text size="sm" c="dimmed">{selectedDelegate.position}</Text>
+                      <Text size="sm" c="dimmed">{selectedDelegate.entity}</Text>
+                    </div>
+                  </Group>
+                  
+                  {walletData && (
+                    <Stack gap={4} align="flex-end">
+                      <Text size="xs" c="dimmed">Wallet Balance</Text>
+                      <Group gap="xs">
+                        <IconCoins size={16} color="var(--mantine-color-yellow-6)" />
+                        <Text fw={600} c="blue">€{walletData.wallet.credit.toFixed(2)}</Text>
+                      </Group>
+                    </Stack>
+                  )}
                 </Group>
               </Card>
             )}
@@ -444,11 +495,124 @@ export default function CustomOrderPage() {
           </Paper>
         )}
 
-        {/* Step 4: Notes and Create Order */}
+        {/* Step 4: Payment Method and Exchange */}
         <Paper p="md" withBorder radius="md">
           <Stack gap="md">
             <Text fw={600} size="lg">
-              Step 4: Additional Notes & Create Order
+              Payment & Exchange Options
+            </Text>
+            
+            <Radio.Group
+              value={paymentMethod}
+              onChange={(value) => setPaymentMethod(value as 'unpaid' | 'admin_paid' | 'credit_only')}
+              name="paymentMethod"
+              label="Payment Method"
+              description="Choose how this order should be handled"
+            >
+              <Stack mt="xs" gap="xs">
+                <Radio value="unpaid" label="Leave unpaid (delegate pays later)" />
+                <Radio value="admin_paid" label="Mark as paid by admin (with optional exchange)" />
+                <Radio 
+                  value="credit_only" 
+                  label={`Pay with delegate's credits only ${
+                    walletData ? `(Available: €${walletData.wallet.credit.toFixed(2)})` : ''
+                  }`}
+                  disabled={!walletData || walletData.wallet.credit < calculateTotal()}
+                />
+              </Stack>
+            </Radio.Group>
+
+            {walletData && walletData.wallet.credit < calculateTotal() && (
+              <Alert color="orange">
+                Delegate has insufficient credits (€{walletData.wallet.credit.toFixed(2)}) for this order (€{calculateTotal().toFixed(2)}).
+                Credit payment option is disabled.
+              </Alert>
+            )}
+
+            {paymentMethod === 'admin_paid' && (
+              <Paper p="md" bg="gray.0" radius="md" withBorder>
+                <Stack gap="md">
+                  <Text fw={500} size="sm">
+                    Exchange Handling (Optional)
+                  </Text>
+                  <Text size="xs" c="dimmed">
+                    If the delegate gave you more money than the order total, specify how to handle the exchange.
+                  </Text>
+                  
+                  <NumberInput
+                    label="Exchange Amount (€)"
+                    placeholder="0.00"
+                    value={exchangeAmount}
+                    onChange={(value) => {
+                      const amount = value as number;
+                      setExchangeAmount(amount);
+                      // Reset split amounts when exchange amount changes
+                      setExchangeCashAmount(0);
+                      setExchangeCreditAmount(0);
+                    }}
+                    min={0}
+                    step={0.01}
+                    leftSection={<IconCoins size={16} />}
+                    description="Total amount to give back to delegate"
+                  />
+
+                  {exchangeAmount > 0 && (
+                    <Stack gap="sm">
+                      <Text fw={500} size="sm">
+                        Split Exchange Amount:
+                      </Text>
+                      
+                      <SimpleGrid cols={2}>
+                        <NumberInput
+                          label="Cash Amount (€)"
+                          placeholder="0.00"
+                          value={exchangeCashAmount}
+                          onChange={(value) => {
+                            const cashAmount = value as number;
+                            setExchangeCashAmount(cashAmount);
+                            setExchangeCreditAmount(Math.max(0, exchangeAmount - cashAmount));
+                          }}
+                          min={0}
+                          max={exchangeAmount}
+                          step={0.01}
+                          leftSection={<IconCash size={16} />}
+                        />
+                        
+                        <NumberInput
+                          label="Credits Amount (€)"
+                          placeholder="0.00"
+                          value={exchangeCreditAmount}
+                          onChange={(value) => {
+                            const creditAmount = value as number;
+                            setExchangeCreditAmount(creditAmount);
+                            setExchangeCashAmount(Math.max(0, exchangeAmount - creditAmount));
+                          }}
+                          min={0}
+                          max={exchangeAmount}
+                          step={0.01}
+                          leftSection={<IconCoins size={16} />}
+                        />
+                      </SimpleGrid>
+
+                      {(exchangeCashAmount + exchangeCreditAmount) !== exchangeAmount && (
+                        <Alert color="orange">
+                          Warning: Cash (€{exchangeCashAmount.toFixed(2)}) + Credits (€{exchangeCreditAmount.toFixed(2)}) = €{(exchangeCashAmount + exchangeCreditAmount).toFixed(2)} 
+                          but Exchange Total is €{exchangeAmount.toFixed(2)}
+                        </Alert>
+                      )}
+                    </Stack>
+                  )}
+                </Stack>
+              </Paper>
+            )}
+          </Stack>
+        </Paper>
+
+        {/* Step 5: Notes and Create Order */}
+        <Paper p="md" withBorder radius="md">
+          <Stack gap="md">
+            <Text fw={600} size="lg">
+              Step 5: Additional Notes & Create Order
             </Text>
             
             <Textarea
@@ -506,6 +670,7 @@ export default function CustomOrderPage() {
                 withBorder
                 p="md"
                 radius="md"
+                mih="fit-content"
                 className={classes.itemCard}
                 onClick={() => handleSelectDelegate(delegate)}
               >
@@ -622,6 +787,21 @@ export default function CustomOrderPage() {
             <Text size="sm">
               <Text span fw={600}>Total:</Text> €{calculateTotal().toFixed(2)}
             </Text>
+            <Text size="sm">
+              <Text span fw={600}>Payment:</Text> {
+                paymentMethod === 'unpaid' ? 'Leave unpaid' :
+                paymentMethod === 'admin_paid' ? 'Mark as paid by admin' :
+                'Pay with credits only'
+              }
+            </Text>
+            {paymentMethod === 'admin_paid' && exchangeAmount > 0 && (
+              <>
+                <Text size="sm">
+                  <Text span fw={600}>Exchange:</Text> €{exchangeAmount.toFixed(2)} 
+                  (€{exchangeCashAmount.toFixed(2)} cash, €{exchangeCreditAmount.toFixed(2)} credits)
+                </Text>
+              </>
+            )}
             {notes.trim() && (
               <Text size="sm">
                 <Text span fw={600}>Notes:</Text> {notes.trim()}

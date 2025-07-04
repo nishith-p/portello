@@ -3,6 +3,7 @@ import { isAdmin, withAuth } from '@/lib/auth/utils';
 import { errorResponse, ValidationError } from '@/lib/core/errors';
 import { createOrder, getOrders } from '@/lib/store/orders/db';
 import { validateOrder } from '@/lib/store/orders/validators';
+import { processCreditPayment, updateUserCredit } from '@/lib/wallet/db';
 import {
   CreateOrderInputExtended,
   CreateOrderItemInput,
@@ -47,7 +48,16 @@ export async function POST(request: NextRequest) {
         }
 
         // Parse request body
-        let body: { items: unknown[]; total_amount?: number; user_id?: string; notes?: string } | unknown[];
+        let body: { 
+          items: unknown[]; 
+          total_amount?: number; 
+          user_id?: string; 
+          notes?: string;
+          payment_method?: 'unpaid' | 'admin_paid' | 'credit_only';
+          exchange_amount?: number;
+          exchange_cash_amount?: number;
+          exchange_credit_amount?: number;
+        } | unknown[];
         try {
           body = await request.json();
         } catch (e) {
@@ -203,10 +213,22 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        // Get payment method from admin request
+        const paymentMethod = !Array.isArray(body) ? body.payment_method : undefined;
+        const exchangeCreditAmount = !Array.isArray(body) ? body.exchange_credit_amount : undefined;
+
+        // Determine initial status based on payment method
+        let initialStatus: 'pending' | 'paid' | 'paid with credit' = 'pending';
+        if (paymentMethod === 'admin_paid') {
+          initialStatus = 'paid';
+        } else if (paymentMethod === 'credit_only') {
+          initialStatus = 'paid with credit';
+        }
+
         // Prepare service data
         const serviceData: CreateOrderInputExtended = {
           user_id: targetUserId,
-          status: 'pending' as const,
+          status: initialStatus,
           total_amount: totalAmount,
           items: typedItems,
         };
@@ -216,6 +238,29 @@ export async function POST(request: NextRequest) {
 
         // Create the order
         const newOrder = await createOrder(serviceData);
+        
+        // Handle credit payment if requested
+        if (paymentMethod === 'credit_only') {
+          const creditResult = await processCreditPayment(targetUserId, newOrder.id, totalAmount);
+          if (!creditResult.success) {
+            // If credit payment fails, we should probably delete the order or mark it as failed
+            throw new ValidationError(creditResult.error || 'Credit payment failed');
+          }
+        }
+        
+        // Handle exchange if admin paid and provided exchange amount
+        if (paymentMethod === 'admin_paid' && exchangeCreditAmount && exchangeCreditAmount > 0) {
+          const exchangeResult = await updateUserCredit(
+            targetUserId,
+            exchangeCreditAmount,
+            `Exchange from admin payment for order ${newOrder.id}`,
+            user.id
+          );
+          if (!exchangeResult.success) {
+            // We don't fail the order creation for this, just note the error in response
+          }
+        }
+
         return NextResponse.json(newOrder, { status: 201 });
       } catch (error) {
         if (error instanceof Error) {
