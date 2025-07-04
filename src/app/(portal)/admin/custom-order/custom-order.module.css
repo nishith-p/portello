@@ -1,0 +1,55 @@
+.selectedDelegateCard {
+  background: linear-gradient(135deg, var(--mantine-color-blue-0) 0%, var(--mantine-color-blue-1) 100%);
+  border: 1px solid var(--mantine-color-blue-3);
+}
+
+.orderItemCard {
+  transition: all 0.2s ease;
+}
+
+.orderItemCard:hover {
+  box-shadow: var(--mantine-shadow-sm);
+  transform: translateY(-1px);
+}
+
+.searchModal {
+  max-height: 70vh;
+}
+
+.searchResults {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.itemCard {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.itemCard:hover {
+  background-color: var(--mantine-color-gray-0);
+  transform: translateY(-1px);
+  box-shadow: var(--mantine-shadow-sm);
+}
+
+.stepHeader {
+  border-left: 4px solid var(--mantine-color-blue-6);
+  padding-left: var(--mantine-spacing-md);
+}
+
+.totalSection {
+  background: linear-gradient(135deg, var(--mantine-color-green-0) 0%, var(--mantine-color-green-1) 100%);
+  border: 1px solid var(--mantine-color-green-3);
+  border-radius: var(--mantine-radius-md);
+  padding: var(--mantine-spacing-md);
+}
+
+@media (max-width: 768px) {
+  .itemCard {
+    margin-bottom: var(--mantine-spacing-xs);
+  }
+  
+  .searchResults {
+    max-height: 300px;
+  }
+}

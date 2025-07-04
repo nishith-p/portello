@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { withAuth } from '@/lib/auth/utils';
+import { isAdmin, withAuth } from '@/lib/auth/utils';
 import { errorResponse, ValidationError } from '@/lib/core/errors';
 import { createOrder, getOrders } from '@/lib/store/orders/db';
 import { validateOrder } from '@/lib/store/orders/validators';
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Parse request body
-        let body: { items: unknown[]; total_amount?: number; user_id?: string } | unknown[];
+        let body: { items: unknown[]; total_amount?: number; user_id?: string; notes?: string } | unknown[];
         try {
           body = await request.json();
         } catch (e) {
@@ -56,6 +56,20 @@ export async function POST(request: NextRequest) {
 
         // Handle the case where body could be an array (just items) or an object with items property
         const orderItems = Array.isArray(body) ? body : body.items;
+        
+        // For admin users, allow specifying a different user_id (for custom orders)
+        // For regular users, always use their own user_id
+        let targetUserId = user.id;
+        
+        // If a user_id is specified in the request, check if current user is admin
+        if (!Array.isArray(body) && body.user_id && body.user_id !== user.id) {
+          const userIsAdmin = await isAdmin();
+          if (userIsAdmin) {
+            targetUserId = body.user_id;
+          } else {
+            throw new ValidationError('Only admins can create orders for other users');
+          }
+        }
 
         // Use proper type assertions for the reduce function
         const totalAmount = Array.isArray(body)
@@ -191,7 +205,7 @@ export async function POST(request: NextRequest) {
 
         // Prepare service data
         const serviceData: CreateOrderInputExtended = {
-          user_id: user.id,
+          user_id: targetUserId,
           status: 'pending' as const,
           total_amount: totalAmount,
           items: typedItems,

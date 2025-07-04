@@ -59,6 +59,7 @@ const navigationData: NavigationItem[] = [
     children: [
       { link: '/admin/orders', label: 'Manage Orders' },
       { link: '/admin/orders/items', label: 'Item Quantities' },
+      { link: '/admin/custom-order', label: 'Custom Order' },
     ],
   },
   {
