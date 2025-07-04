@@ -210,7 +210,7 @@ const renderActivityCard = (activity: any, dayColor: string, isMobile: boolean =
               </Badge>
             )}
             {activity.venue && (
-              <Text size="xs" c="dimmed">
+              <Text size="xs" c="dimmed" fw={700}>
                 {activity.venue}
               </Text>
             )}
@@ -364,6 +364,11 @@ const MobileAgendaView = ({ day }: { day: typeof agendaData.day0 }) => {
                         <Text size="xs" c="dimmed" mb="md" fw={500}>
                           {session.startTime} - {session.endTime}
                         </Text>
+                        {session.venue && (
+                          <Text size="xs" c="dimmed" fw={700}>
+                            Venue: {session.venue}
+                          </Text>
+                        )}
                         <Text fw={600} size="sm" style={{ flex: 1 }}>
                           {session.title}
                         </Text>
@@ -437,6 +442,12 @@ const MobileAgendaView = ({ day }: { day: typeof agendaData.day0 }) => {
                 <Text fw={500} mb="xs">
                   {session.title}
                 </Text>
+
+                {session.venue && (
+                  <Text size="xs" c="dimmed" fw={700}>
+                    {session.venue}
+                  </Text>
+                )}
 
                 {session.type && session.type !== 'default' && (
                   <Badge size="sm" color={getActivityColor(session.type)} variant="light">
