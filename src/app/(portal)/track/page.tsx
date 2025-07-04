@@ -198,7 +198,7 @@ export default function YsfTrackSelectionPage() {
                 onClick={handleSubmit}
                 disabled={!canSubmit}
                 loading={isUpdating}
-                size="lg"
+                size="md"
               >
                 Confirm Selections
               </Button>
