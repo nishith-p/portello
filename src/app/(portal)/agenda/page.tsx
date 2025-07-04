@@ -7,7 +7,6 @@ import {
   Box,
   Button,
   Container,
-  Divider,
   Group,
   Paper,
   ScrollArea,
@@ -149,6 +148,11 @@ const renderActivityCard = (activity: any, dayColor: string, isMobile: boolean =
       <Text fw={600} size="sm">
         {activity.title}
       </Text>
+      {activity.venue && (
+        <Text size="xs" c="dimmed">
+          Venue: {activity.venue}
+        </Text>
+      )}
       <Text size="xs" c="dimmed">
         {activity.startTime} - {activity.endTime}
       </Text>
@@ -204,6 +208,11 @@ const renderActivityCard = (activity: any, dayColor: string, isMobile: boolean =
               <Badge size="xs" color={typeColor} variant="filled">
                 {activityType}
               </Badge>
+            )}
+            {activity.venue && (
+              <Text size="xs" c="dimmed">
+                {activity.venue}
+              </Text>
             )}
           </Group>
         </Group>
