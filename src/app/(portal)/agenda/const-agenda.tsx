@@ -91,7 +91,7 @@ export const agendaData = {
         targetRoles: ['MCP'],
         startTime: '11:30',
         endTime: '12:45',
-        type: 'break',
+        type: 'plenary',
         venue: 'Blue Orchard',
       },
       {
