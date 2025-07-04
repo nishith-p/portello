@@ -79,30 +79,25 @@ export const agendaData = {
     timeSlots: timeSlots,
     sessions: [
       {
-        title: 'MCP Checkin',
+        title: 'MCP Checkin + Media Event',
         targetRoles: ['MCP'],
         startTime: '09:00',
         endTime: '11:30',
         type: 'break',
-      },
-      {
-        title: 'Lunch',
-        targetRoles: ['All'],
-        startTime: '11:30',
-        endTime: '13:00',
-        type: 'break',
+        venue: 'Lounge',
       },
       {
         title: 'MCP Opening Plenary',
         targetRoles: ['MCP'],
-        startTime: '13:00',
-        endTime: '14:00',
-        type: 'plenary',
+        startTime: '11:30',
+        endTime: '12:45',
+        type: 'break',
+        venue: 'Blue Orchard',
       },
       {
-        title: 'Break',
+        title: 'Lunch',
         targetRoles: ['All'],
-        startTime: '14:00',
+        startTime: '12:45',
         endTime: '14:15',
         type: 'break',
       },
@@ -111,12 +106,14 @@ export const agendaData = {
         targetRoles: ['MCP'],
         startTime: '14:15',
         endTime: '14:45',
+        venue: 'Blue Orchard',
       },
       {
         title: 'LEAD',
         targetRoles: ['MCP'],
         startTime: '14:45',
         endTime: '15:45',
+        venue: 'Blue Orchard',
       },
       {
         title: 'Break',
@@ -130,6 +127,7 @@ export const agendaData = {
         targetRoles: ['MCP'],
         startTime: '16:00',
         endTime: '17:00',
+        venue: 'AME-Board Room | AP-Kids Area | EUR-Blue Orchard | MEA-Skylime',
       },
       {
         title: 'Break',
@@ -143,6 +141,7 @@ export const agendaData = {
         targetRoles: ['MCP'],
         startTime: '17:15',
         endTime: '18:30',
+        venue: 'Blue Orchard',
       },
       {
         title: 'MCP Evening Plenary',
@@ -150,6 +149,7 @@ export const agendaData = {
         startTime: '18:30',
         endTime: '19:15',
         type: 'plenary',
+        venue: 'Blue Orchard',
       },
       {
         title: 'Dinner',
@@ -163,6 +163,7 @@ export const agendaData = {
         targetRoles: ['MCP'],
         startTime: '20:15',
         endTime: '22:15',
+        venue: 'Skylime',
       },
       {
         title: 'Welcome Party',
