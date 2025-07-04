@@ -43,7 +43,7 @@ export default function GalaBookingPage() {
     const success = await submitBooking();
     if (success) {
       notifications.show({
-        title: 'Gala Night Seat Booking',
+        title: 'Electrolux Group Excellence Awards Seat Booking',
         message: 'Booking Successful!',
         color: 'green',
       });
@@ -86,7 +86,7 @@ export default function GalaBookingPage() {
           },
         }}
       >
-        Gala Night Seat Booking
+        Electrolux Group Excellence Awards Seat Booking
       </Title>
 
       <Box style={{ position: 'relative' }}>
