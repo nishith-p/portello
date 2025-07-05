@@ -38,6 +38,7 @@ const statusColorMap: StatusColorMap = {
   'payment failed': 'red',
   'charged back': 'purple',
   failed: 'red',
+  'paid with credit': 'teal',
 };
 
 // Helper to truncate long IDs with tooltips
