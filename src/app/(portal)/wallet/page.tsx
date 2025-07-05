@@ -131,17 +131,17 @@ export default function WalletPage() {
                   <Table.Tr>
                     <Table.Td>USD</Table.Td>
                     <Table.Td>1</Table.Td>
-                    <Table.Td>850</Table.Td>
+                    <Table.Td>845</Table.Td>
                   </Table.Tr>
                   <Table.Tr>
                     <Table.Td>CAD</Table.Td>
                     <Table.Td>1</Table.Td>
-                    <Table.Td>630</Table.Td>
+                    <Table.Td>625</Table.Td>
                   </Table.Tr>
                   <Table.Tr>
                     <Table.Td>LKR</Table.Td>
                     <Table.Td>100</Table.Td>
-                    <Table.Td>300</Table.Td>
+                    <Table.Td>285</Table.Td>
                   </Table.Tr>
                 </Table.Tbody>
               </Table>
