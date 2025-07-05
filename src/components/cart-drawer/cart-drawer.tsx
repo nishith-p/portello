@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { IconMinus, IconPlus, IconShoppingCart, IconTrash } from '@tabler/icons-react';
 import {
@@ -38,6 +38,22 @@ export const CartDrawer = () => {
   const { usePlaceOrder } = useOrderHooks();
   const placeOrderMutation = usePlaceOrder();
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [isAdminUser, setIsAdminUser] = useState(false);
+
+  useEffect(() => {
+    // Check admin status when component mounts
+    const checkAdminStatus = async () => {
+      try {
+        const response = await fetch('/api/users/admin');
+        const data = await response.json();
+        setIsAdminUser(data.isAdmin);
+      } catch (error) {
+        setIsAdminUser(false);
+      }
+    };
+
+    checkAdminStatus();
+  }, []);
 
   const handleGoToStore = () => {
     closeCart();
@@ -79,6 +95,10 @@ export const CartDrawer = () => {
     }
   };
 
+  const handlePlaceCreditOrder = async () => {
+    handlePlaceOrder();
+  };
+
   // Render cart item based on type (regular or pack)
   const renderCartItem = (item: any, index: number) => {
     const isLastItem = index === cartItems.length - 1;
@@ -89,13 +109,13 @@ export const CartDrawer = () => {
       const packItemsWithOptional = item.selected_optional_item
         ? [...item.pack_items, item.selected_optional_item]
         : item.pack_items;
-    
+
       // Create a new item object with the updated pack_items
       const updatedItem = {
         ...item,
-        pack_items: packItemsWithOptional
+        pack_items: packItemsWithOptional,
       };
-    
+
       return <CartPackItemComponent key={`pack_item_${index}`} item={updatedItem} index={index} />;
     }
 
@@ -250,16 +270,35 @@ export const CartDrawer = () => {
                 </Text>
               </Flex>
 
-              <Button
-                fullWidth
-                color="green"
-                size="md"
-                onClick={handlePlaceOrder}
-                disabled={isPlacingOrder || placeOrderMutation.isPending || cartItems.length === 0}
-                loading={isPlacingOrder || placeOrderMutation.isPending}
-              >
-                {isPlacingOrder || placeOrderMutation.isPending ? 'Processing...' : 'Place Order'}
-              </Button>
+              {!isAdminUser ? (
+                <Button
+                  fullWidth
+                  color="green"
+                  size="md"
+                  onClick={handlePlaceOrder}
+                  disabled={
+                    isPlacingOrder || placeOrderMutation.isPending || cartItems.length === 0
+                  }
+                  loading={isPlacingOrder || placeOrderMutation.isPending}
+                >
+                  {isPlacingOrder || placeOrderMutation.isPending ? 'Processing...' : 'Place Order'}
+                </Button>
+              ) : (
+                <Button
+                  fullWidth
+                  color="green"
+                  size="md"
+                  onClick={handlePlaceCreditOrder}
+                  disabled={
+                    isPlacingOrder || placeOrderMutation.isPending || cartItems.length === 0
+                  }
+                  loading={isPlacingOrder || placeOrderMutation.isPending}
+                >
+                  {isPlacingOrder || placeOrderMutation.isPending
+                    ? 'Processing...'
+                    : 'Place Credit Order'}
+                </Button>
+              )}
             </Box>
           </Box>
         </Stack>

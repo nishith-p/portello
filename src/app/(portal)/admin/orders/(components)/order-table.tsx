@@ -36,7 +36,7 @@ const statusColorMap: Record<OrderStatus, string> = {
   'payment failed': 'red',
   'charged back': 'purple',
   failed: 'red',
-  'paid with credit': 'teal'
+  'paid with credit': 'teal',
 };
 
 export function OrderTable({ orders, onViewOrderAction }: OrderTableProps) {
