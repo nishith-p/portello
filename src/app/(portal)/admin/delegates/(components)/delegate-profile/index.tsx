@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { IconMapPin } from '@tabler/icons-react';
-import { Avatar, Divider, Grid, Group, Stack, Text } from '@mantine/core';
+import { Avatar, Button, Divider, Grid, Group, Loader, Stack, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { formatCredit } from '@/app/(portal)/wallet/(utils)/wallet-utils';
 import { useUpdateDocument } from '@/lib/users/hooks';
 import { User, UserDocuments } from '@/lib/users/types';
+import { useAdminWallet, useWallet } from '@/lib/wallet/hooks';
 import {
   DocumentLinkModal,
   DocumentsSection,
   OtherDetailsSection,
   PersonalInfoSection,
 } from './(components)';
+import { UpdateCreditModal } from './(components)/update-credit-modal';
 
 export type DocumentKey =
   | 'passport'
@@ -26,6 +29,9 @@ interface DelegateProfileProps {
 
 export function DelegateProfile({ user, documents }: DelegateProfileProps) {
   const fullName = `${user.first_name} ${user.last_name}`;
+  const { walletData, loading, error, refetch } = useAdminWallet(user.kinde_id);
+  const [updateModalOpened, { open: openUpdateModal, close: closeUpdateModal }] =
+    useDisclosure(false);
 
   // Set up document update mutation
   const updateDocument = useUpdateDocument();
@@ -101,6 +107,27 @@ export function DelegateProfile({ user, documents }: DelegateProfileProps) {
             </Text>
           </Group>
         </div>
+        <Stack align="flex-end" gap="xs">
+          {loading ? (
+            <Group gap="xs">
+              <Loader size="sm" />
+              <Text size="sm">Loading balance...</Text>
+            </Group>
+          ) : error ? (
+            <Text size="sm" c="red">
+              Error loading balance
+            </Text>
+          ) : (
+            <>
+              <Text size="md" fw={700} c="blue">
+                {formatCredit(walletData?.wallet.credit || 0)}
+              </Text>
+              <Button variant="outline" onClick={openUpdateModal} loading={loading}>
+                Update Amount
+              </Button>
+            </>
+          )}
+        </Stack>
       </Group>
 
       <Divider />
@@ -136,6 +163,15 @@ export function DelegateProfile({ user, documents }: DelegateProfileProps) {
         setDocumentLink={setDocumentLink}
         onSave={handleLinkSave}
         isLoading={updateDocument.isPending}
+      />
+
+      {/* Credit Amount Update Modal*/}
+      <UpdateCreditModal
+        opened={updateModalOpened}
+        onClose={closeUpdateModal}
+        userId={user.kinde_id}
+        walletData={walletData}
+        onSuccess={refetch}
       />
     </Stack>
   );

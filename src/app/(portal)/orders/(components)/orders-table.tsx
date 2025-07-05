@@ -26,6 +26,7 @@ const statusColorMap: Record<OrderStatus, string> = {
   pending: 'orange',
   confirmed: 'blue',
   paid: 'teal',
+  'paid with credit': 'teal',
   processing: 'indigo',
   shipped: 'cyan',
   delivered: 'green',
