@@ -194,21 +194,15 @@ export const agendaData = {
         startTime: '07:00',
         endTime: '09:00',
         type: 'break',
-        venue: 'Lounge',
+        venue: 'Lounge Area',
       },
       {
         title: 'Check-in',
         targetRoles: ['All'],
         startTime: '09:00',
-        endTime: '09:30',
-        type: 'break',
-      },
-      {
-        title: 'Ushering',
-        targetRoles: ['All'],
-        startTime: '09:30',
         endTime: '10:00',
         type: 'break',
+        venue: 'Lounge Area',
       },
       {
         title: 'Opening Ceremony',
@@ -216,6 +210,7 @@ export const agendaData = {
         startTime: '10:00',
         endTime: '12:00',
         type: 'special event',
+        venue: 'Mandarin Shore',
       },
       {
         title: 'Lunch',
@@ -225,11 +220,27 @@ export const agendaData = {
         type: 'break',
       },
       {
+        title: 'Asia Pacific MCPs Regional Space',
+        targetRoles: ['MCP'],
+        startTime: '12:00',
+        endTime: '13:00',
+        type: 'break',
+        venue: 'Blue Orchard',
+      },
+      {
+        title: 'Lunch',
+        targetRoles: ['MCP'],
+        startTime: '13:00',
+        endTime: '14:00',
+        type: 'break',
+      },
+      {
         title: 'Opening Plenary + Opening of IC 2025',
         targetRoles: ['All'],
         startTime: '14:00',
         endTime: '16:15',
         type: 'plenary',
+        venue: 'Mandarin Shore',
       },
       {
         title: 'Break',
@@ -243,6 +254,7 @@ export const agendaData = {
         targetRoles: ['All'],
         startTime: '16:30',
         endTime: '18:00',
+        venue: 'Mandarin Shore',
       },
       {
         title: 'Break',
@@ -257,6 +269,7 @@ export const agendaData = {
         startTime: '18:30',
         endTime: '19:00',
         type: 'pai election',
+        venue: 'Mandarin Shore',
       },
       {
         title: 'PAI Elections Opening Speeches',
@@ -264,6 +277,7 @@ export const agendaData = {
         startTime: '19:00',
         endTime: '20:45',
         type: 'pai election',
+        venue: 'Mandarin Shore',
       },
       {
         title: 'DHL Networking Space',
@@ -271,6 +285,7 @@ export const agendaData = {
         startTime: '20:45',
         endTime: '21:30',
         type: 'networking',
+        venue: 'Mandarin Shore',
       },
       {
         title: 'Dinner',
