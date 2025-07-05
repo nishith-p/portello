@@ -4,7 +4,7 @@ import { getAnyUserWalletData } from '@/lib/wallet/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> } // Changed: params is now Promise<{ userId: string }>
 ) {
   return withAuth(
     request,
@@ -14,7 +14,7 @@ export async function GET(
           return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { userId } = await params;
+        const { userId } = await params; // This await was already correct
         if (!userId) {
           return NextResponse.json({ error: 'User ID required' }, { status: 400 });
         }

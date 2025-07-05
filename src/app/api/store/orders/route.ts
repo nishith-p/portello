@@ -50,7 +50,8 @@ export async function POST(request: NextRequest) {
         // Parse request body
         let body: { 
           items: unknown[]; 
-          total_amount?: number; 
+          total_amount?: number;
+          credit_amount?: number;
           user_id?: string; 
           notes?: string;
           payment_method?: 'unpaid' | 'admin_paid' | 'credit_only';
@@ -58,6 +59,7 @@ export async function POST(request: NextRequest) {
           exchange_cash_amount?: number;
           exchange_credit_amount?: number;
         } | unknown[];
+        
         try {
           body = await request.json();
         } catch (e) {
@@ -68,10 +70,8 @@ export async function POST(request: NextRequest) {
         const orderItems = Array.isArray(body) ? body : body.items;
         
         // For admin users, allow specifying a different user_id (for custom orders)
-        // For regular users, always use their own user_id
         let targetUserId = user.id;
         
-        // If a user_id is specified in the request, check if current user is admin
         if (!Array.isArray(body) && body.user_id && body.user_id !== user.id) {
           const userIsAdmin = await isAdmin();
           if (userIsAdmin) {
@@ -81,10 +81,9 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // Use proper type assertions for the reduce function
+        // Calculate total amount
         const totalAmount = Array.isArray(body)
           ? orderItems.reduce<number>((sum, item) => {
-              // Check if item has the expected properties
               if (
                 typeof item === 'object' &&
                 item !== null &&
@@ -105,13 +104,22 @@ export async function POST(request: NextRequest) {
           });
         }
 
-        // Identify and type check pack items
-        const typedItems: (CreateOrderItemInput | CreateOrderPackItem)[] = [];
+        // Get payment details from request
+        const paymentMethod = !Array.isArray(body) ? body.payment_method : undefined;
+        const creditAmount = !Array.isArray(body) ? body.credit_amount : undefined;
+        const exchangeCreditAmount = !Array.isArray(body) ? body.exchange_credit_amount : undefined;
 
+        // Validate credit payment amount if payment method is credit_only
+        if (paymentMethod === 'credit_only' && (typeof creditAmount !== 'number' || creditAmount <= 0)) {
+          throw new ValidationError('Valid credit amount is required for credit payments');
+        }
+
+        // Process items
+        const typedItems: (CreateOrderItemInput | CreateOrderPackItem)[] = [];
         for (const item of orderItems) {
           if (typeof item === 'object' && item !== null) {
             if ('is_pack' in item && item.is_pack === true) {
-              // It's a pack item
+              // Pack item processing
               if (
                 'item_code' in item &&
                 'quantity' in item &&
@@ -129,7 +137,7 @@ export async function POST(request: NextRequest) {
                   is_pack: true,
                   pack_items: Array.isArray(item.pack_items)
                     ? item.pack_items.map((child: unknown) => {
-                        // Ensure child is an object
+                        // Fix: Properly handle child object
                         if (typeof child !== 'object' || child === null) {
                           return {
                             item_code: '',
@@ -138,7 +146,7 @@ export async function POST(request: NextRequest) {
                           };
                         }
 
-                        // Now child is guaranteed to be an object
+                        // Now safely cast to Record<string, unknown>
                         const childObj = child as Record<string, unknown>;
 
                         return {
@@ -147,48 +155,17 @@ export async function POST(request: NextRequest) {
                           price: 'price' in childObj ? Number(childObj.price || 0) : 0,
                           size: 'size' in childObj ? String(childObj.size) : null,
                           color: 'color' in childObj ? String(childObj.color) : null,
-                          color_hex:
-                            'color_hex' in childObj
-                              ? String(childObj.color_hex)
-                              : 'colorHex' in childObj
-                                ? String(childObj.colorHex)
-                                : null,
+                          color_hex: 'color_hex' in childObj ? String(childObj.color_hex) : null,
                           name: 'name' in childObj ? String(childObj.name) : null,
                           image: 'image' in childObj ? String(childObj.image) : null,
                         };
                       })
                     : [],
-                    ...('selected_optional_item' in item && 
-                      isOptionalItem(item.selected_optional_item) && {
-                    selected_optional_item: {
-                      item_code: String(item.selected_optional_item.item_code),
-                      quantity: Number(item.selected_optional_item.quantity ?? 1),
-                      price: Number(item.selected_optional_item.price ?? 0),
-                      size: 'size' in item.selected_optional_item 
-                        ? String(item.selected_optional_item.size) 
-                        : null,
-                      color: 'color' in item.selected_optional_item 
-                        ? String(item.selected_optional_item.color) 
-                        : null,
-                      color_hex: 'color_hex' in item.selected_optional_item
-                        ? String(item.selected_optional_item.color_hex)
-                        : 'colorHex' in item.selected_optional_item
-                          ? String(item.selected_optional_item.colorHex)
-                          : null,
-                      name: 'name' in item.selected_optional_item 
-                        ? String(item.selected_optional_item.name) 
-                        : null,
-                      image: 'image' in item.selected_optional_item 
-                        ? String(item.selected_optional_item.image) 
-                        : null,
-                    }
-                  })
                 };
                 typedItems.push(packItem);
               }
             } else {
-              // Regular item
-              // eslint-disable-next-line no-lonely-if
+              // Regular item processing
               if ('item_code' in item && 'quantity' in item && 'price' in item) {
                 const regularItem: CreateOrderItemInput = {
                   item_code: String(item.item_code),
@@ -198,12 +175,7 @@ export async function POST(request: NextRequest) {
                   discount_perc: 'discount_perc' in item ? Number(item.discount_perc) : 0,
                   size: 'size' in item ? String(item.size) : null,
                   color: 'color' in item ? String(item.color) : null,
-                  color_hex:
-                    'color_hex' in item
-                      ? String(item.color_hex)
-                      : 'colorHex' in item
-                        ? String(item.colorHex)
-                        : null,
+                  color_hex: 'color_hex' in item ? String(item.color_hex) : null,
                   name: 'name' in item ? String(item.name) : null,
                   image: 'image' in item ? String(item.image) : null,
                 };
@@ -213,11 +185,7 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // Get payment method from admin request
-        const paymentMethod = !Array.isArray(body) ? body.payment_method : undefined;
-        const exchangeCreditAmount = !Array.isArray(body) ? body.exchange_credit_amount : undefined;
-
-        // Determine initial status based on payment method
+        // Determine initial status
         let initialStatus: 'pending' | 'paid' | 'paid with credit' = 'pending';
         if (paymentMethod === 'admin_paid') {
           initialStatus = 'paid';
@@ -239,11 +207,14 @@ export async function POST(request: NextRequest) {
         // Create the order
         const newOrder = await createOrder(serviceData);
         
-        // Handle credit payment if requested
-        if (paymentMethod === 'credit_only') {
-          const creditResult = await processCreditPayment(targetUserId, newOrder.id, totalAmount);
+        // Handle credit payment - KEY FIX: Use creditAmount instead of totalAmount
+        if (paymentMethod === 'credit_only' && creditAmount) {
+          const creditResult = await processCreditPayment(
+            targetUserId, 
+            newOrder.id, 
+            creditAmount // Use the credit amount sent from frontend
+          );
           if (!creditResult.success) {
-            // If credit payment fails, we should probably delete the order or mark it as failed
             throw new ValidationError(creditResult.error || 'Credit payment failed');
           }
         }
@@ -257,7 +228,7 @@ export async function POST(request: NextRequest) {
             user.id
           );
           if (!exchangeResult.success) {
-            // We don't fail the order creation for this, just note the error in response
+            console.error('Exchange credit update failed:', exchangeResult.error);
           }
         }
 
