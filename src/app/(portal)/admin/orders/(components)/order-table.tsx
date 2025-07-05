@@ -31,11 +31,12 @@ const statusColorMap: Record<OrderStatus, string> = {
   shipped: 'cyan',
   delivered: 'green',
   cancelled: 'red',
-  'payment pending':   'orange',
+  'payment pending': 'orange',
   'payment cancelled': 'red',
-  'payment failed':    'red',
-  'charged back':      'purple',
-  failed:             'red',
+  'payment failed': 'red',
+  'charged back': 'purple',
+  failed: 'red',
+  'paid with credit': 'teal'
 };
 
 export function OrderTable({ orders, onViewOrderAction }: OrderTableProps) {
