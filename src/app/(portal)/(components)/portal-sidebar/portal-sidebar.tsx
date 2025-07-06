@@ -13,6 +13,7 @@ import {
   IconShoppingBag,
   IconUsers,
   IconFileText,
+  IconWallet,
   IconTableColumn,
   IconArmchair,
 } from '@tabler/icons-react';
@@ -65,6 +66,7 @@ const navigationData: NavigationItem[] = [
     children: [
       { link: '/admin/orders', label: 'Manage Orders' },
       { link: '/admin/orders/items', label: 'Item Quantities' },
+      { link: '/admin/custom-order', label: 'Custom Order' },
     ],
   },
   {
@@ -72,6 +74,12 @@ const navigationData: NavigationItem[] = [
     label: 'Delegate Payments',
     icon: IconCreditCard,
     adminOnly: false,
+  },
+  {
+    link: '/wallet',
+    label: 'Wallet',
+    icon: IconWallet,
+    adminOnly: false
   },
   {
     link: '/gala',

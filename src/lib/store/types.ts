@@ -74,7 +74,8 @@ export type OrderStatus =
   | 'payment cancelled'
   | 'payment failed'
   | 'charged back'
-  | 'failed';
+  | 'failed'
+  | 'paid with credit';
 
 /**
  * Base order item properties common to all order item types

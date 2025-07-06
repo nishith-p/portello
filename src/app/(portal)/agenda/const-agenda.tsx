@@ -220,6 +220,21 @@ export const agendaData = {
         type: 'break',
       },
       {
+        title: 'Asia Pacific MCPs Regional Space',
+        targetRoles: ['MCP'],
+        startTime: '12:00',
+        endTime: '13:00',
+        type: 'break',
+        venue: 'Blue Orchard',
+      },
+      {
+        title: 'Lunch',
+        targetRoles: ['MCP'],
+        startTime: '13:00',
+        endTime: '14:00',
+        type: 'break',
+      },
+      {
         title: 'Opening Plenary + Opening of IC 2025',
         targetRoles: ['All'],
         startTime: '13:45',
