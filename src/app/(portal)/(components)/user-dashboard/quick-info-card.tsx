@@ -21,7 +21,7 @@ export function QuickInfoCard({ user }: QuickInfoCardProps) {
     <Container fluid px={0} w="100%" m={0}>
       <Paper radius="md" withBorder p="md">
         <SimpleGrid cols={{ base: 1, lg: 2 }}>
-          {/* Room Number Stat - Now Clickable */}
+          {/* Room Number Stat */}
           <Paper 
             withBorder 
             p="md" 
