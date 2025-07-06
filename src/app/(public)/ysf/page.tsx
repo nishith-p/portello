@@ -23,7 +23,6 @@ import { notifications } from '@mantine/notifications';
 import { useAllYSFStats, useCreateYSFSelection, useYSFSelectionInfo } from '@/lib/ysf/hooks';
 import { PANELS, TRACK1, TRACK2, type Track } from './const-ysf-tracks';
 
-// Email validation regex
 const validateEmail = (email: string) => {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
@@ -32,6 +31,7 @@ export default function YsfTrackSelectionPage() {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [emailValidated, setEmailValidated] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
   const { data: selectionInfo, refetch: refetchSelection } = useYSFSelectionInfo(email);
   const { data: stats, isLoading: statsLoading } = useAllYSFStats();
   const { mutate: createSelections, isPending: isCreating } = useCreateYSFSelection();
@@ -51,18 +51,14 @@ export default function YsfTrackSelectionPage() {
         panel: selectionInfo.selections.panel || '',
         full_name: selectionInfo.full_name || '',
       });
+      setHasSubmitted(selectionInfo.hasSubmitted || false);
     }
   }, [selectionInfo]);
 
-  const handleEmailSubmit = async () => {
+  const handleEmailSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     if (!email) {
       setEmailError('Email is required');
-      notifications.show({
-        title: 'Email required',
-        message: 'Please enter your email address',
-        color: 'red',
-        icon: <IconX size="1.1rem" />,
-      });
       return;
     }
 
@@ -76,7 +72,7 @@ export default function YsfTrackSelectionPage() {
     await refetchSelection();
   };
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = async () => {
     if (!selections.track1 || !selections.track2 || !selections.panel) {
       notifications.show({
         title: 'Missing selections',
@@ -97,22 +93,37 @@ export default function YsfTrackSelectionPage() {
       return;
     }
 
-    createSelections({
-      email,
-      track1: selections.track1,
-      track2: selections.track2,
-      panel: selections.panel,
-      full_name: selections.full_name,
-    });
+    try {
+      await createSelections({
+        email,
+        track1: selections.track1,
+        track2: selections.track2,
+        panel: selections.panel,
+        full_name: selections.full_name,
+      });
 
-    // Show success notification
-    notifications.show({
-      title: 'Success!',
-      message: 'Your selections have been saved',
-      color: 'green',
-    });
+      await refetchSelection();
+      setHasSubmitted(true);
+    } catch (error) {
+      notifications.show({
+        title: 'Error',
+        message: 'Failed to save selections',
+        color: 'red',
+        icon: <IconX size="1.1rem" />,
+      });
+    }
+  };
 
-    window.location.reload();
+  const handleNewSubmission = () => {
+    setEmailValidated(false);
+    setHasSubmitted(false);
+    setEmail('');
+    setSelections({
+      track1: '',
+      track2: '',
+      panel: '',
+      full_name: '',
+    });
   };
 
   const getTrackDetails = (trackId: string, session: 'track1' | 'track2') => {
@@ -150,7 +161,7 @@ export default function YsfTrackSelectionPage() {
     selections.track2 &&
     selections.panel &&
     selections.full_name &&
-    !selectionInfo?.hasSubmitted;
+    !hasSubmitted;
 
   return (
     <Container size="lg" py="xl">
@@ -183,35 +194,41 @@ export default function YsfTrackSelectionPage() {
           <Title order={2} size="h3" mb="md">
             Start by entering your email
           </Title>
-          <Group align="flex-end">
-            <div style={{ flex: 1 }}>
-              <TextInput
-                label="Email Address"
-                placeholder="your@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                error={emailError}
-                style={{ flex: 1 }}
-                required
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleEmailSubmit();
-                  }
-                }}
-              />
-              {emailError && (
-                <Text size="xs" c="red" mt={4} style={{ textAlign: 'left' }}>
-                  {emailError}
-                </Text>
-              )}
-            </div>
-            <Button onClick={handleEmailSubmit} loading={!selectionInfo && !!email && !emailError}>
-              Continue
-            </Button>
-          </Group>
+          <form onSubmit={handleEmailSubmit}>
+            <Group align="flex-end">
+              <div style={{ flex: 1 }}>
+                <TextInput
+                  label="Email Address"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  error={emailError}
+                  style={{ flex: 1 }}
+                  required
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleEmailSubmit();
+                    }
+                  }}
+                />
+                {emailError && (
+                  <Text size="xs" c="red" mt={4} style={{ textAlign: 'left' }}>
+                    {emailError}
+                  </Text>
+                )}
+              </div>
+              <Button
+                type="submit"
+                onClick={handleEmailSubmit}
+                loading={!selectionInfo && !!email && !emailError}
+              >
+                Continue
+              </Button>
+            </Group>
+          </form>
         </Paper>
-      ) : selectionInfo?.hasSubmitted ? (
+      ) : hasSubmitted ? (
         <>
           <Alert variant="light" color="green" icon={<IconInfoCircle />} mb="xl">
             You have already submitted your selections. Here's a summary of your registration:
@@ -238,7 +255,6 @@ export default function YsfTrackSelectionPage() {
               Your Selected Sessions
             </Title>
             <Stack gap="xl">
-              {/* Panel Selection Summary */}
               {selections.panel && (
                 <div>
                   <Text fw={500} size="lg" mb="sm">
@@ -253,7 +269,6 @@ export default function YsfTrackSelectionPage() {
                 </div>
               )}
 
-              {/* Workshop 1 Summary */}
               {selections.track1 && (
                 <div>
                   <Text fw={500} size="lg" mb="sm">
@@ -275,7 +290,6 @@ export default function YsfTrackSelectionPage() {
                 </div>
               )}
 
-              {/* Workshop 2 Summary */}
               {selections.track2 && (
                 <div>
                   <Text fw={500} size="lg" mb="sm">
@@ -299,7 +313,17 @@ export default function YsfTrackSelectionPage() {
             </Stack>
           </Card>
 
-          <Alert variant="light" color="blue" icon={<IconInfoCircle />}>
+          <Group justify="center" mt="xl">
+            <Button 
+              variant="outline" 
+              onClick={handleNewSubmission}
+              size="md"
+            >
+              Submit Another Response
+            </Button>
+          </Group>
+
+          <Alert variant="light" color="blue" icon={<IconInfoCircle />} mt="xl">
             If you need to make changes to your selections, please contact the DX team.
           </Alert>
         </>
@@ -316,7 +340,6 @@ export default function YsfTrackSelectionPage() {
               required
             />
 
-            {/* Panel Discussion Section */}
             <div>
               <Title order={2} size="h3" mb="sm">
                 Panel Discussion
@@ -370,7 +393,6 @@ export default function YsfTrackSelectionPage() {
               </Radio.Group>
             </div>
 
-            {/* Track Session 1 */}
             <div>
               <Title order={2} size="h3" mb="sm">
                 Workshop 1
@@ -397,7 +419,6 @@ export default function YsfTrackSelectionPage() {
               </Radio.Group>
             </div>
 
-            {/* Track Session 2 */}
             <div>
               <Title order={2} size="h3" mb="sm">
                 Workshop 2
