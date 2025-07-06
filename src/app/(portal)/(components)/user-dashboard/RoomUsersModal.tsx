@@ -62,11 +62,11 @@ export function RoomUsersModal({ opened, onClose, roomNo }: RoomUsersModalProps)
                           <Text size="xs" c="dimmed">
                             {user.aiesec_email}
                           </Text>
-                          {/* {user.telegram_id && (
+                          {user.telegram_id && (
                             <Text size="xs" c="dimmed">
                               {user.telegram_id}
                             </Text>
-                          )} */}
+                          )}
                         </div>
                       </Group>
 
