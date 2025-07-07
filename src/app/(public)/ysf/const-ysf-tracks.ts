@@ -14,7 +14,7 @@ export const TRACK1: Track[] = [
     name: 'Mastercard – Crafting Your Personal Brand for Impact',
     description: 'Learn how to shape a personal brand that reflects your strengths, values, and ambitions. Gain the tools to communicate your unique identity with confidence and stand out in the professional world.',
     color: 'blue',
-    maxSlots: 1,
+    maxSlots: 105,
   },
   {
     id: 'solutions_ground',
@@ -22,7 +22,7 @@ export const TRACK1: Track[] = [
     name: 'Solutions Ground – Legacy Leaders: The Be a CEO Edition',
     description: 'Develop leadership skills, team management, and organizational impact',
     color: 'green',
-    maxSlots: 75,
+    maxSlots: 105,
   },
   {
     id: 'dhl',
@@ -30,7 +30,7 @@ export const TRACK1: Track[] = [
     name: 'DHL – Leadership Reimagined',
     description: 'Environmental consciousness, sustainable development, and green initiatives',
     color: 'yellow',
-    maxSlots: 75,
+    maxSlots: 105,
   },
   {
     id: 'jci',
@@ -38,7 +38,7 @@ export const TRACK1: Track[] = [
     name: 'JCI – Become a Sustainable Leader in Action',
     description: 'Inclusion, equity, and celebrating differences in the workplace',
     color: 'grape',
-    maxSlots: 75,
+    maxSlots: 105,
   },
 ];
 
@@ -49,7 +49,7 @@ export const TRACK2: Track[] = [
     name: 'PwC – Building Your Personal Brand for Career and Purpose',
     description: 'Learn how to craft a personal brand that aligns your skills, values, and purpose to stand out in your career journey.',
     color: 'blue',
-    maxSlots: 75,
+    maxSlots: 105,
   },
   {
     id: 'tcs',
@@ -57,7 +57,7 @@ export const TRACK2: Track[] = [
     name: 'TCS – Leading Across Differences: Building Inclusive Teams in a Global World',
     description: 'Explore strategies to lead diverse teams effectively and foster inclusion in cross-cultural, global environments.',
     color: 'green',
-    maxSlots: 75,
+    maxSlots: 105,
   },
   {
     id: 'henkel',
@@ -65,7 +65,7 @@ export const TRACK2: Track[] = [
     name: 'Henkel – The Importance of Emotional Intelligence in Leadership',
     description: 'Understand how emotional intelligence plays a critical role in building resilient, sustainable leadership.',
     color: 'red',
-    maxSlots: 75,
+    maxSlots: 105,
   },
   {
     id: 'dhl',
@@ -73,7 +73,7 @@ export const TRACK2: Track[] = [
     name: 'DHL – Entrepreneurship & Innovation for Social Sustainability',
     description: 'Dive into how innovation and entrepreneurship can drive inclusive solutions for a more sustainable and equitable future.',
     color: 'yellow',
-    maxSlots: 75,
+    maxSlots: 105,
   },
 ];
 
@@ -83,13 +83,13 @@ export const PANELS = [
     name: 'Panel 1',
     description:
       'Inclusive job markets and equity in access to opportunities with UN Foundation, UNICEF, JCI',
-    maxSlots: 1,
+    maxSlots: 205,
   },
   {
     id: 'panelB',
     name: 'Panel 2',
     description:
       'How to lead the change and drive sustainability innovation with Project Everyone, UNIDO, EFF',
-    maxSlots: 145,
+    maxSlots: 205,
   },
 ];
