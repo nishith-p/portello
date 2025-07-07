@@ -13,6 +13,10 @@ import {
   IconShirt,
   IconShoppingBag,
   IconUsers,
+  IconFileText,
+  IconWallet,
+  IconTableColumn,
+  IconArmchair,
 } from '@tabler/icons-react';
 import { Box, Divider, NavLink, Stack, Tooltip } from '@mantine/core';
 import classes from './portal-sidebar.module.css';
@@ -34,6 +38,11 @@ const navigationData: NavigationItem[] = [
     link: '/',
     label: 'Dashboard',
     icon: IconHome,
+  },
+  {
+    link: '/agenda',
+    label: 'Agenda',
+    icon: IconTableColumn,
   },
   {
     link: '/admin/delegates',
@@ -58,6 +67,7 @@ const navigationData: NavigationItem[] = [
     children: [
       { link: '/admin/orders', label: 'Manage Orders' },
       { link: '/admin/orders/items', label: 'Item Quantities' },
+      { link: '/admin/custom-order', label: 'Custom Order' },
     ],
   },
   {
@@ -65,6 +75,25 @@ const navigationData: NavigationItem[] = [
     label: 'Delegate Payments',
     icon: IconCreditCard,
     adminOnly: false,
+  },
+  {
+    link: '/wallet',
+    label: 'Wallet',
+    icon: IconWallet,
+    adminOnly: false
+  },
+  {
+    link: '/gala',
+    label: 'Gala Seating',
+    icon: IconArmchair,
+    adminOnly: false,
+    disabledMessage: 'Coming Soon!'
+  },
+  {
+    link: '/admin/gala',
+    label: 'Gala Dashboard',
+    icon: IconArmchair,
+    adminOnly: true,
   },
   {
     link: '/contact',

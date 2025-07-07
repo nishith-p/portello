@@ -74,7 +74,8 @@ export type OrderStatus =
   | 'payment cancelled'
   | 'payment failed'
   | 'charged back'
-  | 'failed';
+  | 'failed'
+  | 'paid with credit';
 
 /**
  * Base order item properties common to all order item types
@@ -388,4 +389,39 @@ export interface PayhereCheckoutInput {
 export interface PayhereCheckoutResponse {
   actionUrl: string;
   fields: Record<string, string>;
+}
+
+export interface ItemVariation {
+  color?: string;
+  size?: string;
+  quantity: number;
+}
+
+export interface PackVariation {
+  color?: string;
+  size?: string;
+  quantity: number;
+}
+
+export interface ItemWithVariations {
+  item_code: string;
+  name: string;
+  quantity: number;
+  variations?: ItemVariation[];
+}
+
+export interface PackWithVariations {
+  pack_code: string;
+  name: string;
+  quantity: number;
+  variations?: PackVariation[];
+}
+
+export interface CsvExportRow {
+  type: 'Item' | 'Pack';
+  code: string;
+  name: string;
+  color: string;
+  size: string;
+  quantity: number;
 }

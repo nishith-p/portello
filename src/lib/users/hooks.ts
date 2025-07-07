@@ -258,7 +258,7 @@ export function useRequestAccountDeletion() {
   });
 }
 
-/*
+/**
  * Hook to fetch users from a specific room
  */
 export function useRoomUsers(roomNo: string | null) {
