@@ -5,11 +5,10 @@ import { Alert, Grid, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { DocumentStatusCard } from '@/app/(portal)/(components)/user-dashboard/document-card';
 import { QuickInfoCard } from '@/app/(portal)/(components)/user-dashboard/quick-info-card';
 import { UserProfile } from '@/app/(portal)/(components)/user-dashboard/user-profile';
-import { useCurrentUserProfile, useUserSelectionInfo } from '@/lib/users/hooks';
+import { useCurrentUserProfile } from '@/lib/users/hooks';
 
 export const UserDashboard = () => {
   const { data: userProfile, isLoading, error } = useCurrentUserProfile();
-  const { data: selectionInfo } = useUserSelectionInfo();
 
   const user = userProfile?.user;
   const userDocuments = userProfile?.documents;
