@@ -7,17 +7,17 @@ import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import {
   IconAddressBook,
   IconCreditCard,
+  IconFileText,
   IconHome,
   IconSettings,
   IconShirt,
   IconShoppingBag,
   IconUsers,
-  IconFileText,
   IconWallet,
   IconTableColumn,
   IconArmchair,
 } from '@tabler/icons-react';
-import { Box, NavLink, Stack, Tooltip, Divider } from '@mantine/core';
+import { Box, Divider, NavLink, Stack, Tooltip } from '@mantine/core';
 import classes from './portal-sidebar.module.css';
 
 type NavigationItem = {
@@ -135,7 +135,10 @@ export const PortalSidebar = memo(({ onNavigate }: PortalSidebarProps) => {
   const isAdmin = permissions?.permissions?.includes('dx:admin');
 
   // For Mobile
-  const handleNavClick = (event: React.MouseEvent<HTMLAnchorElement>, hasDisabledMessage: boolean) => {
+  const handleNavClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    hasDisabledMessage: boolean
+  ) => {
     if (hasDisabledMessage) {
       event.preventDefault();
       return;

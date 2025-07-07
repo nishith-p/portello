@@ -58,7 +58,7 @@ export function QuickInfoCard({ user }: QuickInfoCardProps) {
           </Paper>
 
           {/* Tribe Number Stat */}
-          <Paper withBorder p="md" radius="md">
+          {/* <Paper withBorder p="md" radius="md">
             <Group>
               <ThemeIcon color="grape" variant="light" size="lg" radius="md">
                 <IconUsers size={20} />
@@ -72,10 +72,10 @@ export function QuickInfoCard({ user }: QuickInfoCardProps) {
                 </Text>
               </div>
             </Group>
-          </Paper>
+          </Paper> */}
 
           {/* Trip Confirmation Stat */}
-          <Paper withBorder p="md" radius="md">
+          {/* <Paper withBorder p="md" radius="md">
             <Group>
               <ThemeIcon
                 color={user.is_trip ? 'green' : 'red'}
@@ -99,7 +99,7 @@ export function QuickInfoCard({ user }: QuickInfoCardProps) {
                 </Group>
               </div>
             </Group>
-          </Paper>
+          </Paper> */}
 
           {/* Meal Preference Stat */}
           <Paper withBorder p="md" radius="md">
