@@ -13,7 +13,6 @@ import {
   IconShirt,
   IconShoppingBag,
   IconUsers,
-  IconFileText,
   IconWallet,
   IconTableColumn,
   IconArmchair,
