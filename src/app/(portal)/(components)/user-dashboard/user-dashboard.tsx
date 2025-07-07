@@ -6,7 +6,6 @@ import { DocumentStatusCard } from '@/app/(portal)/(components)/user-dashboard/d
 import { QuickInfoCard } from '@/app/(portal)/(components)/user-dashboard/quick-info-card';
 import { UserProfile } from '@/app/(portal)/(components)/user-dashboard/user-profile';
 import { useCurrentUserProfile, useUserSelectionInfo } from '@/lib/users/hooks';
-import { YsfSessionsCard } from './ysf-card';
 
 export const UserDashboard = () => {
   const { data: userProfile, isLoading, error } = useCurrentUserProfile();
@@ -45,7 +44,6 @@ export const UserDashboard = () => {
 
       <Grid gutter={{ base: 'xs', sm: 'md', md: 'lg' }}>
         <Grid.Col span={{ base: 12, sm: 12, md: 8 }} order={{ base: 2, md: 1 }}>
-          <YsfSessionsCard user={user} />
           <UserProfile user={user} />
         </Grid.Col>
 
