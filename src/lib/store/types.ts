@@ -23,6 +23,7 @@ export interface StoreItem {
   active: boolean;
   pre_price?: number;
   discount_perc?: number;
+  consumable: boolean;
 }
 
 /**
