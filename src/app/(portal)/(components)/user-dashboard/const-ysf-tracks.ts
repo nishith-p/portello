@@ -13,7 +13,7 @@ export const TRACK1: Track[] = [
     theme: 'Employability',
     name: 'Mastercard – Crafting Your Personal Brand for Impact',
     description: 'Learn how to shape a personal brand that reflects your strengths, values, and ambitions. Gain the tools to communicate your unique identity with confidence and stand out in the professional world.',
-    color: 'blue',
+    color: 'black',
     maxSlots: 75,
   },
   {
@@ -21,7 +21,7 @@ export const TRACK1: Track[] = [
     theme: 'Leadership',
     name: 'Solutions Ground – Legacy Leaders: The Be a CEO Edition',
     description: 'Develop leadership skills, team management, and organizational impact',
-    color: 'green',
+    color: 'blue',
     maxSlots: 75,
   },
   {
@@ -48,7 +48,7 @@ export const TRACK2: Track[] = [
     theme: 'Employability',
     name: 'PwC – Building Your Personal Brand for Career and Purpose',
     description: 'Learn how to craft a personal brand that aligns your skills, values, and purpose to stand out in your career journey.',
-    color: 'blue',
+    color: 'orange',
     maxSlots: 75,
   },
   {
