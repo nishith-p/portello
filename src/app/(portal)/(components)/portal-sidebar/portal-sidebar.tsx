@@ -7,14 +7,17 @@ import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import {
   IconAddressBook,
   IconCreditCard,
+  IconFileText,
   IconHome,
   IconSettings,
   IconShirt,
   IconShoppingBag,
   IconUsers,
-  IconFileText,
+  IconWallet,
+  IconTableColumn,
+  IconArmchair,
 } from '@tabler/icons-react';
-import { Box, NavLink, Stack, Tooltip, Divider } from '@mantine/core';
+import { Box, Divider, NavLink, Stack, Tooltip } from '@mantine/core';
 import classes from './portal-sidebar.module.css';
 
 type NavigationItem = {
@@ -34,6 +37,11 @@ const navigationData: NavigationItem[] = [
     link: '/',
     label: 'Dashboard',
     icon: IconHome,
+  },
+  {
+    link: '/agenda',
+    label: 'Agenda',
+    icon: IconTableColumn,
   },
   {
     link: '/admin/delegates',
@@ -58,6 +66,7 @@ const navigationData: NavigationItem[] = [
     children: [
       { link: '/admin/orders', label: 'Manage Orders' },
       { link: '/admin/orders/items', label: 'Item Quantities' },
+      { link: '/admin/custom-order', label: 'Custom Order' },
     ],
   },
   {
@@ -65,6 +74,25 @@ const navigationData: NavigationItem[] = [
     label: 'Delegate Payments',
     icon: IconCreditCard,
     adminOnly: false,
+  },
+  {
+    link: '/wallet',
+    label: 'Wallet',
+    icon: IconWallet,
+    adminOnly: false
+  },
+  {
+    link: '/gala',
+    label: 'Gala Seating',
+    icon: IconArmchair,
+    adminOnly: false,
+    disabledMessage: 'Coming Soon!'
+  },
+  {
+    link: '/admin/gala',
+    label: 'Gala Dashboard',
+    icon: IconArmchair,
+    adminOnly: true,
   },
   {
     link: '/contact',
@@ -107,7 +135,10 @@ export const PortalSidebar = memo(({ onNavigate }: PortalSidebarProps) => {
   const isAdmin = permissions?.permissions?.includes('dx:admin');
 
   // For Mobile
-  const handleNavClick = (event: React.MouseEvent<HTMLAnchorElement>, hasDisabledMessage: boolean) => {
+  const handleNavClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    hasDisabledMessage: boolean
+  ) => {
     if (hasDisabledMessage) {
       event.preventDefault();
       return;

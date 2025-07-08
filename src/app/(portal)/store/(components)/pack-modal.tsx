@@ -1,12 +1,6 @@
 'use client';
 
 import {
-  AwaitedReactNode,
-  JSXElementConstructor,
-  Key,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
   useEffect,
   useState,
 } from 'react';
@@ -39,6 +33,7 @@ import {
   updateCartPackItemDetail,
 } from '@/components/cart-drawer/utils';
 import { useCart } from '@/context/cart';
+import { useStoreItemStock } from '@/lib/store/items/hooks';
 import { CartPackItem, CartPackItemDetail, StorePack } from '@/lib/store/types';
 import { SizeModal } from './size-modal';
 import classes from './pack-modal.module.css';
@@ -48,6 +43,26 @@ interface PackModalProps {
   onCloseAction: () => void;
   selectedPack: StorePack | null;
 }
+
+const ItemStockDisplay = ({
+  itemCode,
+  color,
+  size,
+}: {
+  itemCode: string;
+  color?: string;
+  size?: string;
+}) => {
+  const { data: stock } = useStoreItemStock(itemCode, color, size);
+
+  if (stock === null || stock === undefined) return null;
+
+  return (
+    <Text c={stock > 0 ? 'yellow' : 'red'} fw={500}>
+      {stock > 0 ? `${stock} in stock` : 'Out of stock'}
+    </Text>
+  );
+};
 
 export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProps) {
   const { addToCart } = useCart();
@@ -558,6 +573,12 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
                                       </Flex>
                                     </Box>
                                   )}
+
+                                  <ItemStockDisplay
+                                    itemCode={originalItem.item_code}
+                                    color={packItem.color}
+                                    size={packItem.size}
+                                  />
                                 </Stack>
                               </Accordion.Panel>
                             </Accordion.Item>
@@ -711,14 +732,21 @@ export function PackModal({ opened, onCloseAction, selectedPack }: PackModalProp
                                           </Box>
                                         )}
 
+                                        {/* Stock Quantity - Only show when selected */}
+                                        {isSelected && (
+                                          <ItemStockDisplay
+                                            itemCode={originalItem.item_code}
+                                            color={cartPackItem.selected_optional_item?.color}
+                                            size={cartPackItem.selected_optional_item?.size}
+                                          />
+                                        )}
+
                                         <Button
                                           fullWidth
                                           variant={isSelected ? 'filled' : 'outline'}
                                           color="teal"
                                           onClick={() => {
                                             if (isSelected) {
-                                              // Update the cart pack item to remove the selection
-                                              // You'll need to implement this function
                                               setCartPackItem(
                                                 removeSelectedOptionalItem(cartPackItem)
                                               );
