@@ -19,7 +19,7 @@ import { ProductCard, ProductModal } from '@/app/(portal)/store/(components)';
 import { PackCard } from '@/app/(portal)/store/(components)/pack-card';
 import { PackModal } from '@/app/(portal)/store/(components)/pack-modal';
 import { useCart } from '@/context/cart';
-import { useStoreItems } from '@/lib/store/items/hooks';
+import { useStoreItems, useStoreItemsSeparated } from '@/lib/store/items/hooks';
 import { useStorePacks } from '@/lib/store/packs/hooks';
 import { StoreItem, StorePack } from '@/lib/store/types';
 import { DiscountBanner } from './(components)/discount-banner';
@@ -32,8 +32,13 @@ export default function StorePage() {
   const [packModalOpened, { open: openPackModal, close: closePackModal }] = useDisclosure(false);
 
   const { addToCart } = useCart();
+  
+  // Existing hooks
   const { data: itemsData, isLoading: isLoadingItems, error: itemsError } = useStoreItems();
   const { data: packsData, isLoading: isLoadingPacks, error: packsError } = useStorePacks();
+  
+  // New hook for consumables
+  const { data: separatedData } = useStoreItemsSeparated();
 
   const handleViewProduct = (item: StoreItem) => {
     setSelectedItem(item);
@@ -67,10 +72,17 @@ export default function StorePage() {
     closeItemModal();
   };
 
-  const items = itemsData?.items || [];
+  // Original items data (filter out consumables)
+  const allItems = itemsData?.items || [];
+  const consumables = separatedData?.consumables || [];
+  const nonConsumableItems = allItems.filter(item => 
+    !consumables.some(consumable => consumable.id === item.id)
+  );
+  
   const packs = packsData?.packs || [];
 
-  const hasItems = items.length > 0;
+  const hasConsumables = consumables.length > 0;
+  const hasNonConsumables = nonConsumableItems.length > 0;
   const hasPacks = packs.length > 0;
 
   if (isLoadingItems || isLoadingPacks) {
@@ -105,17 +117,33 @@ export default function StorePage() {
         Store
       </Title>
 
-      {hasItems || hasPacks ? (
+      {hasConsumables || hasNonConsumables || hasPacks ? (
         <>
+          {/* Consumables Section */}
+          {hasConsumables && (
+            <Box mb={hasNonConsumables || hasPacks ? "xl" : undefined}>
+              <Title size="h3" mb="md">
+                Consumables
+              </Title>
+              <SimpleGrid cols={{ sm: 2, md: 4 }} spacing="lg">
+                {consumables.map((item) => (
+                  <ProductCard key={item.id} item={item} onViewProductAction={handleViewProduct} />
+                ))}
+              </SimpleGrid>
+            </Box>
+          )}
+
+          {hasConsumables && (hasNonConsumables || hasPacks) && <Divider my="xl" />}
+
           {/* Packs Section */}
           {hasPacks && (
-            <Box mb="xl">
+            <Box mb={hasNonConsumables ? "xl" : undefined}>
               <Group align="center" mb="md">
                 <Group gap="xs" align="center">
                   <IconPackages size={24} />
                   <Title size="h3">Packs</Title>
                 </Group>
-                {hasItems && (
+                {hasNonConsumables && (
                   <Text size="sm" c="dimmed">
                     Get more for less with our bundled packs
                   </Text>
@@ -130,10 +158,10 @@ export default function StorePage() {
             </Box>
           )}
 
-          {hasItems && hasPacks && <Divider my="xl" />}
+          {hasPacks && hasNonConsumables && <Divider my="xl" />}
 
-          {/* Items Section */}
-          {hasItems && (
+          {/* Individual Products Section (non-consumables only) */}
+          {hasNonConsumables && (
             <Box>
               {hasPacks && (
                 <Title size="h3" mb="md">
@@ -142,7 +170,7 @@ export default function StorePage() {
               )}
 
               <SimpleGrid cols={{ sm: 2, md: 4 }} spacing="lg">
-                {items.map((item) => (
+                {nonConsumableItems.map((item) => (
                   <ProductCard key={item.id} item={item} onViewProductAction={handleViewProduct} />
                 ))}
               </SimpleGrid>
@@ -157,6 +185,7 @@ export default function StorePage() {
         </Center>
       )}
 
+      {/* Modals */}
       <ProductModal
         opened={itemModalOpened}
         onCloseAction={closeItemModal}
