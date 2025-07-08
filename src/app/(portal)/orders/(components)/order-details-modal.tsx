@@ -162,6 +162,7 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
                             src={item.image}
                             alt={item.name || 'Product image'}
                             fill
+                            sizes='md'
                             style={{ objectFit: 'cover', borderRadius: 4 }}
                           />
                         </Box>
@@ -186,6 +187,35 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
                     </Grid.Col>
                     <Grid.Col span={{ base: 9, sm: 6 }}>
                       <Text fw={500}>{item.name || `Item ${item.item_code}`}</Text>
+                      <Group gap="xs">
+                        {item.size && (
+                          <Badge size="sm" variant="outline">
+                            Size: {item.size}
+                          </Badge>
+                        )}
+                        {item.color && (
+                          <Badge
+                            size="sm"
+                            variant="outline"
+                            leftSection={
+                              item.color_hex ? (
+                                <div
+                                  style={{
+                                    width: 10,
+                                    height: 10,
+                                    borderRadius: '50%',
+                                    backgroundColor: item.color_hex,
+                                    border: '1px solid rgba(0, 0, 0, 0.1)',
+                                  }}
+                                />
+                              ) : null
+                            }
+                          >
+                            {item.color}
+                          </Badge>
+                        )}
+                      </Group>
+
                       {item.item_code === 'DELEGATE_FEE' && item.description && (
                         <Text size="sm" c="dimmed">
                           {item.description}
@@ -193,7 +223,7 @@ export function OrderDetailsModal({ opened, onCloseAction, order }: OrderDetails
                       )}
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, sm: 4 }}>
-                      <Flex justify={isMobile ? 'space-between' : 'flex-end'} align="center">
+                      <Flex justify={isMobile ? 'space-between' : 'flex-end'} align="center" gap='xs'>
                         <Text>
                           {formatCurrency(item.price)} × {item.quantity}
                         </Text>
