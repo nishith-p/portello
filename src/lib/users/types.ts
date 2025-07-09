@@ -69,16 +69,19 @@ export interface UserProfile {
 }
 
 export interface UserListItem {
-  id: number;
+  id: string;
   kinde_id: string;
   full_name: string;
   position: string;
   entity: string;
-  sub_entity: string | null;
+  sub_entity?: string;
   aiesec_email: string;
-  round: number | null;
+  round?: number;
   room_no?: string;
   telegram_id?: string;
+  ysf_track_1?: string | null;
+  ysf_track_2?: string | null;
+  ysf_panel?: string | null;
 }
 
 export interface UserSearchParams {

@@ -405,3 +405,37 @@ export function useUpdateSelections() {
     },
   });
 }
+
+/**
+ * Hook to fetch all users with YSF selections (admin only)
+ */
+export function useAllYSFSelections() {
+  return useQuery<UserListItem[]>({
+    queryKey: ['admin', 'ysfSelections'],
+    queryFn: async () => {
+      const response = await fetch('/api/users/track/selection');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to fetch YSF selections');
+      }
+      return response.json();
+    },
+  });
+}
+
+/**
+ * Hook to fetch unique entities (admin only)
+ */
+export function useUniqueEntities() {
+  return useQuery<string[]>({
+    queryKey: ['admin', 'uniqueEntities'],
+    queryFn: async () => {
+      const response = await fetch('/api/users/track/selection?type=entities');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to fetch unique entities');
+      }
+      return response.json();
+    },
+  });
+}

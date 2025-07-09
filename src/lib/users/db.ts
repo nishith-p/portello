@@ -1,3 +1,8 @@
+import {
+  PANELS,
+  TRACK1,
+  TRACK2,
+} from '@/app/(portal)/(components)/user-dashboard/const-ysf-tracks';
 import { supabaseServer } from '@/lib/core/supabase';
 import {
   User,
@@ -6,7 +11,6 @@ import {
   UserProfile,
   UserSearchParams,
 } from '@/lib/users/types';
-import { PANELS, TRACK1, TRACK2 } from '@/app/(portal)/(components)/user-dashboard/const-ysf-tracks';
 
 /**
  * Get a user by their Kinde ID
@@ -65,6 +69,7 @@ export async function getUserProfile(kindeId: string): Promise<UserProfile | nul
 
 /**
  * Search and filter users for admin panel
+ * 
  */
 export async function searchUsers(
   params: UserSearchParams
@@ -74,7 +79,7 @@ export async function searchUsers(
   let query = supabaseServer
     .from('users')
     .select(
-      'id, kinde_id, first_name, last_name, position, entity, sub_entity, aiesec_email, round',
+      'id, kinde_id, first_name, last_name, position, entity, sub_entity, aiesec_email, round, room_no, telegram_id, ysf_track_1, ysf_track_2, ysf_panel',
       {
         count: 'exact',
       }
@@ -152,7 +157,9 @@ export async function updateUserDeleteRequest(
 export async function getUsersByRoom(roomNo: string): Promise<UserListItem[]> {
   const { data, error } = await supabaseServer
     .from('users')
-    .select('id, kinde_id, first_name, last_name, position, entity, sub_entity, aiesec_email, round, room_no, telegram_id')
+    .select(
+      'id, kinde_id, first_name, last_name, position, entity, sub_entity, aiesec_email, round, room_no, telegram_id'
+    )
     .eq('room_no', roomNo)
     .order('first_name', { ascending: true });
 
@@ -171,7 +178,7 @@ export async function getUsersByRoom(roomNo: string): Promise<UserListItem[]> {
     aiesec_email: user.aiesec_email,
     round: user.round,
     room_no: user.room_no,
-    telegram_id: user.telegram_id
+    telegram_id: user.telegram_id,
   }));
 
   return users;
@@ -201,22 +208,22 @@ export async function getAllTrackStats(): Promise<{
   const panelStats: Record<string, number> = {};
 
   // Initialize track1 stats
-  TRACK1.forEach(track => {
+  TRACK1.forEach((track) => {
     track1Stats[track.id] = 0;
   });
 
   // Initialize track2 stats
-  TRACK2.forEach(track => {
+  TRACK2.forEach((track) => {
     track2Stats[track.id] = 0;
   });
 
   // Initialize panel stats
-  PANELS.forEach(panel => {
+  PANELS.forEach((panel) => {
     panelStats[panel.id] = 0;
   });
 
   // Count selections
-  users?.forEach(user => {
+  users?.forEach((user) => {
     if (user.ysf_track_1 && track1Stats.hasOwnProperty(user.ysf_track_1)) {
       track1Stats[user.ysf_track_1]++;
     }
@@ -243,19 +250,19 @@ export async function updateUserSelections(
   }
 ): Promise<{ success: boolean }> {
   // Validate track1
-  const validTrack1Ids = TRACK1.map(t => t.id);
+  const validTrack1Ids = TRACK1.map((t) => t.id);
   if (!validTrack1Ids.includes(selections.track1)) {
     throw new Error('Invalid track1 selection');
   }
 
   // Validate track2
-  const validTrack2Ids = TRACK2.map(t => t.id);
+  const validTrack2Ids = TRACK2.map((t) => t.id);
   if (!validTrack2Ids.includes(selections.track2)) {
     throw new Error('Invalid track2 selection');
   }
 
   // Validate panel
-  const validPanels = PANELS.map(p => p.id);
+  const validPanels = PANELS.map((p) => p.id);
   if (!validPanels.includes(selections.panel)) {
     throw new Error('Invalid panel selection');
   }
@@ -265,7 +272,7 @@ export async function updateUserSelections(
     .update({
       ysf_track_1: selections.track1,
       ysf_track_2: selections.track2,
-      ysf_panel: selections.panel
+      ysf_panel: selections.panel,
     })
     .eq('kinde_id', kindeId);
 
@@ -303,8 +310,60 @@ export async function getUserSelectionInfo(kindeId: string): Promise<{
     selections: {
       track1: data.ysf_track_1,
       track2: data.ysf_track_2,
-      panel: data.ysf_panel
+      panel: data.ysf_panel,
     },
-    hasSubmitted: !!(data.ysf_track_1 && data.ysf_track_2 && data.ysf_panel)
+    hasSubmitted: !!(data.ysf_track_1 && data.ysf_track_2 && data.ysf_panel),
   };
+}
+
+// Add these to your existing db.ts
+
+/**
+ * Get all users with YSF selections for admin view
+ */
+export async function getAllUsersWithYSFSelections(): Promise<UserListItem[]> {
+  const { data, error } = await supabaseServer
+    .from('users')
+    .select('id, kinde_id, first_name, last_name, position, entity, sub_entity, aiesec_email, round, room_no, telegram_id, ysf_track_1, ysf_track_2, ysf_panel')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching users with YSF selections:', error);
+    throw error;
+  }
+
+  return data.map((user) => ({
+    id: user.id,
+    kinde_id: user.kinde_id,
+    full_name: `${user.first_name} ${user.last_name}`,
+    position: user.position,
+    entity: user.entity,
+    sub_entity: user.sub_entity,
+    aiesec_email: user.aiesec_email,
+    round: user.round,
+    room_no: user.room_no,
+    telegram_id: user.telegram_id,
+    ysf_track_1: user.ysf_track_1,
+    ysf_track_2: user.ysf_track_2,
+    ysf_panel: user.ysf_panel
+  }));
+}
+
+/**
+ * Get unique entities from users
+ */
+export async function getUniqueEntities(): Promise<string[]> {
+  const { data, error } = await supabaseServer
+    .from('users')
+    .select('entity')
+    .neq('entity', null);
+
+  if (error) {
+    console.error('Error fetching unique entities:', error);
+    throw error;
+  }
+
+  // Explicitly convert Set to Array
+  const entities = data.map(item => item.entity);
+  return Array.from(new Set(entities));
 }
