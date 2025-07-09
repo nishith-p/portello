@@ -6,16 +6,16 @@ import { usePathname } from 'next/navigation';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import {
   IconAddressBook,
+  IconArmchair,
   IconCreditCard,
   IconFileText,
   IconHome,
   IconSettings,
   IconShirt,
   IconShoppingBag,
+  IconTableColumn,
   IconUsers,
   IconWallet,
-  IconTableColumn,
-  IconArmchair,
 } from '@tabler/icons-react';
 import { Box, Divider, NavLink, Stack, Tooltip } from '@mantine/core';
 import classes from './portal-sidebar.module.css';
@@ -37,6 +37,12 @@ const navigationData: NavigationItem[] = [
     link: '/',
     label: 'Dashboard',
     icon: IconHome,
+  },
+  {
+    link: '/admin/track',
+    label: 'YSF Track Responses',
+    icon: IconUsers,
+    adminOnly: true,
   },
   {
     link: '/agenda',
@@ -79,14 +85,14 @@ const navigationData: NavigationItem[] = [
     link: '/wallet',
     label: 'Wallet',
     icon: IconWallet,
-    adminOnly: false
+    adminOnly: false,
   },
   {
     link: '/gala',
     label: 'Gala Seating',
     icon: IconArmchair,
     adminOnly: false,
-    disabledMessage: 'Coming Soon!'
+    disabledMessage: 'Coming Soon!',
   },
   {
     link: '/admin/gala',
