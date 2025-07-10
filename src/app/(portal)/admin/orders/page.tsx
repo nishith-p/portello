@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { IconAlertCircle, IconRefresh } from '@tabler/icons-react';
+import { IconAlertCircle, IconDownload, IconRefresh } from '@tabler/icons-react';
 import {
   Alert,
   Button,
@@ -16,6 +16,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { useOrderHooks } from '@/lib/store/orders/hooks';
 import { Order, OrderStatus } from '@/lib/store/types';
+import { exportToCsv, formatDate } from '@/lib/utils';
 import { OrderDetailModal, OrderPagination, OrderSearch, OrderTable } from './(components)';
 
 interface OrderSearchParams {
@@ -116,6 +117,47 @@ export default function AdminOrdersPage() {
     }));
   };
 
+  // Handle exporting to csv
+  const handleExportOrders = () => {
+    if (!allOrders) return;
+
+    // Format date and time separately
+    const formatDatePart = (dateString?: string): string => {
+      if (!dateString) return 'N/A';
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: '2-digit',
+      }).replace(',', ''); 
+    };
+
+    const formatTimePart = (dateString?: string): string => {
+      if (!dateString) return 'N/A';
+      return new Date(dateString).toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      });
+    };
+
+    // Prepare the CSV data with separate date and time columns
+    const csvData = allOrders.map((order) => ({
+      'Order ID': order.id,
+      'Customer ID': order.user_id,
+      Status: order.status,
+      'Total Amount': order.total_amount,
+      Date: formatDatePart(order.created_at),
+      Time: formatTimePart(order.created_at),
+      'Item Count': order.items?.length || 0,
+      Items:
+        order.items
+          ?.map((item) => `${item.name} (${item.item_code}) - Qty: ${item.quantity} - Size: ${item.size}`)
+          .join('; ') || 'N/A',
+    }));
+
+    exportToCsv('orders_export.csv', csvData);
+  };
+
   return (
     <Container fluid p="md">
       <Stack gap="lg">
@@ -123,13 +165,23 @@ export default function AdminOrdersPage() {
           <Title order={2} c="gray.8">
             Order Management
           </Title>
-          <Button
-            leftSection={<IconRefresh size={16} />}
-            variant="primary"
-            onClick={() => refetch()}
-          >
-            Refresh
-          </Button>
+          <Group justify="space-between">
+            <Button
+              leftSection={<IconDownload size={16} />}
+              variant="outline"
+              onClick={handleExportOrders}
+              disabled={isLoading || !allOrders}
+            >
+              Export to CSV
+            </Button>
+            <Button
+              leftSection={<IconRefresh size={16} />}
+              variant="primary"
+              onClick={() => refetch()}
+            >
+              Refresh
+            </Button>
+          </Group>
         </Group>
 
         <Paper p="md" radius="md" withBorder>

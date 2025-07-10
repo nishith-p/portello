@@ -58,3 +58,36 @@ export function formatRelativeTime(dateString?: string): string {
 
   return formatDate(dateString);
 }
+
+/**
+ * Export data to a csv format
+ */
+export function exportToCsv(filename: string, rows: object[]) {
+  if (!rows || !rows.length) {
+    return;
+  }
+  
+  const separator = ',';
+  const keys = Object.keys(rows[0]);
+  let csvContent = keys.join(separator) + '\n';
+  
+  rows.forEach((row) => {
+    const values = keys.map(key => {
+      const value = row[key as keyof typeof row];
+      return value === undefined || value === null ? '' : String(value);
+    });
+    csvContent += values.join(separator) + '\n';
+  });
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  
+  link.setAttribute('href', url);
+  link.setAttribute('download', filename);
+  link.style.visibility = 'hidden';
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}

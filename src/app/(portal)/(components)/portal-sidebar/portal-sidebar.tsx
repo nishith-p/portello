@@ -6,16 +6,18 @@ import { usePathname } from 'next/navigation';
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs';
 import {
   IconAddressBook,
+  IconArmchair,
   IconCreditCard,
+  IconFileText,
   IconHome,
   IconSettings,
   IconShirt,
   IconShoppingBag,
+  IconTableColumn,
   IconUsers,
-  IconFileText,
-  IconArmchair,
+  IconWallet,
 } from '@tabler/icons-react';
-import { Box, NavLink, Stack, Tooltip, Divider } from '@mantine/core';
+import { Box, Divider, NavLink, Stack, Tooltip } from '@mantine/core';
 import classes from './portal-sidebar.module.css';
 
 type NavigationItem = {
@@ -35,6 +37,17 @@ const navigationData: NavigationItem[] = [
     link: '/',
     label: 'Dashboard',
     icon: IconHome,
+  },
+  {
+    link: '/admin/track',
+    label: 'YSF Track Responses',
+    icon: IconUsers,
+    adminOnly: true,
+  },
+  {
+    link: '/agenda',
+    label: 'Agenda',
+    icon: IconTableColumn,
   },
   {
     link: '/admin/delegates',
@@ -59,12 +72,19 @@ const navigationData: NavigationItem[] = [
     children: [
       { link: '/admin/orders', label: 'Manage Orders' },
       { link: '/admin/orders/items', label: 'Item Quantities' },
+      { link: '/admin/custom-order', label: 'Custom Order' },
     ],
   },
   {
     link: '/payments',
     label: 'Delegate Payments',
     icon: IconCreditCard,
+    adminOnly: false,
+  },
+  {
+    link: '/wallet',
+    label: 'Wallet',
+    icon: IconWallet,
     adminOnly: false,
   },
   {
@@ -120,7 +140,10 @@ export const PortalSidebar = memo(({ onNavigate }: PortalSidebarProps) => {
   const isAdmin = permissions?.permissions?.includes('dx:admin');
 
   // For Mobile
-  const handleNavClick = (event: React.MouseEvent<HTMLAnchorElement>, hasDisabledMessage: boolean) => {
+  const handleNavClick = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    hasDisabledMessage: boolean
+  ) => {
     if (hasDisabledMessage) {
       event.preventDefault();
       return;

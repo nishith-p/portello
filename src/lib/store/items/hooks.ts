@@ -254,7 +254,53 @@ export function useUpdateStoreItemStatus() {
   });
 }
 
-// Add this new hook to your existing hooks
+/**
+ * Hook to fetch consumable and non-consumable items separately
+ * (Doesn't affect existing useStoreItems hook)
+ */
+export function useStoreItemsSeparated() {
+  const query = useQuery<{
+    consumables: StoreItem[];
+    nonConsumables: StoreItem[];
+    success?: boolean;
+    error?: string;
+  }>({
+    queryKey: ['storeItems', 'separated'],
+    queryFn: async () => {
+      try {
+        const response = await fetch('/api/store/items/consumables');
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error?.message || 'Failed to fetch consumable items');
+        }
+        
+        if (!data.success) {
+          throw new Error(data.error || 'Unknown error occurred');
+        }
+
+        return data;
+      } catch (error) {
+        console.error('Fetch consumables error:', error);
+        throw error;
+      }
+    },
+    retry: 1, // Retry once if fails
+  });
+
+  useEffect(() => {
+    if (query.error) {
+      notifications.show({
+        title: 'Error loading consumables',
+        message: query.error.message || 'Please try again later',
+        color: 'red',
+      });
+    }
+  }, [query.error]);
+
+  return query;
+}
+
 export function useStoreItemStock(itemCode: string, color?: string, size?: string) {
   return useQuery<number | null>({
     queryKey: ['storeItemStock', itemCode, color, size],

@@ -220,6 +220,39 @@ export async function updateStoreItemStatus(id: string, active: boolean): Promis
 }
 
 /**
+ * Get active consumable store items
+ */
+export async function getActiveConsumableItems(): Promise<StoreItem[]> {
+  const { data, error } = await supabaseServer
+    .from('store_items')
+    .select('*')
+    .eq('active', true)
+    .eq('consumable', true)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Supabase consumable items error:', error);
+    throw error;
+  }
+  return data;
+}
+
+export async function getActiveNonConsumableItems(): Promise<StoreItem[]> {
+  const { data, error } = await supabaseServer
+    .from('store_items')
+    .select('*')
+    .eq('active', true)
+    .eq('consumable', false)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Supabase non-consumable items error:', error);
+    throw error;
+  }
+  return data;
+}
+
+ /*
  * Get store item's stock
  */
 export async function getStoreItemStock(

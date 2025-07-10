@@ -6,6 +6,7 @@ import { notifications } from '@mantine/notifications';
 import { UserStats } from '@/lib/users/stats/db';
 import {
   UpdateDocumentParams,
+  UserListItem,
   UserListResponse,
   UserProfile,
   UserSearchParams,
@@ -253,6 +254,188 @@ export function useRequestAccountDeletion() {
         message: error.message || 'Failed to submit account deletion request',
         color: 'red',
       });
+    },
+  });
+}
+
+/**
+ * Hook to fetch users from a specific room
+ */
+export function useRoomUsers(roomNo: string | null) {
+  const query = useQuery<{ users: UserListItem[] }>({
+    queryKey: ['users', 'room', roomNo],
+    queryFn: async () => {
+      if (!roomNo) {
+        throw new Error('Room number is required');
+      }
+
+      const params = new URLSearchParams();
+      params.set('roomNo', roomNo);
+      
+      const response = await fetch(`/api/users/room?${params.toString()}`);
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to fetch room users');
+      }
+
+      return response.json();
+    },
+    enabled: !!roomNo, // Only run the query if roomNo is provided
+  });
+
+  useEffect(() => {
+    if (query.error) {
+      notifications.show({
+        title: 'Error',
+        message: query.error.message || 'Failed to load room users',
+        color: 'red',
+      });
+    }
+  }, [query.error]);
+
+  return query;
+}
+
+/**
+ * Hook to fetch all track and panel statistics
+ */
+export function useAllTrackStats() {
+  const query = useQuery({
+    queryKey: ['tracks', 'allStats'],
+    queryFn: async () => {
+      const response = await fetch('/api/users/track?statsOnly=true');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to fetch track statistics');
+      }
+      return response.json();
+    },
+  });
+
+  useEffect(() => {
+    if (query.error) {
+      notifications.show({
+        title: 'Error',
+        message: query.error.message || 'Failed to load track statistics',
+        color: 'red',
+      });
+    }
+  }, [query.error]);
+
+  return query;
+}
+
+/**
+ * Hook to fetch user's selection info
+ */
+export function useUserSelectionInfo() {
+  const query = useQuery({
+    queryKey: ['tracks', 'userSelections'],
+    queryFn: async () => {
+      const response = await fetch('/api/users/track');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to fetch selection information');
+      }
+
+      return response.json();
+    },
+
+  });
+
+  useEffect(() => {
+    if (query.error) {
+      notifications.show({
+        title: 'Error',
+        message: query.error.message || 'Failed to load selection information',
+        color: 'red',
+      });
+    }
+  }, [query.error]);
+
+  return query;
+}
+
+/**
+ * Hook to update user's selections
+ */
+export function useUpdateSelections() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (selections: {
+      track1: string;
+      track2: string;
+      panel: string;
+    }) => {
+      const response = await fetch('/api/users/track', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(selections),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to update selections');
+      }
+
+      return response.json();
+    },
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['tracks', 'allStats'] }),
+        queryClient.invalidateQueries({ queryKey: ['tracks', 'userSelections'] }),
+      ]);
+
+      notifications.show({
+        title: 'Selections Updated',
+        message: 'Your session selections have been saved successfully',
+        color: 'green',
+      });
+    },
+    onError: (error) => {
+      notifications.show({
+        title: 'Update Failed',
+        message: error.message || 'Failed to save selections',
+        color: 'red',
+      });
+    },
+  });
+}
+
+/**
+ * Hook to fetch all users with YSF selections (admin only)
+ */
+export function useAllYSFSelections() {
+  return useQuery<UserListItem[]>({
+    queryKey: ['admin', 'ysfSelections'],
+    queryFn: async () => {
+      const response = await fetch('/api/users/track/selection');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to fetch YSF selections');
+      }
+      return response.json();
+    },
+  });
+}
+
+/**
+ * Hook to fetch unique entities (admin only)
+ */
+export function useUniqueEntities() {
+  return useQuery<string[]>({
+    queryKey: ['admin', 'uniqueEntities'],
+    queryFn: async () => {
+      const response = await fetch('/api/users/track/selection?type=entities');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Failed to fetch unique entities');
+      }
+      return response.json();
     },
   });
 }
